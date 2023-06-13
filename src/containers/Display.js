@@ -10,47 +10,37 @@ import {sumIcon} from '../icons/svgIcons';
 
 function Display({mainIndex, itemIndex}) {
 
-    const firstYear = content[2].firstYear;
     const currentDate = new Date();    
     const currentYear = currentDate.getFullYear();
-    const yearList = Array.from({ length: currentYear - firstYear + 1 }, (_, index) => currentYear - index);
 
-    let defaultControl = {
-        value: currentYear, 
+    const blockList = mockStore[mainIndex][itemIndex].map(currentBlock => currentBlock.block);
+
+    let defaultBlock = {
+        value: blockList[0], 
         index: 0,
-        max: yearList.length - 1,
-        list: yearList
-    };
-    
-    if (itemIndex === 4) {
-        defaultControl = {
-            value: 'Andi', 
-            index: 0,
-            max: 1,
-            list: ['Andi', 'Mariana']
-        };
+        max: blockList.length - 1,
+        list: blockList
     };
 
-    const [control, setControl] = useState(defaultControl);
+    const [block, setBlock] = useState(defaultBlock);
 
-    const toggleControlLeft = () => {
-        setControl(prevControl => {
-            const newIndex = prevControl.index - 1;
+    const toggleBlockLeft = () => {
+        setBlock(prevBlock => {
+            const newIndex = prevBlock.index - 1;
             return {
-                ...prevControl,
-                value: prevControl.list[newIndex],
+                ...prevBlock,
+                value: prevBlock.list[newIndex],
                 index: newIndex
             };
         });
     };
 
-    const toggleControlRight = () => {
-        setControl(prevControl => {
-            const newIndex = prevControl.index + 1;
-            console.log(prevControl);
+    const toggleBlockRight = () => {
+        setBlock(prevBlock => {
+            const newIndex = prevBlock.index + 1;
             return {
-                ...prevControl,
-                value: prevControl.list[newIndex],
+                ...prevBlock,
+                value: prevBlock.list[newIndex],
                 index: newIndex
             };
         });
@@ -63,12 +53,11 @@ function Display({mainIndex, itemIndex}) {
         if(index === -1) {
             index = accountIcons.findIndex(icon => account.group === icon.title); 
         }
-        console.log(index);
         return accountIcons[index].source;        
     }
     //...until here
     
-    let yearIndex = 0;
+    let blockIndex = 0;
     let assetsComponent = (<h2>Path did not match!</h2>);
 
     switch (itemIndex){
@@ -76,11 +65,9 @@ function Display({mainIndex, itemIndex}) {
             break;
 
         case 1: //Resources
-            yearIndex = mockStore[mainIndex][itemIndex].findIndex(block => block.year === control.value);
+            blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
             //if current year is not found, it has to be created
-            console.log(control);
-            console.log(yearIndex);
-            const resourcesBlock = mockStore[mainIndex][itemIndex][yearIndex];
+            const resourcesBlock = mockStore[mainIndex][itemIndex][blockIndex];
             const resourcesComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                 const groupTitleComponent = createHeadlineComponent(group); 
                 const groupItemsComponent = resourcesBlock.accounts
@@ -93,9 +80,9 @@ function Display({mainIndex, itemIndex}) {
             break;
 
         case 2: //Investments
-            yearIndex = mockStore[mainIndex][itemIndex].findIndex(block => block.year === control.value);
+            blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
             //if current year is not found, it has to be created
-            const investmentsBlock = mockStore[mainIndex][itemIndex][yearIndex]; 
+            const investmentsBlock = mockStore[mainIndex][itemIndex][blockIndex]; 
             const investmentsComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                 const groupTitleComponent = createHeadlineComponent(group); 
                 const groupItemsComponent = investmentsBlock.accounts
@@ -108,16 +95,18 @@ function Display({mainIndex, itemIndex}) {
             break;
 
         case 3: // Transfers
-            yearIndex = mockStore[mainIndex][itemIndex].findIndex(block => block.year === control.value);
+            blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
             //if current year is not found, it has to be created
-            const transfersBlock = mockStore[mainIndex][itemIndex][yearIndex];     
-            const transfersComponent = transfersBlock.transfers.map(transfer => {return createTransfersComponent(transfer);});
+            const transfersBlock = mockStore[mainIndex][itemIndex][blockIndex];     
+            const transfersComponent = transfersBlock.accounts.map(transfer => {return createTransfersComponent(transfer);});
             const transfersSumComponent = createBigSumComponent(null, transfersBlock.amount);
             assetsComponent = (<>{transfersComponent}{transfersSumComponent}</>)
             break;
 
         case 4: //Expanses
-            const expansesBlock = mockStore[mainIndex][itemIndex];
+            blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
+            //if current year is not found, it has to be created
+            const expansesBlock = mockStore[mainIndex][itemIndex][blockIndex];
             const expansesComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                 const groupTitleComponent = createHeadlineComponent(group); 
                 const groupItemsComponent = expansesBlock.expanses
@@ -125,14 +114,14 @@ function Display({mainIndex, itemIndex}) {
                     .map(expanse => createExpansesComponent(expanse));                               
                 return (<>{groupTitleComponent}{groupItemsComponent}</>);          
             }); 
-            const expaneseSumComponent = createBigSumComponent(expansesBlock.amountMonthly, expansesBlock.amountYearly); //refactor for use of control (sec-values)
+            const expaneseSumComponent = createBigSumComponent(expansesBlock.amountMonthly, expansesBlock.amountYearly);
             assetsComponent = (<>{expansesComponent}{expaneseSumComponent}</>)
             break;
 
         case 5: //Pension
-            yearIndex = mockStore[mainIndex][itemIndex].findIndex(block => block.year === control.value);
+            blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
             //if current year is not found, it has to be created
-            const pensionsBlock = mockStore[mainIndex][itemIndex][yearIndex];            
+            const pensionsBlock = mockStore[mainIndex][itemIndex][blockIndex];            
             const pensionsComponent = pensionsBlock.accounts.map(account => {return createPensionsComponent (account);});
             const pensionsSumComponent = createBigSumComponent(pensionsBlock.expected, pensionsBlock.amount);
             assetsComponent = (<>{pensionsComponent}{pensionsSumComponent}</>)
@@ -143,7 +132,7 @@ function Display({mainIndex, itemIndex}) {
 
     function createResourcesComponent (account){
         return (
-            <NavLink to={'edit/:' + control.value.toString() + account.id} className='nav-link'>      
+            <NavLink to={'edit/:' + block.value.toString() + account.id} state={{item: account, block: block.value}} className='nav-link'>      
                 <div class='row content-row'>
                     <div class='col-6 d-flex align-items-center'>
                         <img src={findIcon(account)}/>
@@ -161,7 +150,7 @@ function Display({mainIndex, itemIndex}) {
 
     function createInvestmentsComponent (account){
         return (
-            <NavLink to={'edit/:' + control.value.toString() + account.id} className='nav-link'>      
+            <NavLink to={'edit/:' + block.value.toString() + account.id} state={{item: account, block: block.value}} className='nav-link'>      
                 <div class='row content-row'>
                     <div class='col-6 d-flex align-items-center'>
                         <img src={findIcon(account)}/>
@@ -190,7 +179,7 @@ function Display({mainIndex, itemIndex}) {
 
     function createTransfersComponent (transfer){
         return (
-            <NavLink to={'edit/:' + control.value.toString() + transfer.id} className='nav-link'>      
+            <NavLink to={'edit/:' + block.value.toString() + transfer.id} state={{item: transfer, block: block.value}} className='nav-link'>      
                 <div class='row content-row small-row'>
                     <div class='col-5 d-flex align-items-center'>
                         <p>{transfer.title}</p>
@@ -208,16 +197,16 @@ function Display({mainIndex, itemIndex}) {
 
     function createExpansesComponent (expanse){
         return (
-            <NavLink to={'edit/:' + expanse.id} className='nav-link'>      
+            <NavLink to={'edit/:' + block.value.toString() + expanse.id} state={{item: expanse, block: block.value}} className='nav-link'>      
                 <div class='row content-row small-row'>
                     <div class='col-6 d-flex align-items-center'>
                         <p>{expanse.title}</p>
                     </div>
                     <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{control.index ? expanse.amountMonthlySec : expanse.amountMonthly} <span class='unit'>€</span></p>
+                        <p>{expanse.amountMonthly} <span class='unit'>€</span></p>
                     </div>        
                     <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{control.index ? expanse.amountYearlySec : expanse.amountYearly} <span class='unit'>€</span></p>
+                        <p>{expanse.amountYearly} <span class='unit'>€</span></p>
                     </div>
                 </div>
             </NavLink>
@@ -268,7 +257,7 @@ function Display({mainIndex, itemIndex}) {
 
     function createPensionsComponent (account){
         return (
-            <NavLink to={'edit/:' + control.value.toString() + account.id} className='nav-link'>      
+            <NavLink to={'edit/:' + block.value.toString() + account.id} state={{item: account, block: block.value}} className='nav-link'>      
                 <div class='row content-row'>
                     <div class='col-6 d-flex align-items-center'>
                         <img src={findIcon(account)}/>
@@ -287,7 +276,7 @@ function Display({mainIndex, itemIndex}) {
    
     return(
         <>
-            <Header mainIndex={mainIndex} itemIndex={itemIndex} control={control} toggleControlLeft={toggleControlLeft} toggleControlRight={toggleControlRight}/> 
+            <Header mainIndex={mainIndex} itemIndex={itemIndex} block={block} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/> 
             <div class='container-fluid content' id='display'>
                 {assetsComponent} 
             </div> 

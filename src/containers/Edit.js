@@ -1,4 +1,6 @@
-import {useParams} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
+import {useState} from 'react';
+
 
 import Header from './Header';
 import content from '../utils/content';
@@ -7,18 +9,18 @@ import mockStore from '../utils/mockStore';
 //also add group and title - but how?
 
 function Edit({mainIndex, itemIndex, context}) {
-    
-    const {id} = useParams();
-    console.log('log' + id);
-    const year = id.slice(0, 4);
-    const accountId = id.slice(4);
+    const location = useLocation();
+    const account = location.state?.item ?? {};
+    const year = location.state?.year ?? 0;
+    const [formData, setFormData] = useState(account);
 
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        // setFormData((prevFormData) => ({
-        //   ...prevFormData,
-        //   [name]: value,
-        // }));
+    const handleChange = (event) => {
+        const {name, value} = event.target;
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [name]: value,
+        }));
+        //dont forget freeze!
       };
 
     const handleSubmit = (event) => {
@@ -42,10 +44,11 @@ function Edit({mainIndex, itemIndex, context}) {
                                     <p>{item.operator}</p>
                                 </div>
                                 <div class='col-5 text-end'>
-                                    {item.type === 'text' && <input type='text'></input>}
-                                    {item.type === 'display' && <p>Display</p>}
-                                    {item.type === 'date' && <input type='date'/>}
-                                    {item.type === 'group' && <select>{content[mainIndex].items[itemIndex].groups.map(group => <option>{group}</option>)}</select>}
+                                    {item.type === 'text' && <input type='text' name={item.value} value={formData[item.value]} onChange={handleChange}></input>}
+                                    {item.type === 'number' && <input type='number' name={item.value} value={formData[item.value]} onChange={handleChange}></input>}
+                                    {item.type === 'display' && <p name={item.value}>{formData[item.value]}</p>}
+                                    {item.type === 'date' && <input type='date' name={item.value} value={formData[item.value]} onChange={handleChange}/>}
+                                    {item.type === 'group' && <select name={item.value} value={formData[item.value]} onChange={handleChange}>{content[mainIndex].items[itemIndex].groups.map(group => <option value={group} selected={(group === account[item.value]) ? true : false}>{group}</option>)}</select>}
                                 </div>
                                 <div class='col-1'>
                                     <p>{item.unit}</p>

@@ -2,11 +2,11 @@ import {NavLink} from 'react-router-dom';
 
 import {deleteIcon, arrowBackIcon, addIcon} from '../icons/svgIcons';
 import mainIcon from '../icons/main.png';
-import Control from './Control';
+import Block from './Block';
 import content from '../utils/content';
 
 
-function Header({mainIndex, itemIndex, context, control, toggleControlLeft, toggleControlRight}) {
+function Header({mainIndex, itemIndex, context, block, toggleBlockLeft, toggleBlockRight}) {
 
     const main = content[mainIndex];
     const item = main ? main.items[itemIndex] : {};
@@ -74,7 +74,7 @@ function Header({mainIndex, itemIndex, context, control, toggleControlLeft, togg
                     {item.create && createComponent}
                 </div>                        
                 <div class='col-4 d-flex text-center'>
-                    <Control control={control} toggleControlLeft={toggleControlLeft} toggleControlRight={toggleControlRight}/>
+                    <Block block={block} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/>
                 </div>
         </>
         );
