@@ -18,8 +18,8 @@ const router = createBrowserRouter(createRoutesFromElements(
                 {main.items.map((item, itemIndex) => (
                     <>
                         <Route path={main.route + '/' + item.route} element={<Display mainIndex={mainIndex} itemIndex={itemIndex}/>}/>
-                        {item.edit && <Route path={`${main.route}/${item.route}/edit/:id`} element={<Edit mainIndex={mainIndex} itemIndex={itemIndex} context={'edit'}/>}/>}
-                        {item.create && <Route path={`${main.route}/${item.route}/create`} element={<Create mainIndex={mainIndex} itemIndex={itemIndex} context={'create'}/>}/>}
+                        {item.edit && <Route path={`${main.route}/${item.route}/edit/:block/:id`} element={<Edit mainIndex={mainIndex} itemIndex={itemIndex} context={'edit'}/>}/>}
+                        {item.create && <Route path={`${main.route}/${item.route}/create/:block`} element={<Create mainIndex={mainIndex} itemIndex={itemIndex} context={'create'}/>}/>}
                     </>
                 ))}
             </>

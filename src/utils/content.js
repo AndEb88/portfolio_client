@@ -32,6 +32,10 @@ const content = [
         route: 'assets', 
         title: 'Assets',
         firstYear: 2018,
+        taxRates: [
+            {since: 2022, rate: 0.26380},
+            {since: 2018, rate: 0.27820}
+        ],
         description: 'Investments description...',      
         items: [
             {
@@ -85,6 +89,7 @@ const content = [
                 createForm: [
                     {value: 'group', title: 'Group', operator: '', type: 'group', unit: '', bold: true},
                     {value: 'title', title: 'Title', operator: '', type: 'text', unit: '', margin: true, bold: true},
+                    {value: 'closingBalance', title: 'Closing Balance', operator: '', type: 'number', unit: '€', margin: true},
                 ],
             }, 
             {
@@ -93,13 +98,14 @@ const content = [
                 edit: true, 
                 create: true, 
                 add: true,
+                //title requires a select with all investment accounts available in this year
                 editForm: [
-                    {value: 'title', title: 'Account', operator: '', type: 'accounts', unit: '', margin: true, bold: true},
+                    {value: 'title', title: 'Title', operator: '', type: 'accounts', unit: '', margin: true, bold: true},
                     {value: 'date', title: 'Date', operator: '', type: 'date', unit: ''},
                     {value: 'amount', title: 'Amount', operator: '', type: 'number', unit: '€', margin: true},
                 ],
                 createForm: [
-                    {value: 'title', title: 'Account', operator: '', type: 'accounts', unit: '', margin: true, bold: true},
+                    {value: 'title', title: 'Title', operator: '', type: 'accounts', unit: '', margin: true, bold: true},
                     {value: 'date', title: 'Date', operator: '', type: 'date', unit: ''},
                     {value: 'amount', title: 'Amount', operator: '', type: 'number', unit: '€', margin: true},
                 ],

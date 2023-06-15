@@ -6,7 +6,7 @@ import Block from './Block';
 import content from '../utils/content';
 
 
-function Header({mainIndex, itemIndex, context, block, toggleBlockLeft, toggleBlockRight}) {
+function Header({mainIndex, itemIndex, context, block={}, toggleBlockLeft, toggleBlockRight}) {
 
     const main = content[mainIndex];
     const item = main ? main.items[itemIndex] : {};
@@ -26,7 +26,7 @@ function Header({mainIndex, itemIndex, context, block, toggleBlockLeft, toggleBl
     ));
 
     const createComponent = (
-        <NavLink to={'create'}>
+        <NavLink to={'create/' + block.value}>
             {addIcon}        
         </NavLink>
     );

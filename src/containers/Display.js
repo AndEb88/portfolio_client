@@ -70,7 +70,7 @@ function Display({mainIndex, itemIndex}) {
             const resourcesBlock = mockStore[mainIndex][itemIndex][blockIndex];
             const resourcesComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                 const groupTitleComponent = createHeadlineComponent(group); 
-                const groupItemsComponent = resourcesBlock.accounts
+                const groupItemsComponent = resourcesBlock.entries
                     .filter(account => account.group === group)
                     .map(account => createResourcesComponent(account));                               
                 return (<>{groupTitleComponent}{groupItemsComponent}</>);          
@@ -85,7 +85,7 @@ function Display({mainIndex, itemIndex}) {
             const investmentsBlock = mockStore[mainIndex][itemIndex][blockIndex]; 
             const investmentsComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                 const groupTitleComponent = createHeadlineComponent(group); 
-                const groupItemsComponent = investmentsBlock.accounts
+                const groupItemsComponent = investmentsBlock.entries
                     .filter(account => account.group === group)
                     .map(account => createInvestmentsComponent(account));                               
                 return (<>{groupTitleComponent}{groupItemsComponent}</>);          
@@ -98,7 +98,7 @@ function Display({mainIndex, itemIndex}) {
             blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
             //if current year is not found, it has to be created
             const transfersBlock = mockStore[mainIndex][itemIndex][blockIndex];     
-            const transfersComponent = transfersBlock.accounts.map(transfer => {return createTransfersComponent(transfer);});
+            const transfersComponent = transfersBlock.entries.map(transfer => {return createTransfersComponent(transfer);});
             const transfersSumComponent = createBigSumComponent(null, transfersBlock.amount);
             assetsComponent = (<>{transfersComponent}{transfersSumComponent}</>)
             break;
@@ -109,7 +109,7 @@ function Display({mainIndex, itemIndex}) {
             const expansesBlock = mockStore[mainIndex][itemIndex][blockIndex];
             const expansesComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                 const groupTitleComponent = createHeadlineComponent(group); 
-                const groupItemsComponent = expansesBlock.expanses
+                const groupItemsComponent = expansesBlock.entries
                     .filter(expanse => expanse.group === group)
                     .map(expanse => createExpansesComponent(expanse));                               
                 return (<>{groupTitleComponent}{groupItemsComponent}</>);          
@@ -122,7 +122,7 @@ function Display({mainIndex, itemIndex}) {
             blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
             //if current year is not found, it has to be created
             const pensionsBlock = mockStore[mainIndex][itemIndex][blockIndex];            
-            const pensionsComponent = pensionsBlock.accounts.map(account => {return createPensionsComponent (account);});
+            const pensionsComponent = pensionsBlock.entries.map(account => {return createPensionsComponent (account);});
             const pensionsSumComponent = createBigSumComponent(pensionsBlock.expected, pensionsBlock.amount);
             assetsComponent = (<>{pensionsComponent}{pensionsSumComponent}</>)
          break;
@@ -132,7 +132,7 @@ function Display({mainIndex, itemIndex}) {
 
     function createResourcesComponent (account){
         return (
-            <NavLink to={'edit/:' + block.value.toString() + account.id} state={{item: account, block: block.value}} className='nav-link'>      
+            <NavLink to={'edit/' + block.value + '/' + account.id} state={{item: account, block: block.value}} className='nav-link'>      
                 <div class='row content-row'>
                     <div class='col-6 d-flex align-items-center'>
                         <img src={findIcon(account)}/>
@@ -150,7 +150,7 @@ function Display({mainIndex, itemIndex}) {
 
     function createInvestmentsComponent (account){
         return (
-            <NavLink to={'edit/:' + block.value.toString() + account.id} state={{item: account, block: block.value}} className='nav-link'>      
+            <NavLink to={'edit/' + block.value + '/' + account.id} state={{item: account, block: block.value}} className='nav-link'>      
                 <div class='row content-row'>
                     <div class='col-6 d-flex align-items-center'>
                         <img src={findIcon(account)}/>
@@ -179,7 +179,7 @@ function Display({mainIndex, itemIndex}) {
 
     function createTransfersComponent (transfer){
         return (
-            <NavLink to={'edit/:' + block.value.toString() + transfer.id} state={{item: transfer, block: block.value}} className='nav-link'>      
+            <NavLink to={'edit/' + block.value + '/' + transfer.id} state={{item: transfer, block: block.value}} className='nav-link'>      
                 <div class='row content-row small-row'>
                     <div class='col-5 d-flex align-items-center'>
                         <p>{transfer.title}</p>
@@ -197,7 +197,7 @@ function Display({mainIndex, itemIndex}) {
 
     function createExpansesComponent (expanse){
         return (
-            <NavLink to={'edit/:' + block.value.toString() + expanse.id} state={{item: expanse, block: block.value}} className='nav-link'>      
+            <NavLink to={'edit/' + block.value + '/' + expanse.id} state={{item: expanse, block: block.value}} className='nav-link'>      
                 <div class='row content-row small-row'>
                     <div class='col-6 d-flex align-items-center'>
                         <p>{expanse.title}</p>
@@ -257,7 +257,7 @@ function Display({mainIndex, itemIndex}) {
 
     function createPensionsComponent (account){
         return (
-            <NavLink to={'edit/:' + block.value.toString() + account.id} state={{item: account, block: block.value}} className='nav-link'>      
+            <NavLink to={'edit/' + block.value + '/' + account.id} state={{item: account, block: block.value}} className='nav-link'>      
                 <div class='row content-row'>
                     <div class='col-6 d-flex align-items-center'>
                         <img src={findIcon(account)}/>

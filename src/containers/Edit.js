@@ -1,18 +1,20 @@
-import {useLocation} from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 import {useState} from 'react';
-
 
 import Header from './Header';
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
 
-//also add group and title - but how?
 
 function Edit({mainIndex, itemIndex, context}) {
-    const location = useLocation();
-    const account = location.state?.item ?? {};
-    const year = location.state?.year ?? 0;
-    const [formData, setFormData] = useState(account);
+
+    const {block, id} = useParams();
+    
+    let entry = mockStore[mainIndex][itemIndex]
+        .find(currentBlock => currentBlock.block === block)
+        .entries.find(currentEntry => currentEntry.id == id);
+
+    const [formData, setFormData] = useState(entry);
 
     const handleChange = (event) => {
         const {name, value} = event.target;
@@ -48,7 +50,7 @@ function Edit({mainIndex, itemIndex, context}) {
                                     {item.type === 'number' && <input type='number' name={item.value} value={formData[item.value]} onChange={handleChange}></input>}
                                     {item.type === 'display' && <p name={item.value}>{formData[item.value]}</p>}
                                     {item.type === 'date' && <input type='date' name={item.value} value={formData[item.value]} onChange={handleChange}/>}
-                                    {item.type === 'group' && <select name={item.value} value={formData[item.value]} onChange={handleChange}>{content[mainIndex].items[itemIndex].groups.map(group => <option value={group} selected={(group === account[item.value]) ? true : false}>{group}</option>)}</select>}
+                                    {item.type === 'group' && <select name={item.value} value={formData[item.value]} onChange={handleChange}>{content[mainIndex].items[itemIndex].groups.map(group => <option value={group} selected={(group === entry[item.value]) ? true : false}>{group}</option>)}</select>}
                                 </div>
                                 <div class='col-1'>
                                     <p>{item.unit}</p>

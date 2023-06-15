@@ -1,11 +1,14 @@
 import Header from './Header';
 import content from '../utils/content';
+import {useParams} from 'react-router-dom';
 
 
 function Create({mainIndex, itemIndex, context}) {
 
+    const {block} = useParams();
+
     const handleInputChange = (event) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         // setFormData((prevFormData) => ({
         //   ...prevFormData,
         //   [name]: value,
@@ -35,6 +38,7 @@ function Create({mainIndex, itemIndex, context}) {
                                 <div class='col-5 text-end'>
                                     {item.type === 'text' && <input type='text'></input>}
                                     {item.type === 'display' && <p>Display</p>}
+                                    {item.type === 'number' && <input type='number'></input>}
                                     {item.type === 'date' && <input type='date'/>}
                                     {item.type === 'group' && <select>{content[mainIndex].items[itemIndex].groups.map(group => <option>{group}</option>)}</select>}
                                 </div>
