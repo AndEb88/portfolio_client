@@ -33,26 +33,40 @@ function Edit() {
 
     return(         
         <div class='container-fluid content'>
-        <form onSubmit={handleSubmit}>
-            <div id='edit-container'>                    
-                    {content[mainIndex].items[itemIndex].editForm.map((item, index) => (
-                        <div key={index} class={`row edit-row ${item.accent && 'edit-row-accent'} ${item.margin && 'edit-row-margin'} ${item.bold && 'edit-row-bold'}`}>
+            <form onSubmit={handleSubmit}>
+                <div id='edit-container'>                    
+                    {content[mainIndex].items[itemIndex].editForm.map((formEntry, index) => (
+                        <div key={index} class={`row edit-row ${formEntry.accent && 'edit-row-accent'} ${formEntry.margin && 'edit-row-margin'} ${formEntry.bold && 'edit-row-bold'}`}>
                             <div class='col-5'>
-                                <p>{item.title}</p>
+                                <p>{formEntry.title}</p>
                             </div>
                             <div class='col-1 text-center'>
-                                <p>{item.operator}</p>
+                                <p>{formEntry.operator}</p>
                             </div>
                             <div class='col-5 text-end'>
-                                {item.type === 'text' && <input type='text' name={item.value} value={formData[item.value]} onChange={handleChange}></input>}
-                                {item.type === 'number' && <input type='number' name={item.value} value={formData[item.value]} onChange={handleChange}></input>}
-                                {item.type === 'display' && <p name={item.value}>{formData[item.value]}</p>}
-                                {item.type === 'date' && <input type='date' name={item.value} value={formData[item.value]} onChange={handleChange}/>}
-                                {item.type === 'group' && <select name={item.value} value={formData[item.value]} onChange={handleChange}>{content[mainIndex].items[itemIndex].groups.map(group => <option value={group} selected={(group === entry[item.value]) ? true : false}>{group}</option>)}</select>}
-                                {item.type === 'account' && <select>{mockStore[2][2].find(currentBlock => currentBlock.block === block).entries.sort((a, b) => a.title.localeCompare(b.title)).map(entry => <option>{entry.title}</option>)}</select>}
+                                {formEntry.type === 'text' && <input type='text' name={formEntry.value} value={formData[formEntry.value]} onChange={handleChange}></input>}
+                                {formEntry.type === 'number' && <input type='number' name={formEntry.value} value={formData[formEntry.value]} onChange={handleChange}></input>}
+                                {formEntry.type === 'display' && <p name={formEntry.value}>{formData[formEntry.value]}</p>}
+                                {formEntry.type === 'date' && <input type='date' name={formEntry.value} value={formData[formEntry.value]} onChange={handleChange}/>}
+                                {formEntry.type === 'group' && (
+                                    <select name={formEntry.value} value={formData[formEntry.value]} onChange={handleChange}>
+                                        {content[mainIndex].items[itemIndex].groups.map(group => 
+                                            <option value={group} selected={(group === formData[formEntry.value]) ? true : false}>
+                                                {group}
+                                            </option>
+                                        )}
+                                    </select>)}
+                                {formEntry.type === 'account' && (
+                                    <select name={formEntry.value} value={formData[formEntry.value]} onChange={handleChange}>
+                                        {mockStore[2][2].find(currentBlock => currentBlock.block === block).entries.sort((a, b) => a.title.localeCompare(b.title)).map(entry => 
+                                            <option value={entry.title} selected={(entry.title === formData[formEntry.value]) ? true : false}>
+                                                {entry.title}
+                                            </option>
+                                        )}
+                                    </select>)}
                             </div>
                             <div class='col-1'>
-                                <p>{item.unit}</p>
+                                <p>{formEntry.unit}</p>
                             </div>                 
                         </div>
                     ))}

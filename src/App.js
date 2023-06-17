@@ -6,10 +6,9 @@ import Header from './containers/Header';
 import content from './utils/content';
 import mockStore from './utils/mockStore';
 
-//store can be accessed via main, item, context properties (indexes are not suitable!)
-//therefore refactor store to object instead of array
-// and pass only main, item, context instead of indexes(?)
-
+//debug: add keys o all mapped components
+//change 'class' to 'className'
+//clean up CSS styles and assigned classes
 
 function App() {
 
