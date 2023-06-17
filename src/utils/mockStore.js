@@ -28,9 +28,9 @@ const mockStore = [
                 entries: [
                     {group: 'Resources', title: 'Cash', closingBalance: 25000.00},
                     {group: 'Resources', title: 'Liabilities', closingBalance: 10000.00},
-                    {group: 'Investments', title: 'P2P', totalROI: 6.1, ROI: 12.3, closingBalance: 81000.00, netProfit: 3},
-                    {group: 'Investments', title: 'Stock Market', totalROI: 4.1, ROI: 12.3, closingBalance: 8000.00, netProfit: 1},
-                    {group: 'Investments', title: 'Other', totalROI: 4.1, ROI: 12.3, closingBalance: 8000.00, netProfit: 2},
+                    {group: 'Investments', title: 'P2P', overallROI: 6.1, ROI: 12.3, closingBalance: 81000.00, netProfit: 3},
+                    {group: 'Investments', title: 'Stock Market', overallROI: 4.1, ROI: 12.3, closingBalance: 8000.00, netProfit: 1},
+                    {group: 'Investments', title: 'Other', overallROI: 4.1, ROI: 12.3, closingBalance: 8000.00, netProfit: 2},
 
                 ]
             },

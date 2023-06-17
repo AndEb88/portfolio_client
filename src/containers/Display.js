@@ -10,10 +10,11 @@ import {sumIcon} from '../icons/svgIcons';
 function Display() {
 
     const [mainIndex, itemIndex, main, item, context, block] = useOutletContext();
+    const editPath = 'edit/' + block.value + '/';
+    const disableLink = (itemIndex === 0);
     
-    let blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
     //if current year is not found, it has to be created
-    const itemBlock = mockStore[mainIndex][itemIndex][blockIndex];
+    const itemBlock = mockStore[mainIndex][itemIndex][block.index];
 
     let itemComponent = (<>(no data available)</>);
     let sumComponent = (<>(no data available)</>);
@@ -89,9 +90,9 @@ function Display() {
         );
     }    
 
-    function createResourceComponent (entry){ 
+    function createResourceComponent (entry){ //BUG: pointerEvents are not set to none for 'Overview'
         return (
-            <NavLink to={'edit/' + block.value + '/' + entry.id} className='nav-link'>      
+            <NavLink to={disableLink ? null : editPath + entry.id} className={`nav-link ${disableLink && 'nav-link-inactive'}`}> 
                 <div class='row content-row'>
                     <div class='col-6 d-flex align-items-center'>
                         <img src={findIcon(entry)}/>
@@ -109,7 +110,7 @@ function Display() {
 
     function createInvestmentComponent (entry){ 
         return (
-            <NavLink to={'edit/' + block.value + '/' + entry.id} className='nav-link'>      
+            <NavLink to={disableLink ? null : editPath + entry.id} className={`nav-link ${disableLink && 'nav-link-inactive'}`}> 
                 <div class='row content-row'>
                     <div class='col-6 d-flex align-items-center'>
                         <img src={findIcon(entry)}/>
@@ -125,7 +126,7 @@ function Display() {
                     </div>        
                     <div class='col-3 text-end'>
                         <div class='row h-50 d-flex align-items-center'>
-                            <h4>{entry.totalROI} <span class='unit'>%</span></h4>
+                            <h4>{entry.overallROI} <span class='unit'>%</span></h4>
                         </div>
                         <div class='row h-50 d-flex align-items-center'>
                             <h4>{entry.closingBalance} <span class='unit'>€</span></h4>
@@ -138,7 +139,7 @@ function Display() {
 
     function createTransferComponent (entry){
         return (
-            <NavLink to={'edit/' + block.value + '/' + entry.id} className='nav-link'>      
+            <NavLink to={editPath + entry.id} className='nav-link'>      
                 <div class='row content-row small-row'>
                     <div class='col-5 d-flex align-items-center'>
                         <p>{entry.title}</p>
@@ -156,7 +157,7 @@ function Display() {
 
     function createExpanseComponent (entry){
         return (
-            <NavLink to={'edit/' + block.value + '/' + entry.id} className='nav-link'>      
+            <NavLink to={editPath + entry.id} className='nav-link'>      
                 <div class='row content-row small-row'>
                     <div class='col-6 d-flex align-items-center'>
                         <p>{entry.title}</p>
@@ -174,7 +175,7 @@ function Display() {
 
     function createPensionComponent (entry){
         return (
-            <NavLink to={'edit/' + block.value + '/' + entry.id} className='nav-link'>      
+            <NavLink to={editPath + entry.id} className='nav-link'>      
                 <div class='row content-row'>
                     <div class='col-6 d-flex align-items-center'>
                         <img src={findIcon(entry)}/>

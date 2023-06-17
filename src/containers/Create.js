@@ -1,4 +1,6 @@
 import content from '../utils/content';
+import mockStore from '../utils/mockStore';
+
 import {NavLink, useParams, useOutletContext} from 'react-router-dom';
 
 
@@ -40,6 +42,7 @@ function Create() {
                                     {item.type === 'number' && <input type='number'></input>}
                                     {item.type === 'date' && <input type='date'/>}
                                     {item.type === 'group' && <select>{content[mainIndex].items[itemIndex].groups.map(group => <option>{group}</option>)}</select>}
+                                    {item.type === 'account' && <select>{mockStore[2][2].find(currentBlock => currentBlock.block === block).entries.sort((a, b) => a.title.localeCompare(b.title)).map(entry => <option>{entry.title}</option>)}</select>}
                                 </div>
                                 <div class='col-1'>
                                     <p>{item.unit}</p>

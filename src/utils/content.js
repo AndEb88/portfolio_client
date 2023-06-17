@@ -101,12 +101,12 @@ const content = [
                 add: true,
                 //title requires a select with all investment accounts available in this year
                 editForm: [
-                    {value: 'title', title: 'Title', operator: '', type: 'accounts', unit: '', margin: true, bold: true},
+                    {value: 'title', title: 'Title', operator: '', type: 'account', unit: '', margin: true, bold: true},
                     {value: 'date', title: 'Date', operator: '', type: 'date', unit: ''},
                     {value: 'amount', title: 'Amount', operator: '', type: 'number', unit: '€', margin: true},
                 ],
                 createForm: [
-                    {value: 'title', title: 'Title', operator: '', type: 'accounts', unit: '', margin: true, bold: true},
+                    {value: 'title', title: 'Title', operator: '', type: 'account', unit: '', margin: true, bold: true},
                     {value: 'date', title: 'Date', operator: '', type: 'date', unit: ''},
                     {value: 'amount', title: 'Amount', operator: '', type: 'number', unit: '€', margin: true},
                 ],

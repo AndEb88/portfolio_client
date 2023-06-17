@@ -12,14 +12,14 @@ import content from './utils/content';
 const router = createBrowserRouter(createRoutesFromElements(
     <Route path="/" element={<App/>}>
         <Route index element={<Landing/>}/>
-        {content.map((main, mainIndex) => (
+        {content.map(main => (
             <>
-                <Route path={main.route} element={<Menu mainIndex={mainIndex}/>}/>
-                {main.items.map((item, itemIndex) => (
+                <Route path={main.route} element={<Menu/>}/>
+                {main.items.map(item => (
                     <>
-                        <Route path={main.route + '/' + item.route} element={<Display mainIndex={mainIndex} itemIndex={itemIndex}/>}/>
-                        {item.edit && <Route path={`${main.route}/${item.route}/edit/:block/:id`} element={<Edit mainIndex={mainIndex} itemIndex={itemIndex} context={'edit'}/>}/>}
-                        {item.create && <Route path={`${main.route}/${item.route}/create/:block`} element={<Create mainIndex={mainIndex} itemIndex={itemIndex} context={'create'}/>}/>}
+                        <Route path={main.route + '/' + item.route} element={<Display/>}/>
+                        {item.edit && <Route path={`${main.route}/${item.route}/edit/:block/:id`} element={<Edit/>}/>}
+                        {item.create && <Route path={`${main.route}/${item.route}/create/:block`} element={<Create/>}/>}
                     </>
                 ))}
             </>

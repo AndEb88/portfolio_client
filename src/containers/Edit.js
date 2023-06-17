@@ -49,6 +49,7 @@ function Edit() {
                                 {item.type === 'display' && <p name={item.value}>{formData[item.value]}</p>}
                                 {item.type === 'date' && <input type='date' name={item.value} value={formData[item.value]} onChange={handleChange}/>}
                                 {item.type === 'group' && <select name={item.value} value={formData[item.value]} onChange={handleChange}>{content[mainIndex].items[itemIndex].groups.map(group => <option value={group} selected={(group === entry[item.value]) ? true : false}>{group}</option>)}</select>}
+                                {item.type === 'account' && <select>{mockStore[2][2].find(currentBlock => currentBlock.block === block).entries.sort((a, b) => a.title.localeCompare(b.title)).map(entry => <option>{entry.title}</option>)}</select>}
                             </div>
                             <div class='col-1'>
                                 <p>{item.unit}</p>
