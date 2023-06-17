@@ -17,7 +17,19 @@ const mockStore = [
     //important: maintain each account in all blocks
     //but do NOT display if closingBalance & openingBalance (etc.) is 0
 
-        [], //overview
+        [ //overview
+            {
+                block: '2023',
+                accumulatedNetProfit: 9234,
+                closingBalance: 51000,
+                entries: [
+                    {id: 200, group: 'Resources', title: 'Robocash', lastUpdate: '2023-04-20', frozen: false, accumulatedROI: 13.1, accumulatedNetProfit: 4000.0, ROI: 13.3, closingBalance: 25000.00, withheldTaxes: 1, bonus: 2, transfers: 3, openingBalance: 4, grossProfit: 5, dueTaxes: 6, netProfit: 7},
+                    {id: 201, group: 'P2P', title: 'Peerberry', lastUpdate: '2023-04-30', frozen: false, accumulatedROI: 12.4, accumulatedNetProfit: 3000, ROI: 12.3, closingBalance: 10000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
+                    {id: 202, group: 'Stock Market', title: 'Scalable Capital', lastUpdate: '2023-04-30', frozen: false, accumulatedROI: 6.1, accumulatedNetProfit: 12000, ROI: 12.3, closingBalance: 81000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
+                    {id: 203, group: 'Other', title: 'Riester I', lastUpdate: '2023-04-30', frozen: false, accumulatedROI: 4.1, accumulatedNetProfit: 400, ROI: 12.3, closingBalance: 8000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
+                ]
+            },
+        ], 
 
         [ //resources
             {

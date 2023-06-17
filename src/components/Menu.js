@@ -1,16 +1,14 @@
-import {NavLink} from 'react-router-dom';
+import {NavLink, useOutletContext} from 'react-router-dom';
 
 import {forwardIcon} from '../icons/svgIcons';
-import Header from '../containers/Header';
 import content from '../utils/content';
 
 
-function Menu({mainIndex}) {
+function Menu() {
 
-    return( 
-        <>
-        <Header mainIndex={mainIndex}/>
-        
+    const [mainIndex] = useOutletContext();
+
+    return(               
         <div class='container-fluid content' id='menu'>
             {content[mainIndex].items.map(item => (
                     <NavLink to={item.route} className='nav-link'>
@@ -23,10 +21,8 @@ function Menu({mainIndex}) {
                             </div>                    
                         </div>
                     </NavLink>
-                ))}
-            </div>
-        </>       
-  
+            ))}
+        </div>
     );
 }
 

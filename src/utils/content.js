@@ -43,7 +43,8 @@ const content = [
                 title: 'Overview', 
                 edit: false, 
                 create: false, 
-                add: false
+                add: false,
+                groups: ['Cash', 'Liabilities', 'P2P', 'Stock Market', 'Other']
             }, 
             {
                 route: 'resources', 

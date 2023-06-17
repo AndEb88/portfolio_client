@@ -1,10 +1,10 @@
-import Header from './Header';
 import content from '../utils/content';
-import {useParams} from 'react-router-dom';
+import {NavLink, useParams, useOutletContext} from 'react-router-dom';
 
 
-function Create({mainIndex, itemIndex, context}) {
+function Create() {
 
+    const [mainIndex, itemIndex, context] = useOutletContext();
     const {block} = useParams();
 
     const handleInputChange = (event) => {
@@ -22,7 +22,6 @@ function Create({mainIndex, itemIndex, context}) {
 
     return(
         <>
-            <Header mainIndex={mainIndex} itemIndex={itemIndex} context={context}/>
 
             <div class='container-fluid content' id='create'>                
                 <form onSubmit={handleSubmit}>

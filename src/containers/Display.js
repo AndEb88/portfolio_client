@@ -1,63 +1,27 @@
-import {NavLink} from 'react-router-dom';
+import {NavLink, useOutletContext} from 'react-router-dom';
 import {useState} from 'react';
 
-import Header from './Header'
 import mockStore from '../utils/mockStore';
 import accountIcons from '../icons/accountIcons'
 import content from '../utils/content';
 import {sumIcon} from '../icons/svgIcons';
 
 
-function Display({mainIndex, itemIndex}) {
+function Display() {
 
-    const currentDate = new Date();    
-    const currentYear = currentDate.getFullYear();
+    const [mainIndex, itemIndex, main, item, context, block] = useOutletContext();
 
-    const blockList = mockStore[mainIndex][itemIndex].map(currentBlock => currentBlock.block);
-
-    let defaultBlock = {
-        value: blockList[0], 
-        index: 0,
-        max: blockList.length - 1,
-        list: blockList
-    };
-
-    const [block, setBlock] = useState(defaultBlock);
-
-    const toggleBlockLeft = () => {
-        setBlock(prevBlock => {
-            const newIndex = prevBlock.index - 1;
-            return {
-                ...prevBlock,
-                value: prevBlock.list[newIndex],
-                index: newIndex
-            };
-        });
-    };
-
-    const toggleBlockRight = () => {
-        setBlock(prevBlock => {
-            const newIndex = prevBlock.index + 1;
-            return {
-                ...prevBlock,
-                value: prevBlock.list[newIndex],
-                index: newIndex
-            };
-        });
-    };
-
-
-    //implement when passing fetchd data to store...
     function findIcon(account){
-        let index = accountIcons.findIndex(icon => account.title === icon.title);
+        let index = accountIcons.findIndex(currentIcon => account.title === currentIcon.title);
         if(index === -1) {
-            index = accountIcons.findIndex(icon => account.group === icon.title); 
+            index = accountIcons.findIndex(currentIcon => account.group === currentIcon.title); 
         }
         return accountIcons[index].source;        
     }
-    //...until here
     
-    let blockIndex = 0;
+    let blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
+    //if current year is not found, it has to be created
+
     let assetsComponent = (<h2>Path did not match!</h2>);
 
     switch (itemIndex){
@@ -65,8 +29,6 @@ function Display({mainIndex, itemIndex}) {
             break;
 
         case 1: //Resources
-            blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
-            //if current year is not found, it has to be created
             const resourcesBlock = mockStore[mainIndex][itemIndex][blockIndex];
             const resourcesComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                 const groupTitleComponent = createHeadlineComponent(group); 
@@ -80,8 +42,6 @@ function Display({mainIndex, itemIndex}) {
             break;
 
         case 2: //Investments
-            blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
-            //if current year is not found, it has to be created
             const investmentsBlock = mockStore[mainIndex][itemIndex][blockIndex]; 
             const investmentsComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                 const groupTitleComponent = createHeadlineComponent(group); 
@@ -95,8 +55,6 @@ function Display({mainIndex, itemIndex}) {
             break;
 
         case 3: // Transfers
-            blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
-            //if current year is not found, it has to be created
             const transfersBlock = mockStore[mainIndex][itemIndex][blockIndex];     
             const transfersComponent = transfersBlock.entries.map(transfer => {return createTransfersComponent(transfer);});
             const transfersSumComponent = createBigSumComponent(null, transfersBlock.amount);
@@ -104,8 +62,6 @@ function Display({mainIndex, itemIndex}) {
             break;
 
         case 4: //Expanses
-            blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
-            //if current year is not found, it has to be created
             const expansesBlock = mockStore[mainIndex][itemIndex][blockIndex];
             const expansesComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                 const groupTitleComponent = createHeadlineComponent(group); 
@@ -119,8 +75,6 @@ function Display({mainIndex, itemIndex}) {
             break;
 
         case 5: //Pension
-            blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
-            //if current year is not found, it has to be created
             const pensionsBlock = mockStore[mainIndex][itemIndex][blockIndex];            
             const pensionsComponent = pensionsBlock.entries.map(account => {return createPensionsComponent (account);});
             const pensionsSumComponent = createBigSumComponent(pensionsBlock.expected, pensionsBlock.amount);
@@ -276,7 +230,6 @@ function Display({mainIndex, itemIndex}) {
    
     return(
         <>
-            <Header mainIndex={mainIndex} itemIndex={itemIndex} block={block} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/> 
             <div class='container-fluid content' id='display'>
                 {assetsComponent} 
             </div> 

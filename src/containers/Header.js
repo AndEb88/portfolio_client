@@ -6,10 +6,10 @@ import Block from './Block';
 import content from '../utils/content';
 
 
-function Header({mainIndex, itemIndex, context, block={}, toggleBlockLeft, toggleBlockRight}) {
+function Header({main, item, context, block, toggleBlockLeft, toggleBlockRight}) {
 
-    const main = content[mainIndex];
-    const item = main ? main.items[itemIndex] : {};
+    const contentMain = content.find(currentMain => currentMain.route === main);
+    const contentItem = contentMain ? contentMain.items.find(currentItem => currentItem.route === item) : undefined;
 
     const bannerComponent = (
         <>
@@ -18,15 +18,15 @@ function Header({mainIndex, itemIndex, context, block={}, toggleBlockLeft, toggl
         </>    
     );
 
-    const backComponent = ((context) => (
+    const backComponent = ((currentItem) => (
         <>
             {arrowBackIcon} 
-            <h2>{context}</h2> 
+            <h2>{currentItem}</h2> 
         </>
     ));
 
     const createComponent = (
-        <NavLink to={'create/' + block.value}>
+        <NavLink to={'/' + main + '/' + item + '/create/' + block.value}> 
             {addIcon}        
         </NavLink>
     );
@@ -40,7 +40,7 @@ function Header({mainIndex, itemIndex, context, block={}, toggleBlockLeft, toggl
                 <div class='col-6 d-flex align-items-center'>
                     {bannerComponent}   
                 </div>                      
-                <div class='col-6 text-center'>
+                <div class='col-6 text-center align-items-center'>
                     <p>Welcome!</p>
                 </div>
             </>
@@ -51,13 +51,13 @@ function Header({mainIndex, itemIndex, context, block={}, toggleBlockLeft, toggl
     else if(!item){
         headerComponent = (
             <>                        
-                <div class='col-6'>
+                <div class='col-6 d-flex align-items-center'>
                     <NavLink to={'/'} >
                         {bannerComponent}          
                     </NavLink>
                 </div>                       
                 <div class='col-6 text-center'>
-                    <p>{main.description}</p>
+                    <p>{contentMain.description}</p>
                 </div>
             </>
         );
@@ -68,10 +68,10 @@ function Header({mainIndex, itemIndex, context, block={}, toggleBlockLeft, toggl
         headerComponent = (
             <>                    
                 <div class='col-8 d-flex align-items-center'>
-                    <NavLink to={'/' + main.route}>
-                        {backComponent(item.title)}      
+                    <NavLink to={'/' + main}>
+                        {backComponent(contentItem.title)}      
                     </NavLink>
-                    {item.create && createComponent}
+                    {contentItem.create && createComponent}
                 </div>                        
                 <div class='col-4 d-flex text-center'>
                     <Block block={block} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/>
@@ -85,7 +85,7 @@ function Header({mainIndex, itemIndex, context, block={}, toggleBlockLeft, toggl
         headerComponent = (
             <>                    
             <div class='col-8'>
-                <NavLink to={'/' + main.route + '/' + item.route} >
+                <NavLink to={'/' + main + '/' + item} >
                     {backComponent('Create')}       
                 </NavLink>
             </div>                        
@@ -98,7 +98,7 @@ function Header({mainIndex, itemIndex, context, block={}, toggleBlockLeft, toggl
         headerComponent = (
             <>                    
             <div class='col-8'>
-                <NavLink to={'/' + main.route + '/' + item.route} >
+                <NavLink to={'/' + main + '/' + item} >
                     {backComponent('Edit')}      
                 </NavLink>
             </div>                        
