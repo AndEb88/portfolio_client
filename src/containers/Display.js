@@ -10,180 +10,188 @@ import {sumIcon} from '../icons/svgIcons';
 function Display() {
 
     const [mainIndex, itemIndex, main, item, context, block] = useOutletContext();
-
-    function findIcon(account){
-        let index = accountIcons.findIndex(currentIcon => account.title === currentIcon.title);
-        if(index === -1) {
-            index = accountIcons.findIndex(currentIcon => account.group === currentIcon.title); 
-        }
-        return accountIcons[index].source;        
-    }
     
     let blockIndex = mockStore[mainIndex][itemIndex].findIndex(currentBlock => currentBlock.block === block.value);
     //if current year is not found, it has to be created
+    const itemBlock = mockStore[mainIndex][itemIndex][blockIndex];
 
-    let assetsComponent = (<h2>Path did not match!</h2>);
+    let itemComponent = (<>(no data available)</>);
+    let sumComponent = (<>(no data available)</>);
 
     switch (itemIndex){
-        case 0: //Overview            
+        case 0: //Overview 
+            itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
+                const groupTitleComponent = createHeadlineComponent(group); 
+                const groupItemsComponent = itemBlock.entries
+                    .filter(account => account.group === group)
+                    .map(account => {
+                        if(group === content[2].items[1].title) return createResourceComponent(account);
+                        if(group === content[2].items[2].title) return createInvestmentComponent(account);
+                    });                              
+                return (<>{groupTitleComponent}{groupItemsComponent}</>);          
+            });
+            sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance, true);       
             break;
 
         case 1: //Resources
-            const resourcesBlock = mockStore[mainIndex][itemIndex][blockIndex];
-            const resourcesComponent = content[mainIndex].items[itemIndex].groups.map(group => {
+            itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                 const groupTitleComponent = createHeadlineComponent(group); 
-                const groupItemsComponent = resourcesBlock.entries
+                const groupItemsComponent = itemBlock.entries
                     .filter(account => account.group === group)
-                    .map(account => createResourcesComponent(account));                               
+                    .map(account => createResourceComponent(account));                               
                 return (<>{groupTitleComponent}{groupItemsComponent}</>);          
             });
-            const resourcesSumComponent = createBigSumComponent(null, resourcesBlock.closingBalance);
-            assetsComponent = (<>{resourcesComponent}{resourcesSumComponent}</>)
+            sumComponent = createSumComponent(null, itemBlock.closingBalance);
             break;
 
         case 2: //Investments
-            const investmentsBlock = mockStore[mainIndex][itemIndex][blockIndex]; 
-            const investmentsComponent = content[mainIndex].items[itemIndex].groups.map(group => {
+            itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                 const groupTitleComponent = createHeadlineComponent(group); 
-                const groupItemsComponent = investmentsBlock.entries
+                const groupItemsComponent = itemBlock.entries
                     .filter(account => account.group === group)
-                    .map(account => createInvestmentsComponent(account));                               
+                    .map(account => createInvestmentComponent(account));                               
                 return (<>{groupTitleComponent}{groupItemsComponent}</>);          
             });
-            const investmentsSumComponent = createBigSumComponent(investmentsBlock.accumulatedNetProfit, investmentsBlock.closingBalance, true);
-            assetsComponent = (<>{investmentsComponent}{investmentsSumComponent}</>)
+            sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance, true);
             break;
 
         case 3: // Transfers
-            const transfersBlock = mockStore[mainIndex][itemIndex][blockIndex];     
-            const transfersComponent = transfersBlock.entries.map(transfer => {return createTransfersComponent(transfer);});
-            const transfersSumComponent = createBigSumComponent(null, transfersBlock.amount);
-            assetsComponent = (<>{transfersComponent}{transfersSumComponent}</>)
+            itemComponent = itemBlock.entries.map(transfer => createTransferComponent(transfer));
+            sumComponent = createSumComponent(null, itemBlock.amount);
             break;
 
         case 4: //Expanses
-            const expansesBlock = mockStore[mainIndex][itemIndex][blockIndex];
-            const expansesComponent = content[mainIndex].items[itemIndex].groups.map(group => {
+            itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                 const groupTitleComponent = createHeadlineComponent(group); 
-                const groupItemsComponent = expansesBlock.entries
+                const groupItemsComponent = itemBlock.entries
                     .filter(expanse => expanse.group === group)
-                    .map(expanse => createExpansesComponent(expanse));                               
+                    .map(expanse => createExpanseComponent(expanse));                               
                 return (<>{groupTitleComponent}{groupItemsComponent}</>);          
             }); 
-            const expaneseSumComponent = createBigSumComponent(expansesBlock.amountMonthly, expansesBlock.amountYearly);
-            assetsComponent = (<>{expansesComponent}{expaneseSumComponent}</>)
+            sumComponent = createSumComponent(itemBlock.amountMonthly, itemBlock.amountYearly);
             break;
 
-        case 5: //Pension
-            const pensionsBlock = mockStore[mainIndex][itemIndex][blockIndex];            
-            const pensionsComponent = pensionsBlock.entries.map(account => {return createPensionsComponent (account);});
-            const pensionsSumComponent = createBigSumComponent(pensionsBlock.expected, pensionsBlock.amount);
-            assetsComponent = (<>{pensionsComponent}{pensionsSumComponent}</>)
+        case 5: //Pension        
+            itemComponent = itemBlock.entries.map(account => createPensionComponent (account));
+            sumComponent = createSumComponent(itemBlock.expected, itemBlock.amount);
          break;
     }
+
+    const assetsComponent = (<>{itemComponent}{sumComponent}</>);
     
-    
-
-    function createResourcesComponent (account){
+    function createHeadlineComponent (headline){ 
         return (
-            <NavLink to={'edit/' + block.value + '/' + account.id} state={{item: account, block: block.value}} className='nav-link'>      
-                <div class='row content-row'>
-                    <div class='col-6 d-flex align-items-center'>
-                        <img src={findIcon(account)}/>
-                        <h3>{account.title}</h3>
-                    </div>
-                    <div class='col-6 text-end'>
-                          <div class='row d-flex align-items-center'>
-                            <h4>{account.closingBalance} <span class='unit'>€</span></h4>
-                        </div>
-                    </div>
-                </div>
-            </NavLink>
-        );
-    }
-
-    function createInvestmentsComponent (account){
-        return (
-            <NavLink to={'edit/' + block.value + '/' + account.id} state={{item: account, block: block.value}} className='nav-link'>      
-                <div class='row content-row'>
-                    <div class='col-6 d-flex align-items-center'>
-                        <img src={findIcon(account)}/>
-                        <h3>{account.title}</h3>
-                    </div>
-                    <div class='col-3 text-end'>
-                        <div class='row h-50 d-flex align-items-center'>
-                            <h4>{account.accumulatedROI} <span class='unit'>%</span></h4>
-                        </div>
-                        <div class='row h-50 d-flex align-items-center'>
-                            <h4>+{account.accumulatedNetProfit} <span class='unit'>€</span></h4>
-                        </div>
-                    </div>        
-                    <div class='col-3 text-end'>
-                        <div class='row h-50 d-flex align-items-center'>
-                            <h4>{account.ROI} <span class='unit'>%</span></h4>
-                        </div>
-                        <div class='row h-50 d-flex align-items-center'>
-                            <h4>{account.closingBalance} <span class='unit'>€</span></h4>
-                        </div>
-                    </div>
-                </div>
-            </NavLink>
-        );
-    }
-
-    function createTransfersComponent (transfer){
-        return (
-            <NavLink to={'edit/' + block.value + '/' + transfer.id} state={{item: transfer, block: block.value}} className='nav-link'>      
-                <div class='row content-row small-row'>
-                    <div class='col-5 d-flex align-items-center'>
-                        <p>{transfer.title}</p>
-                    </div>
-                    <div class='col-4 text-end d-flex align-items-center justify-content-end'>
-                        <p>{transfer.date}</p>
-                    </div>        
-                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{transfer.amount} <span class='unit'>€</span></p>
-                    </div>
-                </div>
-            </NavLink>
-        );
-    }
-
-    function createExpansesComponent (expanse){
-        return (
-            <NavLink to={'edit/' + block.value + '/' + expanse.id} state={{item: expanse, block: block.value}} className='nav-link'>      
-                <div class='row content-row small-row'>
-                    <div class='col-6 d-flex align-items-center'>
-                        <p>{expanse.title}</p>
-                    </div>
-                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{expanse.amountMonthly} <span class='unit'>€</span></p>
-                    </div>        
-                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{expanse.amountYearly} <span class='unit'>€</span></p>
-                    </div>
-                </div>
-            </NavLink>
-        );
-    }
-
-    function createSmallSumComponent (left, right){
-        return (
-            <div class='row content-row small-row sum-row'>
-                <div class='col-6 d-flex align-items-center'>
-                    <h4>Sum</h4>
-                </div>
-                <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                    {left && (<p>{left}<span class='unit'> €</span></p>)}
-                </div>        
-                <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                    <p>{right}<span class='unit'> €</span></p>
+            <div class='row content-row headline-row'>
+                <div class='col-12 d-flex align-items-center'>
+                    <h3>{headline}</h3>
                 </div>
             </div>
         );
+    }    
+
+    function createResourceComponent (entry){ 
+        return (
+            <NavLink to={'edit/' + block.value + '/' + entry.id} className='nav-link'>      
+                <div class='row content-row'>
+                    <div class='col-6 d-flex align-items-center'>
+                        <img src={findIcon(entry)}/>
+                        <h3>{entry.title}</h3>
+                    </div>
+                    <div class='col-6 text-end'>
+                          <div class='row d-flex align-items-center'>
+                            <h4>{entry.closingBalance} <span class='unit'>€</span></h4>
+                        </div>
+                    </div>
+                </div>
+            </NavLink>
+        );
     }
 
-    function createBigSumComponent (left, right, plus){
+    function createInvestmentComponent (entry){ 
+        return (
+            <NavLink to={'edit/' + block.value + '/' + entry.id} className='nav-link'>      
+                <div class='row content-row'>
+                    <div class='col-6 d-flex align-items-center'>
+                        <img src={findIcon(entry)}/>
+                        <h3>{entry.title}</h3>
+                    </div>
+                    <div class='col-3 text-end'>
+                        <div class='row h-50 d-flex align-items-center'>
+                            <h4>{entry.ROI} <span class='unit'>%</span></h4>
+                        </div>
+                        <div class='row h-50 d-flex align-items-center'>
+                            <h4>+{entry.netProfit} <span class='unit'>€</span></h4>
+                        </div>
+                    </div>        
+                    <div class='col-3 text-end'>
+                        <div class='row h-50 d-flex align-items-center'>
+                            <h4>{entry.totalROI} <span class='unit'>%</span></h4>
+                        </div>
+                        <div class='row h-50 d-flex align-items-center'>
+                            <h4>{entry.closingBalance} <span class='unit'>€</span></h4>
+                        </div>
+                    </div>
+                </div>
+            </NavLink>
+        );
+    }
+
+    function createTransferComponent (entry){
+        return (
+            <NavLink to={'edit/' + block.value + '/' + entry.id} className='nav-link'>      
+                <div class='row content-row small-row'>
+                    <div class='col-5 d-flex align-items-center'>
+                        <p>{entry.title}</p>
+                    </div>
+                    <div class='col-4 text-end d-flex align-items-center justify-content-end'>
+                        <p>{entry.date}</p>
+                    </div>        
+                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
+                        <p>{entry.amount} <span class='unit'>€</span></p>
+                    </div>
+                </div>
+            </NavLink>
+        );
+    }
+
+    function createExpanseComponent (entry){
+        return (
+            <NavLink to={'edit/' + block.value + '/' + entry.id} className='nav-link'>      
+                <div class='row content-row small-row'>
+                    <div class='col-6 d-flex align-items-center'>
+                        <p>{entry.title}</p>
+                    </div>
+                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
+                        <p>{entry.amountMonthly} <span class='unit'>€</span></p>
+                    </div>        
+                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
+                        <p>{entry.amountYearly} <span class='unit'>€</span></p>
+                    </div>
+                </div>
+            </NavLink>
+        );
+    }
+
+    function createPensionComponent (entry){
+        return (
+            <NavLink to={'edit/' + block.value + '/' + entry.id} className='nav-link'>      
+                <div class='row content-row'>
+                    <div class='col-6 d-flex align-items-center'>
+                        <img src={findIcon(entry)}/>
+                        <h3>{entry.title}</h3>
+                    </div>
+                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
+                        <h4>{entry.expected}<span class='unit'> €</span></h4>
+                    </div>        
+                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
+                        <h4>{entry.amount}<span class='unit'> €</span></h4>
+                    </div>
+                </div>
+            </NavLink>
+        );
+    }
+
+    function createSumComponent (left, right, plus){
         return (    
             <div class='row content-row sum-row'>
                 <div class='col-6 d-flex align-items-center'>
@@ -199,33 +207,12 @@ function Display() {
         );
     }
 
-    function createHeadlineComponent (headline){
-        return (
-            <div class='row content-row headline-row'>
-                <div class='col-12 d-flex align-items-center'>
-                    <h3>{headline}</h3>
-                </div>
-            </div>
-        );
-    }
-
-    function createPensionsComponent (account){
-        return (
-            <NavLink to={'edit/' + block.value + '/' + account.id} state={{item: account, block: block.value}} className='nav-link'>      
-                <div class='row content-row'>
-                    <div class='col-6 d-flex align-items-center'>
-                        <img src={findIcon(account)}/>
-                        <h3>{account.title}</h3>
-                    </div>
-                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <h4>{account.expected}<span class='unit'> €</span></h4>
-                    </div>        
-                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <h4>{account.amount}<span class='unit'> €</span></h4>
-                    </div>
-                </div>
-            </NavLink>
-        );
+    function findIcon(account){
+        let index = accountIcons.findIndex(currentIcon => account.title === currentIcon.title);
+        if(index === -1) {
+            index = accountIcons.findIndex(currentIcon => account.group === currentIcon.title); 
+        }
+        return accountIcons[index].source;        
     }
    
     return(

@@ -6,10 +6,10 @@ import Block from './Block';
 import content from '../utils/content';
 
 
-function Header({main, item, context, block, toggleBlockLeft, toggleBlockRight}) {
+function Header({mainIndex, itemIndex, main, item, context, block, toggleBlockLeft, toggleBlockRight}) {
 
-    const contentMain = content.find(currentMain => currentMain.route === main);
-    const contentItem = contentMain ? contentMain.items.find(currentItem => currentItem.route === item) : undefined;
+    const contentMain = content[mainIndex];
+    const contentItem = contentMain ? contentMain.items[itemIndex] : undefined;
 
     const bannerComponent = (
         <>
@@ -56,7 +56,7 @@ function Header({main, item, context, block, toggleBlockLeft, toggleBlockRight})
                         {bannerComponent}          
                     </NavLink>
                 </div>                       
-                <div class='col-6 text-center'>
+                <div class='col-6 text-center align-items-center'>
                     <p>{contentMain.description}</p>
                 </div>
             </>

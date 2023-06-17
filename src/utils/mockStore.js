@@ -1,3 +1,6 @@
+//overall structure:
+// main -> item -> block -> entry
+
 const mockStore = [
 
     [ //about
@@ -17,16 +20,18 @@ const mockStore = [
     //important: maintain each account in all blocks
     //but do NOT display if closingBalance & openingBalance (etc.) is 0
 
-        [ //overview
+        [ //overview - calculate dynamically (not stored in database!)
             {
                 block: '2023',
-                accumulatedNetProfit: 9234,
-                closingBalance: 51000,
+                netProfit: 6,
+                closingBalance: 151000,
                 entries: [
-                    {id: 200, group: 'Resources', title: 'Robocash', lastUpdate: '2023-04-20', frozen: false, accumulatedROI: 13.1, accumulatedNetProfit: 4000.0, ROI: 13.3, closingBalance: 25000.00, withheldTaxes: 1, bonus: 2, transfers: 3, openingBalance: 4, grossProfit: 5, dueTaxes: 6, netProfit: 7},
-                    {id: 201, group: 'P2P', title: 'Peerberry', lastUpdate: '2023-04-30', frozen: false, accumulatedROI: 12.4, accumulatedNetProfit: 3000, ROI: 12.3, closingBalance: 10000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
-                    {id: 202, group: 'Stock Market', title: 'Scalable Capital', lastUpdate: '2023-04-30', frozen: false, accumulatedROI: 6.1, accumulatedNetProfit: 12000, ROI: 12.3, closingBalance: 81000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
-                    {id: 203, group: 'Other', title: 'Riester I', lastUpdate: '2023-04-30', frozen: false, accumulatedROI: 4.1, accumulatedNetProfit: 400, ROI: 12.3, closingBalance: 8000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
+                    {group: 'Resources', title: 'Cash', closingBalance: 25000.00},
+                    {group: 'Resources', title: 'Liabilities', closingBalance: 10000.00},
+                    {group: 'Investments', title: 'P2P', totalROI: 6.1, ROI: 12.3, closingBalance: 81000.00, netProfit: 3},
+                    {group: 'Investments', title: 'Stock Market', totalROI: 4.1, ROI: 12.3, closingBalance: 8000.00, netProfit: 1},
+                    {group: 'Investments', title: 'Other', totalROI: 4.1, ROI: 12.3, closingBalance: 8000.00, netProfit: 2},
+
                 ]
             },
         ], 
@@ -58,25 +63,25 @@ const mockStore = [
             {
                 block: '2023',
                 taxRate: 0.26380, 
-                accumulatedNetProfit: 9234,
+                netProfit: 7,
                 closingBalance: 51000,
                 entries: [
-                    {id: 200, group: 'P2P', title: 'Robocash', lastUpdate: '2023-04-20', frozen: false, accumulatedROI: 13.1, accumulatedNetProfit: 4000.0, ROI: 13.3, closingBalance: 25000.00, withheldTaxes: 1, bonus: 2, transfers: 3, openingBalance: 4, grossProfit: 5, dueTaxes: 6, netProfit: 7},
-                    {id: 201, group: 'P2P', title: 'Peerberry', lastUpdate: '2023-04-30', frozen: false, accumulatedROI: 12.4, accumulatedNetProfit: 3000, ROI: 12.3, closingBalance: 10000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
-                    {id: 202, group: 'Stock Market', title: 'Scalable Capital', lastUpdate: '2023-04-30', frozen: false, accumulatedROI: 6.1, accumulatedNetProfit: 12000, ROI: 12.3, closingBalance: 81000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
-                    {id: 203, group: 'Other', title: 'Riester I', lastUpdate: '2023-04-30', frozen: false, accumulatedROI: 4.1, accumulatedNetProfit: 400, ROI: 12.3, closingBalance: 8000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
+                    {id: 200, group: 'P2P', title: 'Robocash', lastUpdate: '2023-04-20', frozen: false, overallROI: 13.1, ROI: 13.3, closingBalance: 25000.00, withheldTaxes: 1, bonus: 2, transfers: 3, openingBalance: 4, grossProfit: 5, dueTaxes: 6, netProfit: 7},
+                    {id: 201, group: 'P2P', title: 'Peerberry', lastUpdate: '2023-04-30', frozen: false, overallROI: 12.4, ROI: 12.3, closingBalance: 10000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
+                    {id: 202, group: 'Stock Market', title: 'Scalable Capital', lastUpdate: '2023-04-30', frozen: false, overallROI: 6.1, ROI: 12.3, closingBalance: 81000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
+                    {id: 203, group: 'Other', title: 'Riester I', lastUpdate: '2023-04-30', frozen: false, overallROI: 4.1, ROI: 12.3, closingBalance: 8000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
                 ]
             },
             {
                 block: '2022', 
                 taxRate: 0.26380,
-                accumulatedNetProfit: 6234,
+                netProfit: 6,
                 closingBalance: 42000,
                 entries: [               
-                    {id: 200, group: 'P2P', title: 'Robocash', lastUpdate: '2022-04-30', frozen: true, accumulatedROI: 13.2, accumulatedNetProfit: 3000, ROI: 13.1, closingBalance: 23000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit:0},
-                    {id: 201, group: 'P2P', title: 'Peerberry', lastUpdate: '2022-04-30', frozen: true, accumulatedROI: 12.5, accumulatedNetProfit: 2000, ROI: 12.5, closingBalance: 9000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit:0},
-                    {id: 202, group: 'Stock Market', title: 'Scalable Capital', lastUpdate: '2022-04-30', frozen: true, accumulatedROI: 5.1, accumulatedNetProfit: 9000, ROI: 12.1, closingBalance: 82000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit:0},
-                    {id: 203, group: 'Other', title: 'Riester I', lastUpdate: '2022-04-30', frozen: true, accumulatedROI: 4.3, accumulatedNetProfit: 320, ROI: 12.2, closingBalance: 7000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit:0},
+                    {id: 200, group: 'P2P', title: 'Robocash', lastUpdate: '2022-04-30', frozen: true, overallROI: 13.2, ROI: 13.1, closingBalance: 23000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
+                    {id: 201, group: 'P2P', title: 'Peerberry', lastUpdate: '2022-04-30', frozen: true, overallROI: 12.5, ROI: 12.5, closingBalance: 9000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 6},
+                    {id: 202, group: 'Stock Market', title: 'Scalable Capital', lastUpdate: '2022-04-30', frozen: true, overallROI: 5.1, ROI: 12.1, closingBalance: 82000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
+                    {id: 203, group: 'Other', title: 'Riester I', lastUpdate: '2022-04-30', frozen: true, overallROI: 4.3, ROI: 12.2, closingBalance: 7000.00, withheldTaxes: 0, bonus: 0, transfers: 0, openingBalance: 0, grossProfit: 0, dueTaxes: 0, netProfit: 0},
                 ]
             }
         ],

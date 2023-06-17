@@ -44,7 +44,7 @@ const content = [
                 edit: false, 
                 create: false, 
                 add: false,
-                groups: ['Cash', 'Liabilities', 'P2P', 'Stock Market', 'Other']
+                groups: ['Resources', 'Investments']
             }, 
             {
                 route: 'resources', 

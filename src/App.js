@@ -60,7 +60,7 @@ function App() {
 
   return (
     <>
-      <Header main={main} item={item} context={context} block={block} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/>   
+      <Header mainIndex={mainIndex} itemIndex={itemIndex} main={main} item={item} context={context} block={block} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/>   
       <Outlet context={[mainIndex, itemIndex, main, item, context, block]}/>
       <Navigator/>
     </>
