@@ -13,11 +13,11 @@ function Display() {
     const editPath = 'edit/' + block.value + '/';
     const disableLink = (itemIndex === 0);
     
-    //if current year is not found, it has to be created
+    //if current year is not found, it has to be created!
     const itemBlock = mockStore[mainIndex][itemIndex][block.index];
 
-    let itemComponent = (<>(no data available)</>);
-    let sumComponent = (<>(no data available)</>);
+    let itemComponent = (<h1>no item data available</h1>);
+    let sumComponent = (<h1>no sum data available</h1>);
 
     switch (itemIndex){
         case 0: //Overview 
@@ -90,7 +90,7 @@ function Display() {
         );
     }    
 
-    function createResourceComponent (entry){ //BUG: pointerEvents are not set to none for 'Overview'
+    function createResourceComponent (entry){ 
         return (
             <NavLink to={disableLink ? null : editPath + entry.id} key={entry.id} className={disableLink && 'nav-link-disabled'}> 
                 <div className='row content-row'>
