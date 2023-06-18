@@ -125,10 +125,7 @@ function Display() {
                         </div>
                     </div>        
                     <div className='col-3 text-end'>
-                        <div className='row h-50 d-flex align-items-center'>
-                            <h4>{entry.overallROI} <span className='unit'>%</span></h4>
-                        </div>
-                        <div className='row h-50 d-flex align-items-center'>
+                          <div className='row d-flex align-items-center'>
                             <h4>{entry.closingBalance} <span className='unit'>€</span></h4>
                         </div>
                     </div>
@@ -181,9 +178,14 @@ function Display() {
                         <img src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
-                    <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <h4>{entry.expected}<span className='unit'> €</span></h4>
-                    </div>        
+                    <div className='col-3 text-end'>
+                        <div className='row h-50 d-flex align-items-center'>
+                            <h4>{entry.ROI} <span className='unit'>%</span></h4>
+                        </div>
+                        <div className='row h-50 d-flex align-items-center'>
+                            <h4>{entry.expected} <span className='unit'>€</span></h4>
+                        </div>
+                    </div>          
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
                         <h4>{entry.amount}<span className='unit'> €</span></h4>
                     </div>

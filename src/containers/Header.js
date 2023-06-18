@@ -71,7 +71,7 @@ function Header({mainIndex, itemIndex, main, item, form, block, toggleBlockLeft,
                     <NavLink to={'/' + main}>
                         {backComponent(contentItem.title)}      
                     </NavLink>
-                    {contentItem.create && createComponent}
+                    {contentItem.create && block.value !== 'overall' && createComponent}
                 </div>                        
                 <div className='col-4 d-flex text-center'>
                     <Block block={block} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/>

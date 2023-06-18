@@ -34,12 +34,21 @@ function App() {
   });
   
   if(blockList && JSON.stringify(blockList) !== JSON.stringify(block.list)){
-    setBlock({
-      value: blockList[0],
-      index: 0,
-      max: blockList.length - 1,
-      list: blockList
-    })
+    if (blockList[0] === 'overall') {
+      setBlock({
+        value: blockList[1],
+        index: 1,
+        max: blockList.length - 1,
+        list: blockList
+      });
+    } else {
+      setBlock({
+        value: blockList[0],
+        index: 0,
+        max: blockList.length - 1,
+        list: blockList
+      });
+    }
   };
 
   const toggleBlockLeft = () => {
