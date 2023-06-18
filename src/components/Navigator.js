@@ -10,10 +10,10 @@ const icons = [aboutIcon, cheatsheetsIcon, assetsIcon, foobarIcon];
 function Navigator() {
 
     return( 
-        <div class='container-fluid fixed-bottom' id='navigator'>
-            <div class='row'>
+        <div className='container-fluid fixed-bottom' id='navigator'>
+            <div className='row'>
                 {content.map((main, index) => ( 
-                    <div class='col-3 text-center'>
+                    <div className='col-3 text-center' key={content.main}>
                         <NavLink to={main.route} className='nav-link'>
                                 {icons[index]}
                                 <h1>{main.title}</h1>

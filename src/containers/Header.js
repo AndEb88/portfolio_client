@@ -13,8 +13,8 @@ function Header({mainIndex, itemIndex, main, item, context, block, toggleBlockLe
 
     const bannerComponent = (
         <>
-            <img class='' src={mainIcon}/>
-            <h1 class=''>AndEb</h1> 
+            <img className='' src={mainIcon}/>
+            <h1 className=''>AndEb</h1> 
         </>    
     );
 
@@ -37,10 +37,10 @@ function Header({mainIndex, itemIndex, main, item, context, block, toggleBlockLe
     if(!main){
         headerComponent= (
             <>                        
-                <div class='col-6 d-flex align-items-center'>
+                <div className='col-6 d-flex align-items-center'>
                     {bannerComponent}   
                 </div>                      
-                <div class='col-6 text-center align-items-center'>
+                <div className='col-6 text-center d-flex align-items-center'>
                     <p>Welcome!</p>
                 </div>
             </>
@@ -51,12 +51,12 @@ function Header({mainIndex, itemIndex, main, item, context, block, toggleBlockLe
     else if(!item){
         headerComponent = (
             <>                        
-                <div class='col-6 d-flex align-items-center'>
+                <div className='col-6 d-flex align-items-center'>
                     <NavLink to={'/'} >
                         {bannerComponent}          
                     </NavLink>
                 </div>                       
-                <div class='col-6 text-center align-items-center'>
+                <div className='col-6 text-center d-flex align-items-center'>
                     <p>{contentMain.description}</p>
                 </div>
             </>
@@ -67,13 +67,13 @@ function Header({mainIndex, itemIndex, main, item, context, block, toggleBlockLe
     else if(!context){
         headerComponent = (
             <>                    
-                <div class='col-8 d-flex align-items-center'>
+                <div className='col-8 d-flex align-items-center'>
                     <NavLink to={'/' + main}>
                         {backComponent(contentItem.title)}      
                     </NavLink>
                     {contentItem.create && createComponent}
                 </div>                        
-                <div class='col-4 d-flex text-center'>
+                <div className='col-4 d-flex text-center'>
                     <Block block={block} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/>
                 </div>
         </>
@@ -84,12 +84,15 @@ function Header({mainIndex, itemIndex, main, item, context, block, toggleBlockLe
     else if(context === 'create'){
         headerComponent = (
             <>                    
-            <div class='col-8'>
-                <NavLink to={'/' + main + '/' + item} >
-                    {backComponent('Create')}       
-                </NavLink>
-            </div>                        
-        </>
+                <div className='col-8'>
+                    <NavLink to={'/' + main + '/' + item} >
+                        {backComponent('Create')}       
+                    </NavLink>
+                </div>
+                <div className='col-4 d-flex text-center'>
+
+                </div>                        
+            </>
         );
     }    
     
@@ -97,21 +100,21 @@ function Header({mainIndex, itemIndex, main, item, context, block, toggleBlockLe
     else if(context === 'edit'){
         headerComponent = (
             <>                    
-            <div class='col-8'>
+            <div className='col-8'>
                 <NavLink to={'/' + main + '/' + item} >
                     {backComponent('Edit')}      
                 </NavLink>
             </div>                        
-            <div class='col-4 d-flex align-items-center justify-content-center'>
-                {deleteIcon} 
+            <div className='col-4 d-flex align-items-center justify-content-center'>
+                {deleteIcon}
             </div>
         </>
         );
     }
 
     return(
-        <div class='container-fluid fixed-top' id='header'>
-            <div class='row d-flex'>
+        <div className='container-fluid fixed-top' id='header'>
+            <div className='row d-flex'>
                 {headerComponent}
             </div>
         </div>

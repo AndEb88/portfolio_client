@@ -82,8 +82,8 @@ function Display() {
     
     function createHeadlineComponent (headline){ 
         return (
-            <div class='row content-row headline-row'>
-                <div class='col-12 d-flex align-items-center'>
+            <div key={headline} className='row content-row headline-row'>
+                <div className='col-12 d-flex align-items-center'>
                     <h3>{headline}</h3>
                 </div>
             </div>
@@ -92,15 +92,15 @@ function Display() {
 
     function createResourceComponent (entry){ //BUG: pointerEvents are not set to none for 'Overview'
         return (
-            <NavLink to={disableLink ? null : editPath + entry.id} className={`nav-link ${disableLink && 'nav-link-inactive'}`}> 
-                <div class='row content-row'>
-                    <div class='col-6 d-flex align-items-center'>
+            <NavLink to={disableLink ? null : editPath + entry.id} key={entry.id} className={`nav-link ${disableLink && 'nav-link-inactive'}`}> 
+                <div className='row content-row'>
+                    <div className='col-6 d-flex align-items-center'>
                         <img src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
-                    <div class='col-6 text-end'>
-                          <div class='row d-flex align-items-center'>
-                            <h4>{entry.closingBalance} <span class='unit'>€</span></h4>
+                    <div className='col-6 text-end'>
+                          <div className='row d-flex align-items-center'>
+                            <h4>{entry.closingBalance} <span className='unit'>€</span></h4>
                         </div>
                     </div>
                 </div>
@@ -110,26 +110,26 @@ function Display() {
 
     function createInvestmentComponent (entry){ 
         return (
-            <NavLink to={disableLink ? null : editPath + entry.id} className={`nav-link ${disableLink && 'nav-link-inactive'}`}> 
-                <div class='row content-row'>
-                    <div class='col-6 d-flex align-items-center'>
+            <NavLink to={disableLink ? null : editPath + entry.id} key={entry.id} className={`nav-link ${disableLink && 'nav-link-inactive'}`}> 
+                <div className='row content-row'>
+                    <div className='col-6 d-flex align-items-center'>
                         <img src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
-                    <div class='col-3 text-end'>
-                        <div class='row h-50 d-flex align-items-center'>
-                            <h4>{entry.ROI} <span class='unit'>%</span></h4>
+                    <div className='col-3 text-end'>
+                        <div className='row h-50 d-flex align-items-center'>
+                            <h4>{entry.ROI} <span className='unit'>%</span></h4>
                         </div>
-                        <div class='row h-50 d-flex align-items-center'>
-                            <h4>+{entry.netProfit} <span class='unit'>€</span></h4>
+                        <div className='row h-50 d-flex align-items-center'>
+                            <h4>+{entry.netProfit} <span className='unit'>€</span></h4>
                         </div>
                     </div>        
-                    <div class='col-3 text-end'>
-                        <div class='row h-50 d-flex align-items-center'>
-                            <h4>{entry.overallROI} <span class='unit'>%</span></h4>
+                    <div className='col-3 text-end'>
+                        <div className='row h-50 d-flex align-items-center'>
+                            <h4>{entry.overallROI} <span className='unit'>%</span></h4>
                         </div>
-                        <div class='row h-50 d-flex align-items-center'>
-                            <h4>{entry.closingBalance} <span class='unit'>€</span></h4>
+                        <div className='row h-50 d-flex align-items-center'>
+                            <h4>{entry.closingBalance} <span className='unit'>€</span></h4>
                         </div>
                     </div>
                 </div>
@@ -139,16 +139,16 @@ function Display() {
 
     function createTransferComponent (entry){
         return (
-            <NavLink to={editPath + entry.id} className='nav-link'>      
-                <div class='row content-row small-row'>
-                    <div class='col-5 d-flex align-items-center'>
+            <NavLink to={editPath + entry.id} key={entry.id} className='nav-link'>      
+                <div className='row content-row small-row'>
+                    <div className='col-5 d-flex align-items-center'>
                         <p>{entry.title}</p>
                     </div>
-                    <div class='col-4 text-end d-flex align-items-center justify-content-end'>
+                    <div className='col-4 text-end d-flex align-items-center justify-content-end'>
                         <p>{entry.date}</p>
                     </div>        
-                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{entry.amount} <span class='unit'>€</span></p>
+                    <div className='col-3 text-end d-flex align-items-center justify-content-end'>
+                        <p>{entry.amount} <span className='unit'>€</span></p>
                     </div>
                 </div>
             </NavLink>
@@ -157,16 +157,16 @@ function Display() {
 
     function createExpanseComponent (entry){
         return (
-            <NavLink to={editPath + entry.id} className='nav-link'>      
-                <div class='row content-row small-row'>
-                    <div class='col-6 d-flex align-items-center'>
+            <NavLink to={editPath + entry.id} key={entry.id} className='nav-link'>      
+                <div className='row content-row small-row'>
+                    <div className='col-6 d-flex align-items-center'>
                         <p>{entry.title}</p>
                     </div>
-                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{entry.amountMonthly} <span class='unit'>€</span></p>
+                    <div className='col-3 text-end d-flex align-items-center justify-content-end'>
+                        <p>{entry.amountMonthly} <span className='unit'>€</span></p>
                     </div>        
-                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{entry.amountYearly} <span class='unit'>€</span></p>
+                    <div className='col-3 text-end d-flex align-items-center justify-content-end'>
+                        <p>{entry.amountYearly} <span className='unit'>€</span></p>
                     </div>
                 </div>
             </NavLink>
@@ -175,17 +175,17 @@ function Display() {
 
     function createPensionComponent (entry){
         return (
-            <NavLink to={editPath + entry.id} className='nav-link'>      
-                <div class='row content-row'>
-                    <div class='col-6 d-flex align-items-center'>
+            <NavLink to={editPath + entry.id} key={entry.id} className='nav-link'>      
+                <div className='row content-row'>
+                    <div className='col-6 d-flex align-items-center'>
                         <img src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
-                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <h4>{entry.expected}<span class='unit'> €</span></h4>
+                    <div className='col-3 text-end d-flex align-items-center justify-content-end'>
+                        <h4>{entry.expected}<span className='unit'> €</span></h4>
                     </div>        
-                    <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <h4>{entry.amount}<span class='unit'> €</span></h4>
+                    <div className='col-3 text-end d-flex align-items-center justify-content-end'>
+                        <h4>{entry.amount}<span className='unit'> €</span></h4>
                     </div>
                 </div>
             </NavLink>
@@ -194,15 +194,15 @@ function Display() {
 
     function createSumComponent (left, right, plus){
         return (    
-            <div class='row content-row sum-row'>
-                <div class='col-6 d-flex align-items-center'>
+            <div className='row content-row sum-row'>
+                <div className='col-6 d-flex align-items-center'>
                     <h3>Sum</h3>
                 </div>
-                <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                    {left && (<h4>{plus && '+'}{left}<span class='unit'> €</span></h4>)}
+                <div className='col-3 text-end d-flex align-items-center justify-content-end'>
+                    {left && (<h4>{plus && '+'}{left}<span className='unit'> €</span></h4>)}
                 </div>        
-                <div class='col-3 text-end d-flex align-items-center justify-content-end'>
-                    <h4>{right}<span class='unit'> €</span></h4>
+                <div className='col-3 text-end d-flex align-items-center justify-content-end'>
+                    <h4>{right}<span className='unit'> €</span></h4>
                 </div>
             </div>
         );
@@ -218,7 +218,7 @@ function Display() {
    
     return(
         <>
-            <div class='container-fluid content' id='display'>
+            <div className='container-fluid content' id='display'>
                 {assetsComponent} 
             </div> 
         </>

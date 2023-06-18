@@ -2,8 +2,8 @@
 function Landing() {
  
     return(
-        <div class='container-fluid content' id='landing'>
-            <div class='row'>
+        <div className='container-fluid content' id='landing'>
+            <div className='row'>
                 <h1>Landing context</h1>
             </div>
         </div>

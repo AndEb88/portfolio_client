@@ -17,8 +17,8 @@ const mockStore = [
 
     [ //assets
 
-    //important: maintain each account in all blocks
-    //but do NOT display if closingBalance & openingBalance (etc.) is 0
+    //important: maintain each account in all blocks (why???)
+    //but do NOT display if closingBalance & openingBalance & transfer (etc.) is 0
 
         [ //overview - calculate dynamically (not stored in database!)
             {
@@ -85,8 +85,7 @@ const mockStore = [
                 ]
             }
         ],
-
-        
+  
         [ //transfers
             {
                 block: '2023',
