@@ -7,7 +7,7 @@ import mockStore from '../utils/mockStore';
 
 function Edit() {
 
-    const [mainIndex, itemIndex, context] = useOutletContext();
+    const [mainIndex, itemIndex, form] = useOutletContext();
     const {block, id} = useParams();
     
     
@@ -39,11 +39,11 @@ function Edit() {
       };
 
     return(         
-        <div className='container-fluid content'>
+        <div className='container-fluid content' id='edit'>
             <form onSubmit={handleSubmit} onChange={handleChange}>
-                <div id='edit-container'>                    
+                <div className='form-container'>                    
                     {content[mainIndex].items[itemIndex].editForm.map((formEntry, index) => (
-                        <div key={formEntry.name} className={`row edit-row ${formEntry.accent && 'edit-row-accent'} ${formEntry.margin && 'edit-row-margin'} ${formEntry.bold && 'edit-row-bold'}`}>
+                        <div key={formEntry.name} className={`row form-row ${formEntry.accent && 'accent-color'} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
                             <div className='col-5'>
                                 <p>{formEntry.title}</p>
                             </div>
@@ -78,17 +78,17 @@ function Edit() {
                         </div>
                     ))}
                     {content[mainIndex].items[itemIndex].freeze && 
-                        <div className='row edit-row'>
+                        <div className='row form-row'>
                             <div className='col-12'>
-                                <div className=' form-check form-switch d-flex align-items-center edit-row-bold'>
-                                    <label className="form-check-label" for="freeze-switch">Freeze</label>
-                                    <input name='frozen' checked={formData.frozen} className="form-check-input" type="checkbox" role="switch" id="freeze-switch"/>
+                                <div className='form-check form-switch d-flex align-items-center form-row-bold'>
+                                    <label className='form-check-label' for='freeze-switch'>Freeze</label>
+                                    <input name='frozen' checked={formData.frozen} className='form-check-input' type='checkbox' role='switch' id='freeze-switch'/>
                                 </div>
                             </div>
                         </div>}                                              
                 </div>
-                <div className='row edit-row d-flex justify-content-center'>
-                    <button className='saveButton' type='submit'>Save</button>
+                <div className='row form-row d-flex justify-content-center'>
+                    <button className='form-button' type='submit'>Save</button>
                 </div>   
             </form>              
         </div> 

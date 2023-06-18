@@ -149,8 +149,8 @@ const mockStore = [
                 amount: 3840,
                 expected: 7100,
                 entries: [
-                    {id: 405, group: 'Pension', title: 'Riester I', frozen: false, amount: 140, expected: 300, ROI: 3},
-                    {id: 406, group: 'Pension', title: 'Statuatory', frozen: false, amount: 3700, expected: 6800, ROI: 3}
+                    {id: 405, group: 'Pension', title: 'Riester I', frozen: true, amount: 140, expected: 300, ROI: 3},
+                    {id: 406, group: 'Pension', title: 'Statuatory', frozen: true, amount: 3700, expected: 6800, ROI: 3}
                     ]
             }
         ]

@@ -1,13 +1,17 @@
-import content from '../utils/content';
-import mockStore from '../utils/mockStore';
 
 import {NavLink, useParams, useOutletContext} from 'react-router-dom';
+import {useState} from 'react';
+
+import content from '../utils/content';
+import mockStore from '../utils/mockStore';
 
 
 function Create() {
 
-    const [mainIndex, itemIndex, context] = useOutletContext();
+    const [mainIndex, itemIndex, form] = useOutletContext();
     const {block} = useParams();
+
+    const [formData, setFormData] = useState({});
 
     const handleChange = (event) => {
         const {name, value} = event.target;
@@ -25,9 +29,9 @@ function Create() {
     return(
         <div className='container-fluid content' id='create'>                
             <form onSubmit={handleSubmit}>
-                <div id='create-container'>
+                <div className='form-container'>
                     {content[mainIndex].items[itemIndex].createForm.map((formEntry, index) => (
-                        <div key={formEntry.name} className={`row edit-row ${formEntry.accent && 'edit-row-accent'} ${formEntry.margin && 'edit-row-margin'} ${formEntry.bold && 'edit-row-bold'}`}>
+                        <div key={formEntry.name} className={`row form-row ${formEntry.accent && 'accent-color'} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
                             <div className='col-5'>
                                 <p>{formEntry.title}</p>
                             </div>
@@ -35,12 +39,12 @@ function Create() {
                                 <p>{formEntry.operator}</p>
                             </div>
                             <div className='col-5 text-end'>
-                                {formEntry.type === 'text' && <input type='text' name={formEntry.name} onChange={handleChange}></input>}
+                                {formEntry.type === 'text' && <input type='text' name={formEntry.name}  onChange={handleChange}></input>}
                                 {formEntry.type === 'number' && <input className='text-end' type='number' name={formEntry.name} onChange={handleChange}></input>}
                                 {formEntry.type === 'date' && <input type='date' name={formEntry.name} onChange={handleChange}/>}
                                 {formEntry.type === 'group' && (
-                                    <select name={formEntry.name} value='' onChange={handleChange}>
-                                        <option disabled selected value='default'>
+                                    <select name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}>
+                                        <option disabled selected value=''>
                                             Select...
                                         </option>
                                         {content[mainIndex].items[itemIndex].groups.map(group => (
@@ -51,8 +55,8 @@ function Create() {
                                     </select>
                                 )}
                                 {formEntry.type === 'account' && (
-                                    <select name={formEntry.name} value='' onChange={handleChange}>
-                                        <option disabled selected value='default'>
+                                    <select name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}>
+                                        <option disabled selected value=''>
                                             Select...
                                         </option>
                                         {mockStore[2][2].find(currentBlock => currentBlock.block === block).entries.sort((a, b) => a.title.localeCompare(b.title)).map(entry => (
@@ -69,8 +73,8 @@ function Create() {
                         </div>
                     ))}
                     </div>
-                    <div className='row edit-row d-flex justify-content-center edit-row-bold'>
-                        <button className='createButton' type='submit'>Create</button>
+                    <div className='row form-row d-flex justify-content-center form-row-bold'>
+                        <button className='form-button' type='submit'>Create</button>
                     </div>
             </form>
         </div>

@@ -20,7 +20,7 @@ import mockStore from './utils/mockStore';
 function App() {
 
   const location = useLocation().pathname;
-  const [home, main, item, context] = location.split('/');
+  const [home, main, item, form] = location.split('/');
 
   const mainIndex = main ? content.findIndex(currentMain => currentMain.route === main) : -1;
   const itemIndex = item ? content[mainIndex].items.findIndex(currentItem => currentItem.route === item) : -1;
@@ -66,8 +66,8 @@ function App() {
 
   return (
     <>
-      <Header mainIndex={mainIndex} itemIndex={itemIndex} main={main} item={item} context={context} block={block} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/>   
-      <Outlet context={[mainIndex, itemIndex, main, item, context, block]}/>
+      <Header mainIndex={mainIndex} itemIndex={itemIndex} main={main} item={item} form={form} block={block} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/>   
+      <Outlet context={[mainIndex, itemIndex, main, item, form, block]}/>
       <Navigator/>
     </>
   );

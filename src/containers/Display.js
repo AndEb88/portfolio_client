@@ -9,7 +9,7 @@ import {sumIcon} from '../icons/svgIcons';
 
 function Display() {
 
-    const [mainIndex, itemIndex, main, item, context, block] = useOutletContext();
+    const [mainIndex, itemIndex, main, item, form, block] = useOutletContext();
     const editPath = 'edit/' + block.value + '/';
     const disableLink = (itemIndex === 0);
     
@@ -92,7 +92,7 @@ function Display() {
 
     function createResourceComponent (entry){ //BUG: pointerEvents are not set to none for 'Overview'
         return (
-            <NavLink to={disableLink ? null : editPath + entry.id} key={entry.id} className={`nav-link ${disableLink && 'nav-link-inactive'}`}> 
+            <NavLink to={disableLink ? null : editPath + entry.id} key={entry.id} className={disableLink && 'nav-link-disabled'}> 
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
                         <img src={findIcon(entry)}/>
@@ -110,7 +110,7 @@ function Display() {
 
     function createInvestmentComponent (entry){ 
         return (
-            <NavLink to={disableLink ? null : editPath + entry.id} key={entry.id} className={`nav-link ${disableLink && 'nav-link-inactive'}`}> 
+            <NavLink to={disableLink ? null : editPath + entry.id} key={entry.id} className={disableLink && 'nav-link-disabled'}> 
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
                         <img src={findIcon(entry)}/>
@@ -139,7 +139,7 @@ function Display() {
 
     function createTransferComponent (entry){
         return (
-            <NavLink to={editPath + entry.id} key={entry.id} className='nav-link'>      
+            <NavLink to={editPath + entry.id} key={entry.id}>      
                 <div className='row content-row small-row'>
                     <div className='col-5 d-flex align-items-center'>
                         <p>{entry.title}</p>
@@ -157,7 +157,7 @@ function Display() {
 
     function createExpanseComponent (entry){
         return (
-            <NavLink to={editPath + entry.id} key={entry.id} className='nav-link'>      
+            <NavLink to={editPath + entry.id} key={entry.id}>      
                 <div className='row content-row small-row'>
                     <div className='col-6 d-flex align-items-center'>
                         <p>{entry.title}</p>
@@ -175,7 +175,7 @@ function Display() {
 
     function createPensionComponent (entry){
         return (
-            <NavLink to={editPath + entry.id} key={entry.id} className='nav-link'>      
+            <NavLink to={editPath + entry.id} key={entry.id}>      
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
                         <img src={findIcon(entry)}/>

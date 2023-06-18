@@ -6,7 +6,7 @@ import Block from './Block';
 import content from '../utils/content';
 
 
-function Header({mainIndex, itemIndex, main, item, context, block, toggleBlockLeft, toggleBlockRight}) {
+function Header({mainIndex, itemIndex, main, item, form, block, toggleBlockLeft, toggleBlockRight}) {
 
     const contentMain = content[mainIndex];
     const contentItem = contentMain ? contentMain.items[itemIndex] : undefined;
@@ -52,7 +52,7 @@ function Header({mainIndex, itemIndex, main, item, context, block, toggleBlockLe
         headerComponent = (
             <>                        
                 <div className='col-6 d-flex align-items-center'>
-                    <NavLink to={'/'} >
+                    <NavLink to={'/'}>
                         {bannerComponent}          
                     </NavLink>
                 </div>                       
@@ -64,7 +64,7 @@ function Header({mainIndex, itemIndex, main, item, context, block, toggleBlockLe
     }
 
     //Display
-    else if(!context){
+    else if(!form){
         headerComponent = (
             <>                    
                 <div className='col-8 d-flex align-items-center'>
@@ -81,7 +81,7 @@ function Header({mainIndex, itemIndex, main, item, context, block, toggleBlockLe
     }
 
     //Create
-    else if(context === 'create'){
+    else if(form === 'create'){
         headerComponent = (
             <>                    
                 <div className='col-8'>
@@ -89,15 +89,15 @@ function Header({mainIndex, itemIndex, main, item, context, block, toggleBlockLe
                         {backComponent('Create')}       
                     </NavLink>
                 </div>
-                <div className='col-4 d-flex text-center'>
-
+                <div className='col-4 d-flex align-items-center justify-content-center'>
+                    <h2>{block.value}</h2>
                 </div>                        
             </>
         );
     }    
     
     //Edit
-    else if(context === 'edit'){
+    else if(form === 'edit'){
         headerComponent = (
             <>                    
             <div className='col-8'>

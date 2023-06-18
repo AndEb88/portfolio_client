@@ -76,7 +76,7 @@ const content = [
                 editForm: [
                     {name: 'group', title: 'Group', operator: '', type: 'group', unit: '', bold: true},
                     {name: 'title', title: 'Title', operator: '', type: 'text', unit: '', bold: true},
-                    {name: 'lastUpdate', title: 'Last Update', operator: '', type: 'display', unit: '', margin: true, bold: true},
+                    {name: 'lastUpdate', title: 'Last Update', operator: '', type: 'display', unit: '', margin: true},
                     {name: 'closingBalance', title: 'Closing Balance', operator: '', type: 'number', unit: '€'},
                     {name: 'withheldTaxes', title: 'Withheld Taxes', operator: '+', type: 'number', unit: '€'},
                     {name: 'bonus', title: 'Bonus & Payback', operator: '-', type: 'number', unit: '€'},
@@ -100,7 +100,7 @@ const content = [
                 create: true, 
                 add: true,
                 // groups must be calculated dynamically depending on set year
-                // therefore retrieve transfer groups 'ad hoc' from selected block in store
+                // therefore transfer groups are retrieved 'ad hoc' from selected block in store
                 editForm: [
                     {name: 'title', title: 'Title', operator: '', type: 'account', unit: '', margin: true, bold: true},
                     {name: 'date', title: 'Date', operator: '', type: 'date', unit: ''},
@@ -138,6 +138,7 @@ const content = [
                 edit: true, 
                 create: true, 
                 add: true,
+                freeze: true,
                 editForm: [
                     {name: 'title', title: 'Title', operator: '', type: 'text', unit: '', margin: true, bold: true},
                     {name: 'amount', title: 'Guaranteed Amount', operator: '', type: 'text', unit: '€'},                    
