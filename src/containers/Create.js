@@ -8,6 +8,9 @@ import mockStore from '../utils/mockStore';
 
 function Create() {
 
+    // add onChange for each specific input type and update accordingly
+    // do I need to declare keys that are not set here? e.g. 'netProfit' would be undefined and could cause issues in Display(?)
+
     const [mainIndex, itemIndex, form] = useOutletContext();
     const {block} = useParams();
 

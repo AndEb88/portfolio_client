@@ -7,6 +7,11 @@ import mockStore from '../utils/mockStore';
 
 function Edit() {
 
+    // add onChange for each specific input type and update accordingly
+    // add delete flag that enables delete after first press
+    // add validated flag that recalculates and enables save for Investments (and Pensions?)
+    // freeze sets lastUpdate to 31.12.
+
     const [mainIndex, itemIndex, form] = useOutletContext();
     const {block, id} = useParams();
     
@@ -30,7 +35,6 @@ function Edit() {
               [name]: value,
             }));
           }
-        //dont forget freeze! set lastUpdate to 31.12.then
       };
 
     const handleSubmit = (event) => {
@@ -42,7 +46,7 @@ function Edit() {
         <div className='container-fluid content' id='edit'>
             <form onSubmit={handleSubmit} onChange={handleChange}>
                 <div className='form-container'>                    
-                    {content[mainIndex].items[itemIndex].editForm.map((formEntry, index) => (
+                    {content[mainIndex].items[itemIndex].editForm.map(formEntry => (
                         <div key={formEntry.name} className={`row form-row ${formEntry.accent && 'accent-color'} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
                             <div className='col-5'>
                                 <p>{formEntry.title}</p>

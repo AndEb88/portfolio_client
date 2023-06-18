@@ -1,50 +1,219 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {fetchCount} from './counterAPI';
+import {fetchAssests, deleteEntry, updateEntry, createEntry, deleteAccount, updateAccount, createAccount} from './assetsAPI';
 
-const initialState = {}; //declare initial state
+const initialState = {}; //declare initial state mockDatabase
 
-// 1. createAsyncThunks like 'assets/fetchData' with API calls from assetsAPI
-// 2. code API calls that access the database (for now just access a mockStore declared with 'let')
+// 1. DONE - createAsyncThunks like 'assets/fetchData' with API calls from assetsAPI
+// 2. DONE - code API calls that access the database (for now just access a mockStore declared with 'let')
 // 3. DONE - add timer for debugging purpose (in order to check if pending and rejected case work)
 // 4. reducers shall update the store, but their actions are only called by extra reducers
 // 5. after initial fetch and any update, also the corresponding dynamic data (that doesn't rely on db) require reducers to update
 // 4. extra reducers call reducers to update the store
 
-export const incrementAsync = createAsyncThunk(
-  'counter/fetchCount',
-  async (amount) => {
-    const response = await fetchCount(amount);
-    // The value we return becomes the `fulfilled` action payload
+const mainIndex = 2;
+
+function findAvailableId(itemIndex, block, state) {
+ 
+  const ids = state[mainIndex][itemIndex]
+    .filter(currentEntry => currentEntry.block === block)
+    .map(currentEntry => currentEntry.id).sort();
+
+  let expected = itemIndex * 1000;
+
+  for (let i = 0; i < ids.length; i++) {
+      expected++;
+      if (ids[i] !== expected) {
+        return expected;
+      }
+  }
+  return ids.length;
+}
+
+// The value we return becomes the `fulfilled` action payload
+
+export const syncAssets = createAsyncThunk(
+  'assets/fetchAssests',
+  async () => {
+    const response = await fetchAssests();
     return response.data;
   }
 );
 
+export const deleteAssetsEntry = createAsyncThunk(
+  'assets/deleteEntry',
+  async (itemIndex, item, block, entry) => {
+    const response = await deleteEntry(item, block, entry);
+    return response.data;
+  }
+);
+
+export const updateAssetsEntry = createAsyncThunk(
+  'assets/updateEntry',
+  async (itemIndex, item, block, entry) => {
+    const response = await updateEntry(item, block, entry);
+    return response.data;
+  }
+);
+
+export const createAssetsEntry = createAsyncThunk(
+  'assets/createEntry',
+  async (itemIndex, item, block, entry, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const newId = findAvailableId(itemIndex, block, state);
+    const newEntry = {...entry, id: newId}
+    const response = await createEntry(item, block, newEntry);
+    return response.data;
+  }
+);
+
+export const deleteAssetsAccount = createAsyncThunk(
+  'assets/deleteAccount',
+  async (itemIndex, item, block, entry, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const blocks = state[mainIndex][itemIndex]
+      .filter(currentBlock => currentBlock.block !== 'overall')
+      .map(currentBlock => currentBlock.block); 
+    const response = await Promise.all(blocks.map(currentBlock => deleteEntry(item, currentBlock, entry)));
+    return response.data; //returns an array of objects instead of a single object
+  }
+);
+
+export const updateAssetsAccount = createAsyncThunk(
+  'assets/updateAccount',
+  async (itemIndex, item, block, entry, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const blocks = state[mainIndex][itemIndex]
+      .filter(currentBlock => currentBlock.block !== 'overall')
+      .map(currentBlock => currentBlock.block);
+    const response = await Promise.all(blocks.map(currentBlock => updateEntry(item, currentBlock, entry)));
+    return response.data; //returns an array of objects instead of a single object
+  }
+);
+
+export const createAssetsAccount = createAsyncThunk(
+  'assets/createAccount',
+  async (itemIndex, item, block, entry, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const blocks = state[mainIndex][itemIndex]
+      .filter(currentBlock => currentBlock.block !== 'overall' && Number(currentBlock.block) >= Number(block))
+      .map(currentBlock => currentBlock.block);       
+    const response = await Promise.all(blocks.map(currentBlock => {
+      const newId = findAvailableId(itemIndex, currentBlock, state);
+      const newEntry = {...entry, id: newId};
+      return createEntry(item, currentBlock, newEntry);
+    }));
+    return response.data; //returns an array of objects instead of a single object
+  }
+);
+
+
 export const counterSlice = createSlice({
   name: 'counter',
   initialState,
-  // The `reducers` field lets us define reducers and generate associated actions
+  // calc data (keys outside entries) for each item  based on database
   reducers: {
-    increment: (state) => {
+    setBlocks: (state) => {
       state.value += 1;
+      //only when syncing all data
     },
-    decrement: (state) => {
+    calcOverview: (state) => {
       state.value -= 1;
     },
-    incrementByAmount: (state, action) => {
+    calcResources: (state, action) => {
       state.value += action.payload;
     },
+    calcInvestments: (state) => {
+      state.value -= 1;
+    },
+    calcTransfers: (state) => {
+      state.value -= 1;
+    },
+    calcExpanses: (state) => {
+      state.value -= 1;
+    },
+    calcPension: (state) => {
+      state.value -= 1;
+    },
   },
-  // The `extraReducers` field lets the slice handle actions defined elsewhere,
-  // including actions generated by createAsyncThunk or in other slices.
+
   extraReducers: (builder) => {
     builder
-      .addCase(incrementAsync.pending, (state) => {
+      .addCase(syncAssets.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(incrementAsync.fulfilled, (state, action) => {
+      .addCase(syncAssets.fulfilled, (state, action) => {
         state.status = 'idle';
         state.value += action.payload;
-      });
+      })
+      .addCase(syncAssets.rejected, (state) => {
+        state.status = 'error';
+      })
+
+      .addCase(deleteAssetsEntry.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(deleteAssetsEntry.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.value += action.payload;
+      })
+      .addCase(deleteAssetsEntry.rejected, (state) => {
+        state.status = 'error';
+      })
+
+      .addCase(updateAssetsEntry.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateAssetsEntry.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.value += action.payload;
+      })
+      .addCase(updateAssetsEntry.rejected, (state) => {
+        state.status = 'error';
+      })
+
+      .addCase(createAssetsEntry.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(createAssetsEntry.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.value += action.payload;
+      })
+      .addCase(createAssetsEntry.rejected, (state) => {
+        state.status = 'error';
+      })
+
+      .addCase(deleteAssetsAccount.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(deleteAssetsAccount.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.value += action.payload;
+      })
+      .addCase(deleteAssetsAccount.rejected, (state) => {
+        state.status = 'error';
+      })
+
+      .addCase(updateAssetsAccount.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateAssetsAccount.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.value += action.payload;
+      })
+      .addCase(updateAssetsAccount.rejected, (state) => {
+        state.status = 'error';
+      })
+
+      .addCase(createAssetsAccount.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(createAssetsAccount.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.value += action.payload;
+      })
+      .addCase(createAssetsAccount.rejected, (state) => {
+        state.status = 'error';
+      })
   },
 });
 
@@ -54,12 +223,6 @@ export const selectCount = (state) => state.counter.value; //declare and export 
 
 export default counterSlice.reducer; //export slice for setting up store
 
-// declare thunk with sync and async logic by hand:
-export const incrementIfOdd = (amount) => (dispatch, getState) => {
-  const currentValue = selectCount(getState());
-  if (currentValue % 2 === 1) {
-    dispatch(incrementByAmount(amount));
-  }
-};
+
 
 

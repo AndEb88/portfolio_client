@@ -6,16 +6,6 @@ import Header from './containers/Header';
 import content from './utils/content';
 import mockStore from './utils/mockStore';
 
-// DEBUG:
-// clean up CSS styles and assigned classes
-
-// TO DO:
-// calculations in edit
-// add onCHange for each specific input type and update accordingly
-// set up store
-// add 'Vermögen' as initial value
-// handle edit, create, delete
-
 
 function App() {
 

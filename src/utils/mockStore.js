@@ -17,8 +17,7 @@ const mockStore = [
 
     [ //assets
 
-    //important: maintain each account in all blocks (why???)
-    //but do NOT display if closingBalance & openingBalance & transfer (etc.) is 0
+    //important: maintain each account in all blocks (why???) but do NOT display if closingBalance & openingBalance & transfer (etc.) is 0
     //database requires block & id as unique identifier
     //itemIndex is coded in first digit of id
 
@@ -33,7 +32,6 @@ const mockStore = [
                     {group: 'Investments', title: 'P2P', ROI: 12.3, closingBalance: 81000.00, netProfit: 3},
                     {group: 'Investments', title: 'Stock Market', ROI: 12.3, closingBalance: 8000.00, netProfit: 1},
                     {group: 'Investments', title: 'Other', ROI: 12.3, closingBalance: 8000.00, netProfit: 2},
-
                 ]
             },
             {

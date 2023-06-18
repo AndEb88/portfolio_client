@@ -1,62 +1,50 @@
-// A mock function to mimic making an async request for data
+import mockDatabase from '../utils/mockDatabase';
 
-import mockStore from '../utils/mockStore';
+
+// API must update the datbase
+// reducers must update the store
+
+function findItemIndex(item) {
+    const itemIndex = content[2].items.find(currentItem => currentItem.route === item);
+    return itemIndex;
+}
 
 //trigger after each update?
 export function fetchAssests() {
     //return entire assets mockStore
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: mockStore[2]}), 1000)
+        setTimeout(() => resolve({data: mockDatabase[2]}), 1000)
     );
 }
 
-
-// Entry actions are the default actions
-
-export function deleteEntry(block, id) {
+export function deleteEntry(item, block, entry) {
     //delete entry
+    const itemIndex = findItemIndex(item);
+    const entryIndex = mockDatabase[mainIndex][itemIndex].findIndex(currentEntry => {
+        return currentEntry.id = entry.id && currentEntry.block === block;
+    });
+    mockDatabase[mainIndex][itemIndex].splice(entryIndex, 1);
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: id}), 1000)
+        setTimeout(() => resolve({data: {item, block, entry}}), 1000)
     );
 }
 
-export function updateEntry(block, entry) {
+export function updateEntry(item, block, entry) {
     //update entry
+    mockDatabase[mainIndex][itemIndex][entryIndex] = entry;
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: entry}), 1000)
+        setTimeout(() => resolve({data: {item, block, entry}}), 1000)
     );
 }
 
-export function createEntry(block, entry) {
+export function createEntry(item, block, entry) {
     //create entry
+    mockDatabase[mainIndex][item][block].push(entry);
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: entry}), 1000)
+        setTimeout(() => resolve({data: {item, block, newEntry}}), 1000)
     );
 }
 
-// Account actions are triggered by Generic actions
-// but only if action is triggered by Resources, Investments or Pension
-
-export function deleteAccount(id) {
-    //delete for all blocks
-    return new Promise((resolve) =>
-        setTimeout(() => resolve({data: id}), 1000)
-    );
-}
-
-export function updateAccount(id) {
-    //update group & title for all blocks
-    return new Promise((resolve) =>
-        setTimeout(() => resolve({data: id}), 1000)
-    );
-}
-
-export function createAccount(block, entry) {
-    //create for current and all previous blocks
-    return new Promise((resolve) =>
-        setTimeout(() => resolve({data: entry}), 1000)
-    );
-}
 
 
   
