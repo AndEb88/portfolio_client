@@ -1,47 +1,44 @@
-import mockDatabase from '../utils/mockDatabase';
+import mockAssets from '../utils/mockAssets';
 
 
-// API must update the datbase
-// reducers must update the store
-
-function findItemIndex(item) {
-    const itemIndex = content[2].items.find(currentItem => currentItem.route === item);
-    return itemIndex;
-}
+// API must update the datbase only
+// reducers must update the store only
 
 //trigger after each update?
 export function fetchAssests() {
     //return entire assets mockStore
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: mockDatabase[2]}), 1000)
+        setTimeout(() => resolve({data: mockAssets}), 1000)
     );
 }
 
-export function deleteEntry(item, block, entry) {
+export function deleteEntry(item, entry) {
     //delete entry
-    const itemIndex = findItemIndex(item);
-    const entryIndex = mockDatabase[mainIndex][itemIndex].findIndex(currentEntry => {
-        return currentEntry.id = entry.id && currentEntry.block === block;
+    const entryIndex = mockAssets[item].findIndex(currentEntry => {
+        return currentEntry.id === entry.id && currentEntry.block === entry.block;
     });
-    mockDatabase[mainIndex][itemIndex].splice(entryIndex, 1);
+    mockAssets[item].splice(entryIndex, 1);
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: {item, block, entry}}), 1000)
+        setTimeout(() => resolve({data: {item, entry}}), 1000)
     );
 }
 
-export function updateEntry(item, block, entry) {
+export function updateEntry(item, entry) {
     //update entry
-    mockDatabase[mainIndex][itemIndex][entryIndex] = entry;
+    const entryIndex = mockAssets[item].findIndex(currentEntry => {
+        return currentEntry.id === entry.id && currentEntry.block === entry.block;
+    });
+    mockAssets[item][entryIndex] = entry;
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: {item, block, entry}}), 1000)
+        setTimeout(() => resolve({data: {item, entry}}), 1000)
     );
 }
 
-export function createEntry(item, block, entry) {
+export function createEntry(item, entry) {
     //create entry
-    mockDatabase[mainIndex][item][block].push(entry);
+    mockAssets[item].push(entry);
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: {item, block, newEntry}}), 1000)
+        setTimeout(() => resolve({data: {item, entry}}), 1000)
     );
 }
 

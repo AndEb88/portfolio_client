@@ -117,7 +117,6 @@ const content = [
                 title: 'Expanses', 
                 edit: true, 
                 create: true, 
-                add: true,
                 groups: ['Income', 'Insurances', 'Housing', 'Subscriptions', 'Transport', 'Living'],
                 editForm: [
                     {name: 'group', title: 'Group', operator: '', type: 'group', unit: '', bold: true},
@@ -135,9 +134,9 @@ const content = [
             {
                 route: 'pension', 
                 title: 'Pension', 
+                year: 2055,
                 edit: true, 
                 create: true, 
-                add: true,
                 freeze: true,
                 editForm: [
                     {name: 'title', title: 'Title', operator: '', type: 'text', unit: '', margin: true, bold: true},

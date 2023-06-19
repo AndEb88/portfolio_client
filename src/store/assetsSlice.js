@@ -18,7 +18,7 @@ function findAvailableId(itemIndex, block, state) {
     .filter(currentEntry => currentEntry.block === block)
     .map(currentEntry => currentEntry.id).sort();
 
-  let expected = itemIndex * 1000;
+  let expected = 1;
 
   for (let i = 0; i < ids.length; i++) {
       expected++;
@@ -41,34 +41,34 @@ export const syncAssets = createAsyncThunk(
 
 export const deleteAssetsEntry = createAsyncThunk(
   'assets/deleteEntry',
-  async (itemIndex, item, block, entry) => {
-    const response = await deleteEntry(item, block, entry);
+  async (item, entry) => {
+    const response = await deleteEntry(item, entry);
     return response.data;
   }
 );
 
 export const updateAssetsEntry = createAsyncThunk(
   'assets/updateEntry',
-  async (itemIndex, item, block, entry) => {
-    const response = await updateEntry(item, block, entry);
+  async (item, entry) => {
+    const response = await updateEntry(item, entry);
     return response.data;
   }
 );
 
 export const createAssetsEntry = createAsyncThunk(
   'assets/createEntry',
-  async (itemIndex, item, block, entry, thunkAPI) => {
+  async (itemIndex, item, entry, thunkAPI) => {
     const state = thunkAPI.getState();
-    const newId = findAvailableId(itemIndex, block, state);
+    const newId = findAvailableId(itemIndex, entry.block, state);
     const newEntry = {...entry, id: newId}
-    const response = await createEntry(item, block, newEntry);
+    const response = await createEntry(item, newEntry);
     return response.data;
   }
 );
 
 export const deleteAssetsAccount = createAsyncThunk(
   'assets/deleteAccount',
-  async (itemIndex, item, block, entry, thunkAPI) => {
+  async (itemIndex, item, entry, thunkAPI) => {
     const state = thunkAPI.getState();
     const blocks = state[mainIndex][itemIndex]
       .filter(currentBlock => currentBlock.block !== 'overall')
@@ -80,7 +80,7 @@ export const deleteAssetsAccount = createAsyncThunk(
 
 export const updateAssetsAccount = createAsyncThunk(
   'assets/updateAccount',
-  async (itemIndex, item, block, entry, thunkAPI) => {
+  async (itemIndex, item, entry, thunkAPI) => {
     const state = thunkAPI.getState();
     const blocks = state[mainIndex][itemIndex]
       .filter(currentBlock => currentBlock.block !== 'overall')
@@ -92,10 +92,10 @@ export const updateAssetsAccount = createAsyncThunk(
 
 export const createAssetsAccount = createAsyncThunk(
   'assets/createAccount',
-  async (itemIndex, item, block, entry, thunkAPI) => {
+  async (itemIndex, item, entry, thunkAPI) => {
     const state = thunkAPI.getState();
     const blocks = state[mainIndex][itemIndex]
-      .filter(currentBlock => currentBlock.block !== 'overall' && Number(currentBlock.block) >= Number(block))
+      .filter(currentBlock => currentBlock.block !== 'overall' && Number(currentBlock.block) >= Number(entry.block))
       .map(currentBlock => currentBlock.block);       
     const response = await Promise.all(blocks.map(currentBlock => {
       const newId = findAvailableId(itemIndex, currentBlock, state);
@@ -108,9 +108,10 @@ export const createAssetsAccount = createAsyncThunk(
 
 
 export const counterSlice = createSlice({
-  name: 'counter',
+  name: 'assets',
   initialState,
   // calc data (keys outside entries) for each item  based on database
+  // and sort arrays (and blocks)
   reducers: {
     setBlocks: (state) => {
       state.value += 1;
