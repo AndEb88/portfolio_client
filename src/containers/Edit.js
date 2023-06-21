@@ -12,13 +12,11 @@ function Edit() {
     // add validated flag that recalculates and enables save for Investments (and Pensions?)
     // freeze sets lastUpdate to 31.12.
 
-    const [mainIndex, itemIndex, form] = useOutletContext();
+    const [mainIndex, itemIndex, main, item, form] = useOutletContext();
     const {block, id} = useParams();
     
     
-    let entry = mockStore[mainIndex][itemIndex]
-        .find(currentBlock => currentBlock.block === block)
-        .entries.find(currentEntry => currentEntry.id == id);
+    let entry = mockStore[main][item][block].entries.find(currentEntry => currentEntry.id == id);
 
     const [formData, setFormData] = useState(entry);
 
@@ -69,7 +67,7 @@ function Edit() {
                                     </select>)}
                                 {formEntry.type === 'account' && (
                                     <select name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}>
-                                        {mockStore[2][2].find(currentBlock => currentBlock.block === block).entries.sort((a, b) => a.title.localeCompare(b.title)).map(entry => 
+                                        {mockStore.assets.investments.overall.entries.sort((a, b) => a.title.localeCompare(b.title)).map(entry => 
                                             <option key={entry.id}value={entry.title} selected={(entry.title === formData[formEntry.name]) ? true : false}>
                                                 {entry.title}
                                             </option>

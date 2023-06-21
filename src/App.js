@@ -14,7 +14,7 @@ function App() {
 
   const mainIndex = main ? content.findIndex(currentMain => currentMain.route === main) : -1;
   const itemIndex = item ? content[mainIndex].items.findIndex(currentItem => currentItem.route === item) : -1;
-  const blockList = item ? mockStore[mainIndex][itemIndex].map(currentBlock => currentBlock.block) : [];
+  const blockList = item ? Object.keys(mockStore[main][item]) : []; //requires sort? 'overall' would be at last index
 
   const [block, setBlock] = useState({
     value: '', 

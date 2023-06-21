@@ -62,7 +62,7 @@ function Create() {
                                         <option disabled selected value=''>
                                             Select...
                                         </option>
-                                        {mockStore[2][2].find(currentBlock => currentBlock.block === block).entries.sort((a, b) => a.title.localeCompare(b.title)).map(entry => (
+                                        {mockStore.assets.investments.overall.entries.sort((a, b) => a.title.localeCompare(b.title)).map(entry => (
                                         <option key={entry.id} value={entry.title}>
                                             {entry.title}
                                         </option>

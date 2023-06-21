@@ -7,11 +7,13 @@ const initialState = {}; //declare initial state mockDatabase
 // 2. DONE - code API calls that access the database (for now just access a mockStore declared with 'let')
 // 3. DONE - add timer for debugging purpose (in order to check if pending and rejected case work)
 // 4. DONE - refactor state to nested objects (instead of arrays?) main -> item -> block -> calcValues & entries array
-// 5. Rename newMockStore to mockStore and refactor existing code to treat keys instead of indexes
-// 6. reducers shall update the store
-// 7. extra reducers shall call reducers accordingly
-// (after initial fetch and any update, also the corresponding dynamic data (that doesn't rely on db) require reducers to update)
-// 8. if a value is not defined, what will the db return? how to handle it on client side?
+// 5. Rename newMockStore to mockStore and refactor existing code to treat keys instead of indexes AND remove mainIndex, itemIndex(?) AND replace block.value by block?
+// 6. reducers shall map the db data and...
+// 7. ...complement values that are not stored in db (like openingBalance)
+// 8. ...replace NULL values with 0 or '' (or provide data at create and update right away?)
+// 9. ...calculate accumulated values for blocks
+// 10. ...calculate overall blocks
+// 11. ...calculate overview item
 
 const main = 'assets';
 

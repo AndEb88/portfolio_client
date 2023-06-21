@@ -14,7 +14,7 @@ function Display() {
     const disableLink = (itemIndex === 0);
     
     //if current year is not found, it has to be created!
-    const itemBlock = mockStore[mainIndex][itemIndex][block.index];
+    const itemBlock = mockStore[main][item][block.value];
 
     let itemComponent = (<h1>no item data available</h1>);
     let sumComponent = (<h1>no sum data available</h1>);
