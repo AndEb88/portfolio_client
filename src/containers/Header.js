@@ -2,11 +2,11 @@ import {NavLink} from 'react-router-dom';
 
 import {deleteIcon, arrowBackIcon, addIcon} from '../icons/svgIcons';
 import mainIcon from '../icons/main.png';
-import Block from './Block';
+import Blocks from './Blocks';
 import content from '../utils/content';
 
 
-function Header({mainIndex, itemIndex, main, item, form, block, toggleBlockLeft, toggleBlockRight}) {
+function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlockLeft, toggleBlockRight}) {
 
     const contentMain = content[mainIndex];
     const contentItem = contentMain ? contentMain.items[itemIndex] : undefined;
@@ -26,7 +26,7 @@ function Header({mainIndex, itemIndex, main, item, form, block, toggleBlockLeft,
     ));
 
     const createComponent = (
-        <NavLink to={'/' + main + '/' + item + '/create/' + block.value}> 
+        <NavLink to={'/' + main + '/' + item + '/create/' + blocks.value}> 
             {addIcon}        
         </NavLink>
     );
@@ -71,10 +71,10 @@ function Header({mainIndex, itemIndex, main, item, form, block, toggleBlockLeft,
                     <NavLink to={'/' + main}>
                         {backComponent(contentItem.title)}      
                     </NavLink>
-                    {contentItem.create && block.value !== 'overall' && createComponent}
+                    {contentItem.create && blocks.value !== 'overall' && createComponent}
                 </div>                        
                 <div className='col-4 d-flex text-center'>
-                    <Block block={block} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/>
+                    <Blocks blocks={blocks} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/>
                 </div>
         </>
         );
@@ -90,7 +90,7 @@ function Header({mainIndex, itemIndex, main, item, form, block, toggleBlockLeft,
                     </NavLink>
                 </div>
                 <div className='col-4 d-flex align-items-center justify-content-center'>
-                    <h2>{block.value}</h2>
+                    <h2>{blocks.value}</h2>
                 </div>                        
             </>
         );

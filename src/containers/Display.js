@@ -10,11 +10,11 @@ import {sumIcon} from '../icons/svgIcons';
 function Display() {
 
     const [mainIndex, itemIndex, main, item, form, block] = useOutletContext();
-    const editPath = 'edit/' + block.value + '/';
+    const editPath = 'edit/' + block + '/';
     const disableLink = (itemIndex === 0);
     
     //if current year is not found, it has to be created!
-    const itemBlock = mockStore[main][item][block.value];
+    const itemBlock = mockStore[main][item][block];
 
     let itemComponent = (<h1>no item data available</h1>);
     let sumComponent = (<h1>no sum data available</h1>);

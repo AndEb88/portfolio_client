@@ -14,35 +14,36 @@ function App() {
 
   const mainIndex = main ? content.findIndex(currentMain => currentMain.route === main) : -1;
   const itemIndex = item ? content[mainIndex].items.findIndex(currentItem => currentItem.route === item) : -1;
-  const blockList = item ? Object.keys(mockStore[main][item]) : []; //requires sort? 'overall' would be at last index
+  let blockList = item ? Object.keys(mockStore[main][item]).sort() : [];
 
-  const [block, setBlock] = useState({
+  const [blocks, setBlocks] = useState({
     value: '', 
     index: 0,
     max: 0,
     list: []
   });
   
-  if(blockList && JSON.stringify(blockList) !== JSON.stringify(block.list)){
-    if (blockList[0] === 'overall') {
-      setBlock({
-        value: blockList[1],
-        index: 1,
-        max: blockList.length - 1,
+  if(blockList && JSON.stringify(blockList) !== JSON.stringify(blocks.list)){
+    const last = blockList.length - 1;
+    if (blockList[last] === 'overall') {
+      setBlocks({
+        value: blockList[last - 1],
+        index: last - 1,
+        max: last,
         list: blockList
       });
     } else {
-      setBlock({
-        value: blockList[0],
-        index: 0,
-        max: blockList.length - 1,
+      setBlocks({
+        value: blockList[last],
+        index: last,
+        max: last,
         list: blockList
       });
     }
   };
 
   const toggleBlockLeft = () => {
-      setBlock(prevBlock => {
+      setBlocks(prevBlock => {
           const newIndex = prevBlock.index - 1;
           return {
               ...prevBlock,
@@ -53,7 +54,7 @@ function App() {
   };
 
   const toggleBlockRight = () => {
-      setBlock(prevBlock => {
+      setBlocks(prevBlock => {
           const newIndex = prevBlock.index + 1;
           return {
               ...prevBlock,
@@ -65,8 +66,19 @@ function App() {
 
   return (
     <>
-      <Header mainIndex={mainIndex} itemIndex={itemIndex} main={main} item={item} form={form} block={block} toggleBlockLeft={toggleBlockLeft} toggleBlockRight={toggleBlockRight}/>   
-      <Outlet context={[mainIndex, itemIndex, main, item, form, block]}/>
+      <Header 
+        mainIndex={mainIndex} 
+        itemIndex={itemIndex} 
+        main={main} 
+        item={item} 
+        form={form} 
+        blocks={blocks} 
+        toggleBlockLeft={toggleBlockLeft} 
+        toggleBlockRight={toggleBlockRight}
+      />   
+      <Outlet
+        context={[mainIndex, itemIndex, main, item, form, blocks.value]}
+      />
       <Navigator/>
     </>
   );
