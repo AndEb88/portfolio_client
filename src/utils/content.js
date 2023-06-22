@@ -57,7 +57,10 @@ const content = [
                 editForm: [
                     {name: 'group', title: 'Group', operator: '', type: 'group', unit: '', bold: true},
                     {name: 'title', title: 'Title', operator: '', type: 'text', unit: '', bold: true, margin: true},
-                    {name: 'closingBalance', title: 'Closing Balance', operator: '', type: 'number', unit: '€', margin: true},
+                    {name: 'closingBalance', title: 'Closing Balance', operator: '', type: 'number', unit: '€'},
+                    {name: 'openingBalance', title: 'Opening Balance', operator: '-', type: 'display', unit: '€'},
+                    {name: 'difference', title: 'Difference', operator: '=', type: 'display', unit: '€', margin: true, accent: true},
+
                 ],
                 createForm: [
                     {name: 'group', title: 'Group', operator: '', type: 'group', unit: '', bold: true},

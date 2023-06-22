@@ -254,20 +254,20 @@ let mockStore = {
             '2023': {
                 closingBalance: -5000,
                 entries: [
-                    {id: 1, group: 'Cash', title: 'DKB Checking', frozen: false, closingBalance: 5000.00},
-                    {id: 2, group: 'Cash', title: 'DKB Savings', frozen: false, closingBalance: 10000.00},
-                    {id: 3, group: 'Liabilities', title: 'Family', frozen: false, closingBalance: -10000.00},
-                    {id: 4, group: 'Liabilities', title: 'Mariana', frozen: false, closingBalance: -10000.00}
+                    {id: 1, group: 'Cash', title: 'DKB Checking', frozen: false, closingBalance: 5000.00, openingBalance: 1, difference: 2},
+                    {id: 2, group: 'Cash', title: 'DKB Savings', frozen: false, closingBalance: 10000.00, openingBalance: 1, difference: 2},
+                    {id: 3, group: 'Liabilities', title: 'Family', frozen: false, closingBalance: -10000.00, openingBalance: 1, difference: 2},
+                    {id: 4, group: 'Liabilities', title: 'Mariana', frozen: false, closingBalance: -10000.00, openingBalance: 1, difference: 2}
                 ]
             },
             
             '2022': {
                 closingBalance: -500,
                 entries: [
-                    {id: 1, group: 'Cash', title: 'DKB Checking', frozen: true, closingBalance: 500.00},
-                    {id: 2, group: 'Cash', title: 'DKB Savings', frozen: true, closingBalance: 1000.00},
-                    {id: 3, group: 'Liabilities', title: 'Family', frozen: true, closingBalance: -1000.00},
-                    {id: 4, group: 'Liabilities', title: 'Mariana', frozen: true, closingBalance: -1000.00}
+                    {id: 1, group: 'Cash', title: 'DKB Checking', frozen: true, closingBalance: 500.00, openingBalance: 1, difference: 2},
+                    {id: 2, group: 'Cash', title: 'DKB Savings', frozen: true, closingBalance: 1000.00, openingBalance: 1, difference: 2},
+                    {id: 3, group: 'Liabilities', title: 'Family', frozen: true, closingBalance: -1000.00, openingBalance: 1, difference: 2},
+                    {id: 4, group: 'Liabilities', title: 'Mariana', frozen: true, closingBalance: -1000.00, openingBalance: 1, difference: 2}
                 ]
             },
         },

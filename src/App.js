@@ -15,6 +15,7 @@ function App() {
   const mainIndex = main ? content.findIndex(currentMain => currentMain.route === main) : -1;
   const itemIndex = item ? content[mainIndex].items.findIndex(currentItem => currentItem.route === item) : -1;
   let blockList = item ? Object.keys(mockStore[main][item]).sort() : [];
+  //sort will be handled when fetching data form database - not required here anymore!
 
   const [blocks, setBlocks] = useState({
     value: '', 
