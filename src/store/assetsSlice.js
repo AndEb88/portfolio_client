@@ -24,25 +24,32 @@ const initialState = {}; //declare initial state mockDatabase
 
 const main = 'assets';
 
-function getAvailableId(item, block, state) {
- 
+function getAvailableId(item, block, state) { 
   const ids = state[main][item][block].entries
     .map(currentEntry => currentEntry.id).sort();
-
   let expected = 0;
-
   for (let i = 0; i < ids.length; i++) {
       expected++;
-      if (ids[i] !== expected) {
-        return expected;
-      }
+      if (ids[i] !== expected) {return expected;}
   }
   return ids.length;
 }
 
+function populateItem(entries) {
+  const item = entries.reduce((block, entry) => { 
+    const group = entry.group;
+    if (!block[group]) {
+      block[group] = {entries: []};
+    }
+    block[group].entries.push(entry);
+    return block;
+  }, {});
+  return item;
+}
+
 
 export const syncAssets = createAsyncThunk(
-  'assets/fetchAssests',
+  'assets/syncAssests',
   async ({}, thunkAPI) => {
 
     const response = await fetchAssests();
@@ -62,7 +69,7 @@ export const syncAssets = createAsyncThunk(
 );
 
 export const syncItem = createAsyncThunk(
-  'assets/fetchItem',
+  'assets/syncItem',
   async ({}, thunkAPI) => {
 
     const response = await fetchItem(item);
@@ -92,25 +99,6 @@ export const syncItem = createAsyncThunk(
   }
 );
 
-export const addNewYear = createAsyncThunk(
-  'assets/addNewyear',
-  async ({year}, thunkAPI) => {
-    const state = thunkAPI.getState();
-    const lastYear = toString(Number(year) - 1);
-    // take over id, group, title
-    // closingBalance = new openingBalance / amount & ROI = new amount & ROI
-    // const response = await createYear('resources', state.resources);
-    // const response = await createYear('investments', state.resources);
-    // const response = await createYear('pension', state.resources);
-
-    thunkAPI.dispatch(syncItem('resources'));
-    thunkAPI.dispatch(syncItem('investments'));
-    thunkAPI.dispatch(syncItem('pensions'));
-    return response.data; 
-    //returns {item, entry}
-  }
-);
-
 export const deleteAssetsEntry = createAsyncThunk(
   'assets/deleteEntry',
   async ({item, entry}, thunkAPI) => {
@@ -118,6 +106,10 @@ export const deleteAssetsEntry = createAsyncThunk(
     const response = await deleteEntry(item, entry);
 
     thunkAPI.dispatch(syncItem(item));
+    if(item ==='transfers') {
+      thunkAPI.dispatch(counterSlice.actions.calcResources());
+      thunkAPI.dispatch(counterSlice.actions.calcOverview());
+    }
     return response.data; 
     //returns {item, entry}
   }
@@ -129,7 +121,11 @@ export const updateAssetsEntry = createAsyncThunk(
 
     const response = await updateEntry(item, entry);
 
-    thunkAPI.dispatch(syncItem(item)); 
+    thunkAPI.dispatch(syncItem(item));
+    if(item ==='transfers') {
+      thunkAPI.dispatch(counterSlice.actions.calcResources());
+      thunkAPI.dispatch(counterSlice.actions.calcOverview());
+    }
     return response.data; 
     //returns {item, entry}
   }
@@ -145,6 +141,10 @@ export const createAssetsEntry = createAsyncThunk(
     const response = await createEntry(item, newEntry);
 
     thunkAPI.dispatch(syncItem(item));
+    if(item ==='transfers') {
+      thunkAPI.dispatch(counterSlice.actions.calcResources());
+      thunkAPI.dispatch(counterSlice.actions.calcOverview());
+    }
     return response.data; 
     //returns {item, entry}
   }
@@ -163,12 +163,12 @@ export const deleteAssetsAccount = createAsyncThunk(
     thunkAPI.dispatch(syncItem(item));   
     if(item === 'investments') thunkAPI.dispatch(syncItem('transfers'));
     return responses.map(currentResponse => currentResponse.data); 
-    // returns [{item: 'resources', entries: []}]
+    //returns [{item: 'resources', entries: []}]
     // ...or [{item: 'investments', entries: []}, {item: 'transfers', entries: []}]
   }
 );
 
-//only for 'investments' and 'assets' item
+//only for 'investments', 'assets' and 'pension' item
 //if 'group' or 'title' changed, update all entries (in case of 'investments' also in 'transfers')
 //then update the actual entry
 export const updateAssetsAccount = createAsyncThunk(
@@ -198,9 +198,8 @@ export const updateAssetsAccount = createAsyncThunk(
   }
 );
 
-//only for 'investments' and 'assets' item
-//create empty entries for all blocks
-//then update the actual entry
+//only for 'investments', 'assets' and 'pension' item
+//create empty entry plus the passed entry for all blocks 
 export const createAssetsAccount = createAsyncThunk( 
   'assets/createAccount',
   async ({item, entry}, thunkAPI) => {
@@ -208,40 +207,89 @@ export const createAssetsAccount = createAsyncThunk(
     const newId = getAvailableId(item, entry.block, state);
     const newEntry = {...entry, id: newId};
     const emptyEntry = {id: entry.id, group: entry.group, title: entry.title};
+    const newEntries = Object.keys(state[item]).map(currentBlock => {
+      if (currentBlock === newEntry.block) {
+        return newEntry;
+      } else {
+        return {...emptyEntry, block: currentBlock};
+      }
+    })
 
-    let responses = [await createEntries(item, emptyEntry)];
-    responses.push(await updateEntry(item, newEntry));
+    let responses = [await createEntries(item, newEntries)];
 
     thunkAPI.dispatch(syncItem(item));   
     return responses.map(currentResponse => currentResponse.data); 
-    // returns [{item, entries: []}, {item, entry}]
+    // returns [{item, entries: []}]
   }
 );
 
+//only for 'investments', 'assets' and 'pension' item
+//create empty entries for new block
+export const addNewYear = createAsyncThunk(
+  'assets/addNewyear',
+  async ({newYear}, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const lastYear = toString(Number(year) - 1);
+    // take over id, group, title
+    // closingBalance = new openingBalance / amount & ROI = new amount & ROI
+    const resourcesEntries = state.resources[lastYear].entries.map(currentEntry => {
+      return {
+        block: newYear, 
+        id: currentEntry.id, 
+        group: currentEntry.group, 
+        title: currentEntry.title, 
+        openingBalance: currentEntry.closingBalance,
+        closingBalance: currentEntry.closingBalance,
+      };
+    });
+    const investmentsEntries = state.investments[lastYear].entries.map(currentEntry => {
+      return {
+        block: newYear, 
+        id: currentEntry.id, 
+        group: currentEntry.group, 
+        title: currentEntry.title, 
+        openingBalance: currentEntry.closingBalance,
+        closingBalance: currentEntry.closingBalance,
+      };
+    });
+    const pensionEntries = state.pension[lastYear].entries.map(currentEntry => {
+      return {
+        block: newYear, 
+        id: currentEntry.id,
+        group: currentEntry.group, 
+        title: currentEntry.title, 
+        ROI: currentEntry.ROI,
+      };
+    });
+    const promises = [createBlock('resources', resourcesEntries),createBlock('investments', investmentsEntries), createBlock('pension', pensionEntries)];
+    
+    const responses = await Promise.all(promises);
 
+    thunkAPI.dispatch(syncItem('resources'));
+    thunkAPI.dispatch(syncItem('investments'));
+    thunkAPI.dispatch(syncItem('pensions'));
+    return responses.map(currentResponse => currentResponse.data); 
+    //returns [{item: 'resources', entries: []}, {item: 'investments', entries: []}, {item: 'pension', entries: []}]
+  }
+);
+
+//sort accordingly in the calc functions
 export const counterSlice = createSlice({
   name: 'assets',
   initialState,
-  // calc data (keys outside entries) for each item  based on database
-  // and sort arrays (and blocks)
   reducers: {
     setAssets: (state, action) => {
       const items = Object.keys(action.payload.assets);
       items.map(currentItem => {
-        state[currentItem] = action.payload.assets[currentItem].reduce((block, entry) => { //sort before assigning? place in separate function?
-          const group = entry.group;
-          if (!block[group]) {
-            block[group] = {entries: []};
-          }
-          block[group].entries.push(entry);
-          return block;
-        }, {});
+        const entries = action.payload.assets[currentItem];
+        state[currentItem] = populateItem(entries);
       });
     },
 
     setItem: (state, action) => {
       const item = action.payload.item;
-      //continue here...      
+      const entries = action.payload.entries;
+      state[item] = populateItem(entries);    
     },
 
     calcOverview: (state) => {
@@ -249,10 +297,30 @@ export const counterSlice = createSlice({
 
     },
     calcResources: (state) => {
-      state.resources = {};
-      //remove 'group' key from state entries
-      //also set update openingBalance with new closingBalance
+      const blocks = Object.keys(state.resources).sort().reverse();
+      //add closingBalance for block
+      blocks.map(currentBlock => {
+        state.resources[currentBlock].closingBalance = state.resources[currentBlock].entries.reduce((blockClosingBalance, entry) => {
+          return blockClosingBalance + entry.closingBalance;
+        }, 0);
+      });
+      //add openingBalance and and difference for all entries
+      let closingBalances = {};
+      state.resources[blocks[0]].entries.map(currentEntry => {
+        closingBalances[currentEntry.id] = 0;
+      });
+      for (let i = blocks.length - 1; i >= 0; i--){
+        state.resources[blocks[i]].entries.map((currentEntry, currentIndex) => {
+          state.resources[blocks[i]].entries[currentIndex].openingBalance = {
+            ...currentEntry,
+            openingBalance: closingBalances[currentEntry.id],
+            difference: currentEntry.closingBalance - closingBalances[currentEntry.id],
+          }
+          closingBalances[currentEntry.id] = currentEntry.closingBalance;
+        })
+      }
     },
+    //continue here
     calcInvestments: (state) => {
       state.investments = {};
       //remove 'group' key from state entries

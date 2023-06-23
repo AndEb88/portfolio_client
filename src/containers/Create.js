@@ -10,6 +10,7 @@ function Create() {
 
     // add onChange for each specific input type and update accordingly
     // do I need to declare keys that are not set here? e.g. 'netProfit' would be undefined and could cause issues in Display(?)
+    // on submit, pass entries as required in database (incl. block!)
 
     const [mainIndex, itemIndex, form] = useOutletContext();
     const {block} = useParams();

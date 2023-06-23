@@ -15,7 +15,9 @@ const accountIcons = [
     {title: 'Scalable Capital', source: scalableCapitalIcon},
     {title: 'Liabilities', source: liabilitiesIcon},
     {title: 'Cash', source: cashIcon},
-    {title: 'Pension', source: pensionIcon},
+    {title: 'Private', source: pensionIcon},
+    {title: 'Public', source: pensionIcon},
+    {title: 'Employer', source: pensionIcon},
 ]
 
 export default accountIcons;

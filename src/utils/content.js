@@ -141,13 +141,16 @@ const content = [
                 edit: true, 
                 create: true, 
                 freeze: true,
+                groups: ['Private', 'Public', 'Employer'],
                 editForm: [
+                    {name: 'group', title: 'Group', operator: '', type: 'group', unit: '', bold: true},
                     {name: 'title', title: 'Title', operator: '', type: 'text', unit: '', margin: true, bold: true},
                     {name: 'amount', title: 'Guaranteed Amount', operator: '', type: 'text', unit: '€'},                    
                     {name: 'expected', title: 'Expected Amount', operator: '', type: 'text', unit: '€'},
                     {name: 'ROI', title: 'Expected Growth', operator: '', type: 'text', unit: '%', margin: true},
                 ],
                 createForm: [
+                    {name: 'group', title: 'Group', operator: '', type: 'group', unit: '', bold: true},
                     {name: 'title', title: 'Title', operator: '', type: 'text', unit: '', margin: true, bold: true},
                     {name: 'amount', title: 'Guaranteed Amount', operator: '', type: 'text', unit: '€'},                    
                     {name: 'expected', title: 'Expected Amount', operator: '', type: 'text', unit: '€'},

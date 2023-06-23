@@ -11,6 +11,7 @@ function Edit() {
     // add delete flag that enables delete after first press
     // add validated flag that recalculates and enables save for Investments (and Pensions?)
     // freeze sets lastUpdate to 31.12.
+    // on submit, pass entries as required in database (incl. block but without dynamic data, like netProfit!)
 
     const [mainIndex, itemIndex, main, item, form] = useOutletContext();
     const {block, id} = useParams();

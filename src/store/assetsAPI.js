@@ -1,9 +1,10 @@
 import mockAssets from '../utils/mockAssets';
 
 
-// API must update the datbase only
-// reducers must update the store only
-// 'mockAssets' is structured by 'item' keys containing and arrays of entrie
+//API must update the datbase only
+//reducers must update the store only
+//'mockAssets' is structured by 'item' keys containing and arrays of entries
+//destructure entries and pass only keys that are stored in database 
 
 export function fetchAssests() {
     //return entire assets mockStore
@@ -80,17 +81,21 @@ export function createEntry(item, entry) {
     );
 }
 
-export function createEntries(item, entry) {
+export function createEntries(item, entries) {
     //create entries (block, id, group and title only) for all blocks
-    const blocks =  [...new Set(mockAssets[item].map(currentEntry => currentEntry.id))];
-    const createdEntries = blocks.map(currentBlock => {
-        const newEntry = {block: currentBlock, id: entry.id, group: entry.group, title: entry.title};
-        mockAssets[item].push(newEntry);
-        return newEntry;
-      });
+    mockAssets[item].push(...entries);
       
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: {item, entries: createdEntries}}), 1000)
+        setTimeout(() => resolve({data: {item, entries}}), 1000)
+    );
+}
+
+export function createBlock(item, entries) {
+    //create entries (block, id, group and title only) for all blocks
+    mockAssets[item].push(...entries);
+      
+    return new Promise((resolve) =>
+        setTimeout(() => resolve({data: {item, entries}}), 1000)
     );
 }
 
