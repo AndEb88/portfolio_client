@@ -9,7 +9,7 @@ import mockAssets from '../utils/mockAssets';
 export function fetchAssests() {
     //return entire assets mockStore
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: {assets}}), 1000)
+        setTimeout(() => resolve({data: {mockAssets}}), 1000)
     );
 }
 

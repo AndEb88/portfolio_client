@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {fetchAssests, deleteEntry, deleteEntries, updateEntry, updateEntries, createEntry, createEntries} from './assetsAPI';
+import {fetchAssests, fetchItem, deleteEntry, deleteEntries, updateEntry, updateEntries, createEntry, createEntries, createBlock} from './assetsAPI';
 
 import content from '../utils/content';
 
@@ -55,18 +55,19 @@ function getDaysPassed(date) {
 
 function populateItem(entries) {
   const item = entries.reduce((block, entry) => { 
-    const group = entry.group;
-    if (!block[group]) {
-      block[group] = {entries: []};
+    const blockKey = entry.block;
+    if (!block[blockKey]) {
+      block[blockKey] = {entries: []};
     }
-    block[group].entries.push(entry);
+    block[blockKey].entries.push(entry);
     return block;
   }, {});
+  console.log(Object.keys(item));
   return item;
 }
 
 
-export const syncAssets = createAsyncThunk(
+const syncAssets = createAsyncThunk(
   'assets/syncAssests',
   async ({}, thunkAPI) => {
 
@@ -74,42 +75,45 @@ export const syncAssets = createAsyncThunk(
 
     //const json = await response.json(); returns response.data directly
     //required for JSON responses from database (?!?)    
-    thunkAPI.dispatch(counterSlice.actions.setAssets(response.data));
-    thunkAPI.dispatch(counterSlice.actions.calcResources());
-    thunkAPI.dispatch(counterSlice.actions.calcInvestments());
-    thunkAPI.dispatch(counterSlice.actions.calcTransfers());
-    thunkAPI.dispatch(counterSlice.actions.calcExpanses());
-    thunkAPI.dispatch(counterSlice.actions.calcPension());
-    thunkAPI.dispatch(counterSlice.actions.calcOverview());
+    thunkAPI.dispatch(assetsSlice.actions.setAssets(response.data));
+    thunkAPI.dispatch(assetsSlice.actions.calcResources());
+    thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
+    thunkAPI.dispatch(assetsSlice.actions.calcTransfers());
+    thunkAPI.dispatch(assetsSlice.actions.calcExpanses());
+    thunkAPI.dispatch(assetsSlice.actions.calcPension());
+    thunkAPI.dispatch(assetsSlice.actions.calcOverview());
     return response.data; 
     //returns {assets}
   }
 );
 
-export const syncItem = createAsyncThunk(
+const syncItem = createAsyncThunk(
   'assets/syncItem',
-  async ({}, thunkAPI) => {
+  async ({item}, thunkAPI) => {
+    console.log(`syncItem thunk dispatched with ${item}`);
 
     const response = await fetchItem(item);
     
-    thunkAPI.dispatch(counterSlice.actions.setItem(response.data));
+    thunkAPI.dispatch(assetsSlice.actions.setItem(response.data));
     switch (item){
       case 'resources':
-        thunkAPI.dispatch(counterSlice.actions.calcResources());
-        thunkAPI.dispatch(counterSlice.actions.calcOverview());
+        console.log('syncing resources');
+
+        thunkAPI.dispatch(assetsSlice.actions.calcResources());
+        thunkAPI.dispatch(assetsSlice.actions.calcOverview());
         break;
       case 'investments':
-        thunkAPI.dispatch(counterSlice.actions.calcInvestments());
-        thunkAPI.dispatch(counterSlice.actions.calcOverview());
+        thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
+        thunkAPI.dispatch(assetsSlice.actions.calcOverview());
         break;
       case 'transfers':
-        thunkAPI.dispatch(counterSlice.actions.calcTransfers());
+        thunkAPI.dispatch(assetsSlice.actions.calcTransfers());
         break;
       case 'expanses':
-        thunkAPI.dispatch(counterSlice.actions.calcExpanses());
+        thunkAPI.dispatch(assetsSlice.actions.calcExpanses());
         break;
       case 'pension':
-        thunkAPI.dispatch(counterSlice.actions.calcPension());
+        thunkAPI.dispatch(assetsSlice.actions.calcPension());
         break;      
     }
     return response.data; 
@@ -117,7 +121,7 @@ export const syncItem = createAsyncThunk(
   }
 );
 
-export const deleteAssetsEntry = createAsyncThunk(
+const deleteAssetsEntry = createAsyncThunk(
   'assets/deleteEntry',
   async ({item, entry}, thunkAPI) => {
 
@@ -125,15 +129,15 @@ export const deleteAssetsEntry = createAsyncThunk(
 
     thunkAPI.dispatch(syncItem(item));
     if(item ==='transfers') {
-      thunkAPI.dispatch(counterSlice.actions.calcResources());
-      thunkAPI.dispatch(counterSlice.actions.calcOverview());
+      thunkAPI.dispatch(assetsSlice.actions.calcResources());
+      thunkAPI.dispatch(assetsSlice.actions.calcOverview());
     }
     return response.data; 
     //returns {item, entry}
   }
 );
 
-export const updateAssetsEntry = createAsyncThunk(
+const updateAssetsEntry = createAsyncThunk(
   'assets/updateEntry',
   async ({item, entry}, thunkAPI) => {
 
@@ -141,15 +145,15 @@ export const updateAssetsEntry = createAsyncThunk(
 
     thunkAPI.dispatch(syncItem(item));
     if(item ==='transfers') {
-      thunkAPI.dispatch(counterSlice.actions.calcInvestments());
-      thunkAPI.dispatch(counterSlice.actions.calcOverview());
+      thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
+      thunkAPI.dispatch(assetsSlice.actions.calcOverview());
     }
     return response.data; 
     //returns {item, entry}
   }
 );
 
-export const createAssetsEntry = createAsyncThunk(
+const createAssetsEntry = createAsyncThunk(
   'assets/createEntry',
   async ({item, entry}, thunkAPI) => {
     const state = thunkAPI.getState();
@@ -160,8 +164,8 @@ export const createAssetsEntry = createAsyncThunk(
 
     thunkAPI.dispatch(syncItem(item));
     if(item ==='transfers') {
-      thunkAPI.dispatch(counterSlice.actions.calcInvestments());
-      thunkAPI.dispatch(counterSlice.actions.calcOverview());
+      thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
+      thunkAPI.dispatch(assetsSlice.actions.calcOverview());
     }
     return response.data; 
     //returns {item, entry}
@@ -170,7 +174,7 @@ export const createAssetsEntry = createAsyncThunk(
 
 //only for 'investments', 'assets' and 'pension' item
 //delete all entries (in case of 'investments' also in 'transfers')
-export const deleteAssetsAccount = createAsyncThunk(
+const deleteAssetsAccount = createAsyncThunk(
   'assets/deleteAccount',
   async ({item, entry}, thunkAPI) => { 
     let promises = [deleteEntries(item, entry)];
@@ -189,10 +193,11 @@ export const deleteAssetsAccount = createAsyncThunk(
 //only for 'investments', 'assets' and 'pension' item
 //if 'group' or 'title' changed, update all entries (in case of 'investments' also in 'transfers')
 //then update the actual entry
-export const updateAssetsAccount = createAsyncThunk(
+const updateAssetsAccount = createAsyncThunk(
   'assets/updateAccount',
   async ({item, entry}, thunkAPI) => {
-    const prevEntry = mockStore[main][item].entries[entry.block].find(currentEntry => currentEntry.id === entry.id);
+    const state = thunkAPI.getState();
+    const prevEntry = state[item].entries[entry.block].find(currentEntry => currentEntry.id === entry.id);
 
     if(prevEntry.group !== entry.group || prevEntry.title !== entry.title){
       let promises = [updateEntries(item, entry)];
@@ -218,7 +223,7 @@ export const updateAssetsAccount = createAsyncThunk(
 
 //only for 'investments', 'assets' and 'pension' item
 //create empty entry plus the passed entry for all blocks 
-export const createAssetsAccount = createAsyncThunk( 
+const createAssetsAccount = createAsyncThunk( 
   'assets/createAccount',
   async ({item, entry}, thunkAPI) => {
     const state = thunkAPI.getState();
@@ -243,11 +248,11 @@ export const createAssetsAccount = createAsyncThunk(
 
 //only for 'investments', 'assets' and 'pension' item
 //create empty entries for new block
-export const addNewYear = createAsyncThunk(
+const addNewYear = createAsyncThunk(
   'assets/addNewyear',
   async ({newYear}, thunkAPI) => {
     const state = thunkAPI.getState();
-    const lastYear = toString(Number(year) - 1);
+    const lastYear = toString(Number(newYear) - 1);
     // take over id, group, title
     // closingBalance = new openingBalance / amount & ROI = new amount & ROI
     const resourcesEntries = state.resources[lastYear].entries.map(currentEntry => {
@@ -307,6 +312,7 @@ export const assetsSlice = createSlice({
     setItem: (state, action) => {
       const item = action.payload.item;
       const entries = action.payload.entries;
+      console.log(`setItem reducer dispatched with ${item} and ${entries}`);
       state[item] = populateItem(entries);    
     },
 
@@ -316,6 +322,7 @@ export const assetsSlice = createSlice({
     },
 
     calcResources: (state) => {
+      console.log('calcResources reducer dispatched');
       const blocks = Object.keys(state.resources).sort();
       //complement all entries
       let closingBalances = {};
@@ -506,11 +513,11 @@ export const assetsSlice = createSlice({
   },
 });
 
-export const {increment, decrement, incrementByAmount} = counterSlice.actions; //export actions defined in 'reducers' for usage in app
+// export const {increment, decrement, incrementByAmount} = counterSlice.actions; //export actions defined in 'reducers' for usage in app
 
 export {syncAssets, syncItem}; //export thunks for usage in app
 
-export const selectItem = (state, item) => state.asstes[item]; //declare and export selector which returns (altered) state for usage in app
+export const selectAssetsItem = (state, item) => state.assets[item]; //declare and export selector which returns (altered) state for usage in app
 
 export default assetsSlice.reducer; //export slice for setting up store
 

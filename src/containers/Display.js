@@ -6,6 +6,7 @@ import mockStore from '../utils/mockStore';
 import accountIcons from '../icons/accountIcons'
 import content from '../utils/content';
 import {sumIcon} from '../icons/svgIcons';
+import {syncAssets, syncItem, selectAssetsItem} from '../store/assetsSlice';
 
 
 function Display() {
@@ -13,71 +14,92 @@ function Display() {
     const [mainIndex, itemIndex, main, item, form, block] = useOutletContext();
     const editPath = 'edit/' + block + '/';
     const disableLink = (itemIndex === 0);
-    
-    //if current year is not found, it has to be created!
-    const itemBlock = mockStore[main][item][block];
 
+    const dispatch = useDispatch();
+    console.log(`dispatching syncItem thunk with ${item}`);
+    const itemStore = useSelector(state => selectAssetsItem(state, item));
+
+    if(!itemStore) dispatch(syncItem({item})); //async!!!! must set in loading state and render without itemStore in the meantime
+
+    const status = useSelector(state => state.assets.status);
+    console.log(`current status ${status}`);
+
+    //if current year is not found, it has to be created!
     let itemComponent = (<h1>no item data available</h1>);
     let sumComponent = (<h1>no sum data available</h1>);
 
-    switch (itemIndex){
-        case 0: //Overview 
-            itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
-                const groupTitleComponent = createHeadlineComponent(group); 
-                const groupItemsComponent = itemBlock.entries
-                    .filter(account => account.group === group)
-                    .map(account => {
-                        if(group === content[2].items[1].title) return createResourceComponent(account);
-                        if(group === content[2].items[2].title) return createInvestmentComponent(account);
-                    });                              
-                return (<>{groupTitleComponent}{groupItemsComponent}</>);          
-            });
-            sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance, true);       
+    switch(status){
+        case 'error':
+
+            break;
+            
+        case 'loading':
+
             break;
 
-        case 1: //Resources
-            itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
-                const groupTitleComponent = createHeadlineComponent(group); 
-                const groupItemsComponent = itemBlock.entries
-                    .filter(account => account.group === group)
-                    .map(account => createResourceComponent(account));                               
-                return (<>{groupTitleComponent}{groupItemsComponent}</>);          
-            });
-            sumComponent = createSumComponent(null, itemBlock.closingBalance);
+        case 'idle':
+            const itemBlock = itemStore[block];
+            switch (itemIndex){
+                case 0: //Overview 
+                    itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
+                        const groupTitleComponent = createHeadlineComponent(group); 
+                        const groupItemsComponent = itemBlock.entries
+                            .filter(account => account.group === group)
+                            .map(account => {
+                                if(group === content[2].items[1].title) return createResourceComponent(account);
+                                if(group === content[2].items[2].title) return createInvestmentComponent(account);
+                            });                              
+                        return (<>{groupTitleComponent}{groupItemsComponent}</>);          
+                    });
+                    sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance, true);       
+                    break;
+        
+                case 1: //Resources
+                    itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
+                        const groupTitleComponent = createHeadlineComponent(group); 
+                        const groupItemsComponent = itemBlock.entries
+                            .filter(account => account.group === group)
+                            .map(account => createResourceComponent(account));                               
+                        return (<>{groupTitleComponent}{groupItemsComponent}</>);          
+                    });
+                    sumComponent = createSumComponent(null, itemBlock.closingBalance);
+                    break;
+        
+                case 2: //Investments
+                    itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
+                        const groupTitleComponent = createHeadlineComponent(group); 
+                        const groupItemsComponent = itemBlock.entries
+                            .filter(account => account.group === group)
+                            .map(account => createInvestmentComponent(account));                               
+                        return (<>{groupTitleComponent}{groupItemsComponent}</>);          
+                    });
+                    sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance, true);
+                    break;
+        
+                case 3: // Transfers
+                    itemComponent = itemBlock.entries.map(transfer => createTransferComponent(transfer));
+                    sumComponent = createSumComponent(null, itemBlock.amount);
+                    break;
+        
+                case 4: //Expanses
+                    itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
+                        const groupTitleComponent = createHeadlineComponent(group); 
+                        const groupItemsComponent = itemBlock.entries
+                            .filter(expanse => expanse.group === group)
+                            .map(expanse => createExpanseComponent(expanse));                               
+                        return (<>{groupTitleComponent}{groupItemsComponent}</>);          
+                    }); 
+                    sumComponent = createSumComponent(itemBlock.amountMonthly, itemBlock.amountYearly);
+                    break;
+        
+                case 5: //Pension        
+                    itemComponent = itemBlock.entries.map(account => createPensionComponent (account));
+                    sumComponent = createSumComponent(itemBlock.expected, itemBlock.amount);
+                 break;
+            }
             break;
-
-        case 2: //Investments
-            itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
-                const groupTitleComponent = createHeadlineComponent(group); 
-                const groupItemsComponent = itemBlock.entries
-                    .filter(account => account.group === group)
-                    .map(account => createInvestmentComponent(account));                               
-                return (<>{groupTitleComponent}{groupItemsComponent}</>);          
-            });
-            sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance, true);
-            break;
-
-        case 3: // Transfers
-            itemComponent = itemBlock.entries.map(transfer => createTransferComponent(transfer));
-            sumComponent = createSumComponent(null, itemBlock.amount);
-            break;
-
-        case 4: //Expanses
-            itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
-                const groupTitleComponent = createHeadlineComponent(group); 
-                const groupItemsComponent = itemBlock.entries
-                    .filter(expanse => expanse.group === group)
-                    .map(expanse => createExpanseComponent(expanse));                               
-                return (<>{groupTitleComponent}{groupItemsComponent}</>);          
-            }); 
-            sumComponent = createSumComponent(itemBlock.amountMonthly, itemBlock.amountYearly);
-            break;
-
-        case 5: //Pension        
-            itemComponent = itemBlock.entries.map(account => createPensionComponent (account));
-            sumComponent = createSumComponent(itemBlock.expected, itemBlock.amount);
-         break;
     }
+
 
     const assetsComponent = (<>{itemComponent}{sumComponent}</>);
     
