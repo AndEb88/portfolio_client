@@ -1,6 +1,8 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {fetchAssests, deleteEntry, deleteEntries, updateEntry, updateEntries, createEntry, createEntries} from './assetsAPI';
 
+import content from '../utils/content';
+
 const initialState = {}; //declare initial state mockDatabase
 
 // 1. DONE - createAsyncThunks like 'assets/fetchData' with API calls from assetsAPI
@@ -33,6 +35,22 @@ function getAvailableId(item, block, state) {
       if (ids[i] !== expected) {return expected;}
   }
   return ids.length;
+}
+
+function getTaxRate(year) {
+  for (const currentYear in content[2].taxRates) {
+    if (year >= currentYear) {
+      return content[2].taxRates[currentYear];
+    }
+  }
+}
+
+function getDaysPassed(date) {
+  const providedDate = new Date(date);
+  const startOfYear = new Date(providedDate.getFullYear(), 0, 1);   
+  const timeDifference = providedDate.getTime() - startOfYear.getTime();
+  const daysPassed = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));  
+  return daysPassed;
 }
 
 function populateItem(entries) {
@@ -123,7 +141,7 @@ export const updateAssetsEntry = createAsyncThunk(
 
     thunkAPI.dispatch(syncItem(item));
     if(item ==='transfers') {
-      thunkAPI.dispatch(counterSlice.actions.calcResources());
+      thunkAPI.dispatch(counterSlice.actions.calcInvestments());
       thunkAPI.dispatch(counterSlice.actions.calcOverview());
     }
     return response.data; 
@@ -142,7 +160,7 @@ export const createAssetsEntry = createAsyncThunk(
 
     thunkAPI.dispatch(syncItem(item));
     if(item ==='transfers') {
-      thunkAPI.dispatch(counterSlice.actions.calcResources());
+      thunkAPI.dispatch(counterSlice.actions.calcInvestments());
       thunkAPI.dispatch(counterSlice.actions.calcOverview());
     }
     return response.data; 
@@ -273,8 +291,8 @@ export const addNewYear = createAsyncThunk(
   }
 );
 
-//sort accordingly in the calc functions
-export const counterSlice = createSlice({
+//sort accordingly in the calc functions?
+export const assetsSlice = createSlice({
   name: 'assets',
   initialState,
   reducers: {
@@ -293,38 +311,92 @@ export const counterSlice = createSlice({
     },
 
     calcOverview: (state) => {
-      state.overview = {};
+      state.overview = {}; //pending... cotinue here!
 
     },
+
     calcResources: (state) => {
-      const blocks = Object.keys(state.resources).sort().reverse();
+      const blocks = Object.keys(state.resources).sort();
+      //complement all entries
+      let closingBalances = {};
+      state.resources[blocks[0]].entries.map(currentEntry => {
+        closingBalances[currentEntry.id] = 0;
+      });
+      for (let i = 0; i < blocks.length; i++){
+        state.resources[blocks[i]].entries.map((currentEntry, currentIndex) => {
+
+          const openingBalance = closingBalances[currentEntry.id];
+          const difference = currentEntry.closingBalance - openingBalance;
+
+          state.resources[blocks[i]].entries[currentIndex].openingBalance = {
+            ...currentEntry,
+            openingBalance,
+            difference,
+          }
+          closingBalances[currentEntry.id] = currentEntry.closingBalance;
+        })
+      }
       //add closingBalance for block
       blocks.map(currentBlock => {
         state.resources[currentBlock].closingBalance = state.resources[currentBlock].entries.reduce((blockClosingBalance, entry) => {
           return blockClosingBalance + entry.closingBalance;
         }, 0);
       });
-      //add openingBalance and and difference for all entries
+    },
+
+    calcInvestments: (state) => {
+      const blocks = Object.keys(state.resources).sort();
+      //completement all entries
       let closingBalances = {};
       state.resources[blocks[0]].entries.map(currentEntry => {
         closingBalances[currentEntry.id] = 0;
       });
-      for (let i = blocks.length - 1; i >= 0; i--){
+      for (let i = 0; i < blocks.length; i++){
+        const taxRate = getTaxRate(blocks[i]);
         state.resources[blocks[i]].entries.map((currentEntry, currentIndex) => {
+
+          const transfersEntries = state.resources.transfers.filter(currentTransfer => currentTransfer.id === currentEntry.id && currentEntry.date.includes(blocks[i]));
+          const closingDaysPassed = getDaysPassed(currentEntry.lastUpdate);
+          const weightedTransfers = transfersEntries.reduce((transfersSum, currentTransfer) => {
+            const transferDaysPassed = getDaysPassed(currentTransfer.date);
+            if (transferDaysPassed > closingDaysPassed) {
+              return transfersSum;
+            } else {
+              return transfersSum + currentTransfer.amount * (closingDaysPassed - transferDaysPassed) / 365;
+            }
+          }, 0);
+
+          const transfers = transfersEntries.reduce((transfersSum, currentTransfer) => {return transfersSum + currentTransfer.amount}, 0);
+          const openingBalance = closingBalances[currentEntry.id];
+          const grossProfit = currentEntry.closingBalance - openingBalance - currentEntry.bonus + currentEntry.withheldTaxes - transfers;
+          const dueTaxes = grossProfit * taxRate;
+          const netProfit = grossProfit + currentEntry.bonus - grossProfit * taxRate;
+          const ROI = grossProfit / (openingBalance * closingDaysPassed / 365 + weightedTransfers);
+
           state.resources[blocks[i]].entries[currentIndex].openingBalance = {
             ...currentEntry,
-            openingBalance: closingBalances[currentEntry.id],
-            difference: currentEntry.closingBalance - closingBalances[currentEntry.id],
+            openingBalance,
+            transfers,
+            grossProfit,
+            dueTaxes,
+            netProfit,
+            ROI,
           }
           closingBalances[currentEntry.id] = currentEntry.closingBalance;
         })
       }
-    },
-    //continue here
-    calcInvestments: (state) => {
-      state.investments = {};
-      //remove 'group' key from state entries
-      //also set update openingBalance with new closingBalance
+      //add closingBalance for block
+      blocks.map(currentBlock => {
+        state.resources[currentBlock].closingBalance = state.resources[currentBlock].entries.reduce((blockClosingBalance, entry) => {
+          return blockClosingBalance + entry.closingBalance;
+        }, 0);
+      });
+      //add netProfit for block
+      blocks.map(currentBlock => {
+        state.resources[currentBlock].netProfit = state.resources[currentBlock].entries.reduce((blockNetProfit, entry) => {
+          return blockNetProfit + entry.netProfit;
+        }, 0);
+    });
     },
     calcTransfers: (state) => {
       state.transfers = {};
@@ -436,9 +508,11 @@ export const counterSlice = createSlice({
 
 export const {increment, decrement, incrementByAmount} = counterSlice.actions; //export actions defined in 'reducers' for usage in app
 
-export const selectCount = (state) => state.counter.value; //declare and export selector which returns (altered) state for usage in app
+export {syncAssets, syncItem}; //export thunks for usage in app
 
-export default counterSlice.reducer; //export slice for setting up store
+export const selectItem = (state, item) => state.asstes[item]; //declare and export selector which returns (altered) state for usage in app
+
+export default assetsSlice.reducer; //export slice for setting up store
 
 
 
