@@ -1,6 +1,6 @@
 import {NavLink, useOutletContext} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
 import mockStore from '../utils/mockStore';
 import accountIcons from '../icons/accountIcons'
@@ -13,16 +13,15 @@ function Display() {
 
     const [mainIndex, itemIndex, main, item, form, block] = useOutletContext();
     const editPath = 'edit/' + block + '/';
-    const disableLink = (itemIndex === 0);
+    const disableLink = (item === 'overview');
 
     const dispatch = useDispatch();
-    console.log(`dispatching syncItem thunk with ${item}`);
     const itemStore = useSelector(state => selectAssetsItem(state, item));
-
-    if(!itemStore) dispatch(syncItem({item})); //async!!!! must set in loading state and render without itemStore in the meantime
-
     const status = useSelector(state => state.assets.status);
-    console.log(`current status ${status}`);
+    console.log(`current status = ${status}`);
+    console.log(`current store = ${itemStore}`);
+
+
 
     //if current year is not found, it has to be created!
     let itemComponent = (<h1>no item data available</h1>);

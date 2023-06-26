@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useLayoutEffect} from 'react';
 import {Outlet, useLocation} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
+import {syncAssets, syncItem, selectAssetsItem} from './store/assetsSlice';
+
 
 
 import Navigator from './components/Navigator';
@@ -14,10 +16,21 @@ function App() {
   const location = useLocation().pathname;
   const [home, main, item, form] = location.split('/');
 
+  const dispatch = useDispatch();
+  const status = useSelector(state => state.assets.status);
+  const store = useSelector(state => state.assets);
+
   const mainIndex = main ? content.findIndex(currentMain => currentMain.route === main) : -1;
   const itemIndex = item ? content[mainIndex].items.findIndex(currentItem => currentItem.route === item) : -1;
-  let blockList = item ? Object.keys(mockStore[main][item]).sort() : [];
-  //sort will be handled when fetching data form database - not required here anymore!
+  const blockList = store[item] ? Object.keys(store[item]) : [];
+  //sort will be handled when fetching data form database - not required here anymore!?
+
+
+  useEffect(() => {
+    dispatch(syncAssets());
+    console.log(`dispatching syncAssets thunk`);
+    console.log(`current item = ${item}`);
+  }, [])
 
   const [blocks, setBlocks] = useState({
     value: '', 
