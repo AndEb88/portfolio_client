@@ -79,7 +79,7 @@ const content = [
                 editForm: [
                     {name: 'group', title: 'Group', operator: '', type: 'group', unit: '', bold: true},
                     {name: 'title', title: 'Title', operator: '', type: 'text', unit: '', bold: true},
-                    {name: 'lastUpdate', title: 'Last Update', operator: '', type: 'display', unit: '', margin: true},
+                    {name: 'date', title: 'Last Update', operator: '', type: 'display', unit: '', margin: true},
                     {name: 'closingBalance', title: 'Closing Balance', operator: '', type: 'number', unit: '€'},
                     {name: 'withheldTaxes', title: 'Withheld Taxes', operator: '+', type: 'number', unit: '€'},
                     {name: 'bonus', title: 'Bonus & Payback', operator: '-', type: 'number', unit: '€'},

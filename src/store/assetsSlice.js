@@ -62,7 +62,6 @@ function populateItem(entries) {
     block[blockKey].entries.push(entry);
     return block;
   }, {});
-  console.log(Object.keys(item));
   return item;
 }
 
@@ -77,11 +76,11 @@ const syncAssets = createAsyncThunk(
     //required for JSON responses from database (?!?)    
     thunkAPI.dispatch(assetsSlice.actions.setAssets(response.data));
     thunkAPI.dispatch(assetsSlice.actions.calcResources());
-    // thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
-    // thunkAPI.dispatch(assetsSlice.actions.calcTransfers());
-    // thunkAPI.dispatch(assetsSlice.actions.calcExpanses());
-    // thunkAPI.dispatch(assetsSlice.actions.calcPension());
-    // thunkAPI.dispatch(assetsSlice.actions.calcOverview());
+    thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
+    thunkAPI.dispatch(assetsSlice.actions.calcTransfers());
+    thunkAPI.dispatch(assetsSlice.actions.calcExpanses());
+    thunkAPI.dispatch(assetsSlice.actions.calcPension());
+    thunkAPI.dispatch(assetsSlice.actions.calcOverview());
     return response.data; 
     //returns {assets}
   }
@@ -90,7 +89,6 @@ const syncAssets = createAsyncThunk(
 const syncItem = createAsyncThunk(
   'assets/syncItem',
   async ({item}, thunkAPI) => {
-    console.log(`syncItem thunk dispatched with ${item}`);
 
     const response = await fetchItem(item);
     
@@ -302,9 +300,7 @@ export const assetsSlice = createSlice({
   initialState,
   reducers: {
     setAssets: (state, action) => {
-      console.log('ready');
       const items = Object.keys(action.payload.assets);
-      console.log(`items keys = ${items}`);
       items.map(currentItem => {
         const entries = action.payload.assets[currentItem];
         state[currentItem] = populateItem(entries);
@@ -314,7 +310,6 @@ export const assetsSlice = createSlice({
     setItem: (state, action) => {
       const item = action.payload.item;
       const entries = action.payload.entries;
-      console.log(`setItem reducer dispatched with ${item} and ${entries}`);
       state[item] = populateItem(entries);    
     },
 
@@ -337,7 +332,7 @@ export const assetsSlice = createSlice({
           const openingBalance = closingBalances[currentEntry.id];
           const difference = currentEntry.closingBalance - openingBalance;
 
-          state.resources[blocks[i]].entries[currentIndex].openingBalance = {
+          state.resources[blocks[i]].entries[currentIndex] = {
             ...currentEntry,
             openingBalance,
             difference,
@@ -354,21 +349,20 @@ export const assetsSlice = createSlice({
     },
 
     calcInvestments: (state) => {
-      //ERROR! something goes wrong in here
-      //also, at first all items must be fetched for having transfers available
-      //so first fix transfers!
       const blocks = Object.keys(state.investments).sort();
-      // completement all entries
+      // complement all entries
       let closingBalances = {};
       state.investments[blocks[0]].entries.map(currentEntry => {
         closingBalances[currentEntry.id] = 0;
       });
+
       for (let i = 0; i < blocks.length; i++){
         const taxRate = getTaxRate(blocks[i]);
+
         state.investments[blocks[i]].entries.map((currentEntry, currentIndex) => {
 
-          const transfersEntries = state.investments.transfers.filter(currentTransfer => currentTransfer.id === currentEntry.id && currentEntry.date.includes(blocks[i]));
-          const closingDaysPassed = getDaysPassed(currentEntry.lastUpdate);
+          const transfersEntries = state.transfers[blocks[i]].entries.filter(currentTransfer => currentTransfer.title === currentEntry.title && currentEntry.date.includes(blocks[i]));
+          const closingDaysPassed = getDaysPassed(currentEntry.date);
           const weightedTransfers = transfersEntries.reduce((transfersSum, currentTransfer) => {
             const transferDaysPassed = getDaysPassed(currentTransfer.date);
             if (transferDaysPassed > closingDaysPassed) {
@@ -383,7 +377,7 @@ export const assetsSlice = createSlice({
           const grossProfit = currentEntry.closingBalance - openingBalance - currentEntry.bonus + currentEntry.withheldTaxes - transfers;
           const dueTaxes = grossProfit * taxRate;
           const netProfit = grossProfit + currentEntry.bonus - grossProfit * taxRate;
-          const ROI = grossProfit / (openingBalance * closingDaysPassed / 365 + weightedTransfers);
+          const ROI = Math.round(grossProfit / (openingBalance * closingDaysPassed / 365 + weightedTransfers) * 1000) / 10;
 
           state.investments[blocks[i]].entries[currentIndex] = {
             ...currentEntry,
@@ -399,7 +393,7 @@ export const assetsSlice = createSlice({
       }
       // complement overall block
       // ....
-      
+
       // add closingBalance for each block
       blocks.map(currentBlock => {
         state.investments[currentBlock].closingBalance = state.investments[currentBlock].entries.reduce((blockClosingBalance, entry) => {
@@ -413,17 +407,50 @@ export const assetsSlice = createSlice({
         }, 0);
       });
     },
+
     calcTransfers: (state) => {
       const blocks = Object.keys(state.transfers).sort();
-
+      // add amount for each block
+      blocks.map(currentBlock => {
+        state.transfers[currentBlock].amount = state.transfers[currentBlock].entries.reduce((blockAmount, entry) => {
+          return blockAmount + entry.amount;
+        }, 0);
+      });
     },
+
     calcExpanses: (state) => {
       const blocks = Object.keys(state.expanses).sort();
+      // complement all entries
+      for (let i = 0; i < blocks.length; i++){
+        state.expanses[blocks[i]].entries.map((currentEntry, currentIndex) => {
 
+          const amountMonthly = currentEntry.amountYearly / 12;
+
+          state.expanses[blocks[i]].entries[currentIndex] = {
+            ...currentEntry,
+            amountMonthly,
+          }
+        })
+      }
+      // add amount for each block
+      blocks.map(currentBlock => {
+        state.expanses[currentBlock].amountYearly = state.expanses[currentBlock].entries.reduce((blockAmount, entry) => {
+          return blockAmount + entry.amountYearly;
+        }, 0);
+        state.expanses[currentBlock].amountMonthly = state.expanses[currentBlock].amountYearly / 12;
+      });
     },
     calcPension: (state) => {
       const blocks = Object.keys(state.pension).sort();
-
+      // add amount for each block
+      blocks.map(currentBlock => {
+        state.pension[currentBlock].amount = state.pension[currentBlock].entries.reduce((blockAmount, entry) => {
+          return blockAmount + entry.amount;
+        }, 0);
+        state.pension[currentBlock].expected = state.pension[currentBlock].entries.reduce((blockExpected, entry) => {
+          return blockExpected + entry.expected;
+        }, 0);
+      });
     },
   },
 

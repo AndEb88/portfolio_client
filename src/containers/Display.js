@@ -50,7 +50,7 @@ function Display() {
                             });                              
                         return (<>{groupTitleComponent}{groupItemsComponent}</>);          
                     });
-                    sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance, true);       
+                    sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance);       
                     break;
         
                 case 1: //Resources
@@ -72,7 +72,7 @@ function Display() {
                             .map(account => createInvestmentComponent(account));                               
                         return (<>{groupTitleComponent}{groupItemsComponent}</>);          
                     });
-                    sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance, true);
+                    sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance);
                     break;
         
                 case 3: // Transfers
@@ -140,15 +140,15 @@ function Display() {
                     </div>
                     <div className='col-3 text-end'>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{entry.ROI} <span className='unit'>%</span></h4>
+                            <h4>{entry.ROI.toFixed(1)} <span className='unit'>%</span></h4>
                         </div>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>+{entry.netProfit} <span className='unit'>€</span></h4>
+                            <h4>{entry.netProfit.toFixed(0)} <span className='unit'>€</span></h4>
                         </div>
                     </div>        
                     <div className='col-3 text-end'>
                           <div className='row d-flex align-items-center'>
-                            <h4>{entry.closingBalance} <span className='unit'>€</span></h4>
+                            <h4>{entry.closingBalance.toFixed(0)} <span className='unit'>€</span></h4>
                         </div>
                     </div>
                 </div>
@@ -216,17 +216,17 @@ function Display() {
         );
     }
 
-    function createSumComponent (left, right, plus){
+    function createSumComponent (left, right){
         return (    
             <div className='row content-row sum-row'>
                 <div className='col-6 d-flex align-items-center'>
                     <h3>Sum</h3>
                 </div>
                 <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                    {left && (<h4>{plus && '+'}{left}<span className='unit'> €</span></h4>)}
+                    {left && (<h4>{left.toFixed(0)}<span className='unit'> €</span></h4>)}
                 </div>        
                 <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                    <h4>{right}<span className='unit'> €</span></h4>
+                    <h4>{right.toFixed(0)}<span className='unit'> €</span></h4>
                 </div>
             </div>
         );
