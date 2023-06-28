@@ -53,7 +53,13 @@ function getDaysPassed(date) {
   return daysPassed;
 }
 
-function populateItem(entries) {
+function plusOne (year) {
+  let yearInt = parseInt(year);
+  yearInt++; 
+  return yearInt.toString();
+}
+
+function populateBlocks(entries) {
   const item = entries.reduce((block, entry) => { 
     const blockKey = entry.block;
     if (!block[blockKey]) {
@@ -73,14 +79,14 @@ const syncAssets = createAsyncThunk(
     const response = await fetchAssests();
     
     //const json = await response.json(); returns response.data directly
-    //required for JSON responses from database (?!?)    
+    //required for JSON responses from database (?!?) 
     thunkAPI.dispatch(assetsSlice.actions.setAssets(response.data));
     thunkAPI.dispatch(assetsSlice.actions.calcResources());
-    thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
-    thunkAPI.dispatch(assetsSlice.actions.calcTransfers());
-    thunkAPI.dispatch(assetsSlice.actions.calcExpanses());
-    thunkAPI.dispatch(assetsSlice.actions.calcPension());
-    thunkAPI.dispatch(assetsSlice.actions.calcOverview());
+    // thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
+    // thunkAPI.dispatch(assetsSlice.actions.calcTransfers());
+    // thunkAPI.dispatch(assetsSlice.actions.calcExpanses());
+    // thunkAPI.dispatch(assetsSlice.actions.calcPension());
+    // thunkAPI.dispatch(assetsSlice.actions.calcOverview());
     return response.data; 
     //returns {assets}
   }
@@ -99,8 +105,6 @@ const syncItem = createAsyncThunk(
         thunkAPI.dispatch(assetsSlice.actions.calcOverview());
         break;
       case 'investments':
-        console.log('syncing investments');
-
         thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
         thunkAPI.dispatch(assetsSlice.actions.calcOverview());
         break;
@@ -302,15 +306,13 @@ export const assetsSlice = createSlice({
     setAssets: (state, action) => {
       const items = Object.keys(action.payload.assets);
       items.map(currentItem => {
-        const entries = action.payload.assets[currentItem];
-        state[currentItem] = populateItem(entries);
+        state[currentItem] = {tempEntries: action.payload.assets[currentItem]};
       });
     },
 
     setItem: (state, action) => {
       const item = action.payload.item;
-      const entries = action.payload.entries;
-      state[item] = populateItem(entries);    
+      state[item] = {tempEntries: action.payload.entries};    
     },
 
     calcOverview: (state) => {
@@ -319,33 +321,44 @@ export const assetsSlice = createSlice({
     },
 
     calcResources: (state) => {
-      console.log('calcResources reducer dispatched');
-      const blocks = Object.keys(state.resources).sort();
-      // complement all entries
-      let closingBalances = {};
-      state.resources[blocks[0]].entries.map(currentEntry => {
-        closingBalances[currentEntry.id] = 0;
+
+      // set up opening balances
+      // instead: sort entries by block and assign closing balance to each id
+      // after complementing entry, set current closing balance to new opening blance, like in investments
+      const openingBalances = {};
+      state.resources.tempEntries.map(currentEntry => {  
+        const openingBlock = plusOne(currentEntry.block);
+        if (!openingBalances[openingBlock]){
+          openingBalances[openingBlock] ={} 
+        }
+        openingBalances[openingBlock][currentEntry.id] = currentEntry.closingBalance;
       });
-      for (let i = 0; i < blocks.length; i++){
-        state.resources[blocks[i]].entries.map((currentEntry, currentIndex) => {
 
-          const openingBalance = closingBalances[currentEntry.id];
-          const difference = currentEntry.closingBalance - openingBalance;
+      // set up and complement all entries
+      const entries = state.resources.tempEntries.map(currentEntry => {
+        const openingBalance = openingBalances[currentEntry.block]?.[currentEntry.id] ?? 0;
+        const difference = currentEntry.closingBalance - openingBalance;
+        return {
+          ...currentEntry,
+          openingBalance,
+          difference,
+        }
+      });
 
-          state.resources[blocks[i]].entries[currentIndex] = {
-            ...currentEntry,
-            openingBalance,
-            difference,
-          }
-          closingBalances[currentEntry.id] = currentEntry.closingBalance;
-        })
-      }
+      //add overall here for investments
+
+      // populate item
+      delete state.resources.tempEntries;
+      state.resources = populateBlocks(entries);
+
       // add closingBalance for each block
+      const blocks = Object.keys(state.resources).sort();
       blocks.map(currentBlock => {
         state.resources[currentBlock].closingBalance = state.resources[currentBlock].entries.reduce((blockClosingBalance, entry) => {
           return blockClosingBalance + entry.closingBalance;
         }, 0);
       });
+      console.log('done3');
     },
 
     calcInvestments: (state) => {
@@ -377,7 +390,7 @@ export const assetsSlice = createSlice({
           const grossProfit = currentEntry.closingBalance - openingBalance - currentEntry.bonus + currentEntry.withheldTaxes - transfers;
           const dueTaxes = grossProfit * taxRate;
           const netProfit = grossProfit + currentEntry.bonus - grossProfit * taxRate;
-          const ROI = Math.round(grossProfit / (openingBalance * closingDaysPassed / 365 + weightedTransfers) * 1000) / 10;
+          const ROI = (Math.round(grossProfit / (openingBalance * closingDaysPassed / 365 + weightedTransfers) * 1000) / 10).toFixed(1);
 
           state.investments[blocks[i]].entries[currentIndex] = {
             ...currentEntry,
@@ -387,13 +400,19 @@ export const assetsSlice = createSlice({
             grossProfit: grossProfit,
             dueTaxes: dueTaxes,
             netProfit: netProfit,
-            ROI,
+            ROI: ROI? ROI : '0,0',
           }
           closingBalances[currentEntry.id] = currentEntry.closingBalance;
         })
       }
       // complement overall block
-      // ....
+      const ids = state.investments[blocks[0]].entries.map(currentEntry => currentEntry.id);
+      state.investments.overall = state.investments[blocks[blocks.length -1]];
+      for (let i = 0; i < blocks.length - 1; i++){
+
+      }
+
+
 
       // add closingBalance for each block
       blocks.map(currentBlock => {
