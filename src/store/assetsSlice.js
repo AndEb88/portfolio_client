@@ -381,11 +381,12 @@ export const assetsSlice = createSlice({
 
           state.investments[blocks[i]].entries[currentIndex] = {
             ...currentEntry,
-            openingBalance,
-            transfers,
-            grossProfit,
-            dueTaxes,
-            netProfit,
+            closingBalance: currentEntry.closingBalance,
+            openingBalance: openingBalance,
+            transfers: transfers,
+            grossProfit: grossProfit,
+            dueTaxes: dueTaxes,
+            netProfit: netProfit,
             ROI,
           }
           closingBalances[currentEntry.id] = currentEntry.closingBalance;

@@ -255,6 +255,10 @@ a {
   background-color: var(--backgroundColor);
 }
 
+#display .decimals {
+  font-size: 0.7rem;
+}
+
 
 /* -------------- */
 /* form */
