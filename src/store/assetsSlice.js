@@ -323,8 +323,8 @@ export const assetsSlice = createSlice({
     calcResources: (state) => {
 
       // set up opening balances
-      // instead: sort entries by block and assign closing balance to each id
-      // after complementing entry, set current closing balance to new opening blance, like in investments
+      // instead: sort entries by block and assign opening balance 0 to each id (filter by block of first entry an map ids)
+      // after complementing entry, set current closing balance to new opening balance, like in investments
       const openingBalances = {};
       state.resources.tempEntries.map(currentEntry => {  
         const openingBlock = plusOne(currentEntry.block);
