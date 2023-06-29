@@ -1,9 +1,12 @@
 
 import {NavLink, useParams, useOutletContext} from 'react-router-dom';
 import {useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
+import {selectAssetsItem} from '../store/assetsSlice';
+
 
 
 function Create() {
@@ -12,8 +15,11 @@ function Create() {
     // do I need to declare keys that are not set here? e.g. 'netProfit' would be undefined and could cause issues in Display(?)
     // on submit, pass entries as required in database (incl. block!)
 
-    const [mainIndex, itemIndex, form] = useOutletContext();
-    const {block} = useParams();
+    const [mainIndex, itemIndex, main, item, form, block] = useOutletContext();
+
+    const dispatch = useDispatch();
+    const itemStore = useSelector(state => selectAssetsItem(state, item));
+    const status = useSelector(state => state.assets.status);
 
     const [formData, setFormData] = useState({});
 
@@ -47,10 +53,7 @@ function Create() {
                                 {formEntry.type === 'number' && <input className='text-end' type='number' name={formEntry.name} onChange={handleChange}></input>}
                                 {formEntry.type === 'date' && <input type='date' name={formEntry.name} onChange={handleChange}/>}
                                 {formEntry.type === 'group' && (
-                                    <select name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}>
-                                        <option disabled selected value=''>
-                                            Select...
-                                        </option>
+                                    <select name={formEntry.name} defaultValue='Select...' value={formData[formEntry.name]} onChange={handleChange}>                                      
                                         {content[mainIndex].items[itemIndex].groups.map(group => (
                                             <option key={group} value={group}>
                                                 {group}

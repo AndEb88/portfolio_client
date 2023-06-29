@@ -53,6 +53,14 @@ function getDaysPassed(date) {
   return daysPassed;
 }
 
+function getDaysInvested(investDate, date) {
+  const startDate = new Date(investDate);
+  const endDate = new Date (date); 
+  const timeDifference = endDate.getTime() - startDate.getTime();
+  const daysInvested = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));  
+  return daysInvested;
+}
+
 function populateBlocks(entries) {
   const item = entries.reduce((block, entry) => { 
     const blockKey = entry.block;
@@ -359,7 +367,7 @@ export const assetsSlice = createSlice({
         const grossProfit = currentEntry.closingBalance - openingBalance - currentEntry.bonus + currentEntry.withheldTaxes - transfers;
         const dueTaxes = grossProfit * taxRate;
         const netProfit = grossProfit + currentEntry.bonus - grossProfit * taxRate;
-        const ROI = grossProfit ? (Math.round(grossProfit / (openingBalance * closingDaysPassed / 365 + weightedTransfers) * 1000) / 10).toFixed(1) : '-';
+        const ROI = grossProfit ? (Math.round(netProfit / (openingBalance * closingDaysPassed / 365 + weightedTransfers) * 1000) / 10).toFixed(1) : '-';
 
         return {
           ...currentEntry,
@@ -373,11 +381,57 @@ export const assetsSlice = createSlice({
         }
       });
 
-      // complement overall block
-      // pending....
+      // set up and calculate entries for overall block
+      const overallBlock = Object.values(entries.reduce((block, currentEntry) => {           
+        if (!block[currentEntry.id]) {
+          block[currentEntry.id] = {
+            ...currentEntry,
+            block: 'overall',
+            openingBalance: 0,
+            ROI: '0',
+          }
+        } else {
+          const entry = block[currentEntry.id];
+          block[currentEntry.id] = {
+            ...entry,
+            transfers: entry.transfers + currentEntry.transfers,
+            grossProfit: entry.grossProfit + currentEntry.grossProfit,
+            dueTaxes: entry.dueTaxes + currentEntry.dueTaxes,
+            netProfit: entry.netProfit + currentEntry.netProfit,
+            date: entry.date > currentEntry.date ? entry.date : currentEntry.date,
+            closingBalance: currentEntry.closingBalance,
+          }
+        }
+        return block;
+      }, {}));
+
+      // calculate ROI for entries of overall block
+      let allTransfers = [];      
+      Object.values(state.transfers).map(currentBlock => {
+        allTransfers.push(...currentBlock.entries);
+      });
+      
+      const overallEntries = overallBlock.map(currentEntry => {
+        const daysBasis = getDaysInvested('2020-01-01', currentEntry.date);
+        const transfersEntries = allTransfers.filter(currentTransfer => currentTransfer.title === currentEntry.title);
+
+        const weightedTransfers = transfersEntries.reduce((transfersSum, currentTransfer) => {
+          const transferDaysInvested = getDaysInvested(currentTransfer.date, currentEntry.date);
+          if (transferDaysInvested < 0) return transfersSum;
+          return transfersSum + currentTransfer.amount * transferDaysInvested / 365;
+        }, 0);
+
+        const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / weightedTransfers * 1000) / 10).toFixed(1) : '-';
+        console.log(ROI);
+        return {
+          ...currentEntry,
+          ROI: ROI,
+        }
+      });
+      
 
       // populate item
-      state.investments = populateBlocks(entries);
+      state.investments = populateBlocks(entries.concat(overallEntries));
 
       // add closingBalance and netProfit for each block
       const blocks = Object.keys(state.investments).sort();

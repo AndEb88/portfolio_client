@@ -6,7 +6,8 @@ import mockStore from '../utils/mockStore';
 import accountIcons from '../icons/accountIcons'
 import content from '../utils/content';
 import {sumIcon} from '../icons/svgIcons';
-import {syncAssets, syncItem, selectAssetsItem} from '../store/assetsSlice';
+import {selectAssetsItem} from '../store/assetsSlice';
+import {toAmount} from '../utils/assetsFunctions';
 
 
 function Display() {
@@ -101,14 +102,7 @@ function Display() {
 
 
     const assetsComponent = (<>{itemComponent}{sumComponent}</>);
-
-    function toAmount (number){
-        const integer = Math.floor(number).toLocaleString();
-        const decimals = (number % 1).toFixed(2).slice(2);
-        return (<>{integer}<span class='decimals'> {decimals}</span></>)
-    }
-
-    
+ 
     function createHeadlineComponent (headline){ 
         return (
             <div key={headline} className='row content-row headline-row'>
