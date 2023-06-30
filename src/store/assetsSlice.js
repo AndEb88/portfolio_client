@@ -70,6 +70,8 @@ function populateBlocks(entries) {
     block[blockKey].entries.push(entry);
     return block;
   }, {});
+
+
   return item;
 }
 
@@ -305,7 +307,7 @@ export const assetsSlice = createSlice({
   initialState,
   reducers: {
     calcOverview: (state, action) => {
-      state.overview = {}; // pending... continue here!
+    // omit and poplate within resources and investments?
 
     },
 
@@ -359,9 +361,7 @@ export const assetsSlice = createSlice({
           return transfersSum + currentTransfer.amount * (closingDaysPassed - transferDaysPassed) / 365;
         }, 0);
 
-        const transfers = transfersEntries.reduce((transfersSum, currentTransfer) => {
-          return transfersSum + currentTransfer.amount
-        }, 0);
+        const transfers = transfersEntries.reduce((transfersSum, currentTransfer) => {return transfersSum + currentTransfer.amount}, 0);
         const openingBalance = closingBalances[currentEntry.id] ?? 0;
         closingBalances[currentEntry.id] = currentEntry.closingBalance;
         const grossProfit = currentEntry.closingBalance - openingBalance - currentEntry.bonus + currentEntry.withheldTaxes - transfers;
@@ -422,7 +422,6 @@ export const assetsSlice = createSlice({
         }, 0);
 
         const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / weightedTransfers * 1000) / 10).toFixed(1) : '-';
-        console.log(ROI);
         return {
           ...currentEntry,
           ROI: ROI,
@@ -432,6 +431,8 @@ export const assetsSlice = createSlice({
 
       // populate item
       state.investments = populateBlocks(entries.concat(overallEntries));
+      state.overview = {};
+      let overviewEntries = [];
 
       // add closingBalance and netProfit for each block
       const blocks = Object.keys(state.investments).sort();
@@ -442,7 +443,35 @@ export const assetsSlice = createSlice({
         state.investments[currentBlock].netProfit = state.investments[currentBlock].entries.reduce((blockNetProfit, entry) => {
           return blockNetProfit + entry.netProfit;
         }, 0);
+        
+        // set up and calculate entries for overall item
+        overviewEntries.push(...Object.values(state.investments[currentBlock].entries.reduce((overviewBlock, entry) => {
+          const groupKey = entry.group;
+          if (!overviewBlock[groupKey]) {
+            overviewBlock[groupKey] = {
+              block: currentBlock,
+              group: 'Investments',
+              title: groupKey,
+              closingBalance: 0,
+              netProfit: 0,
+            };
+          }
+          const overallEntry = overviewBlock[groupKey];
+          overviewBlock[groupKey] = {
+            ...overallEntry,
+            closingBalance: overallEntry.closingBalance + entry.closingBalance,
+            netProfit: overallEntry.netProfit + entry.netProfit
+          }
+          return overviewBlock;
+        }, {})));
       });
+
+      // populate item
+      state.overview = populateBlocks(overviewEntries);
+
+
+      //block netProfit & closingBalance missing, ROIs missing, investments missing
+
     },
 
     calcTransfers: (state, action) => {
