@@ -348,6 +348,7 @@ export const assetsSlice = createSlice({
       
       // set up opening balances
       const closingBalances = {};
+      let overallBlockId = {};
 
       // set up weightedTransfers for overview item
       let groupWeightedTransfers = {};
@@ -377,6 +378,34 @@ export const assetsSlice = createSlice({
         groupWeightedTransfers[currentEntry.group][block] = (groupWeightedTransfers[currentEntry.group][block] ?? 0) + weightedTransfers;
         const ROI = netProfit ? (Math.round(netProfit / weightedTransfers * 1000) / 10).toFixed(1) : '-';
 
+        // set up overall entry and add
+        if (!overallBlockId[currentEntry.id]) {
+          overallBlockId[currentEntry.id] = {
+            ...currentEntry,
+            transfers,
+            grossProfit,
+            dueTaxes,
+            netProfit,
+            block: 'overall',
+            openingBalance: 0,
+            closingBalance: currentEntry.closingBalance,
+            ROI: '-',
+          }
+        } else {
+          const entry = overallBlockId[currentEntry.id];
+          console.log(entry.netProfit + currentEntry.netProfit);
+          overallBlockId[currentEntry.id] = {
+            ...entry,
+            transfers: entry.transfers + transfers,
+            grossProfit: entry.grossProfit + grossProfit,
+            dueTaxes: entry.dueTaxes + dueTaxes,
+            netProfit: entry.netProfit + netProfit,
+            date: entry.date > currentEntry.date ? entry.date : currentEntry.date,
+            closingBalance: currentEntry.closingBalance,
+          }
+        }
+
+        //return entry
         return {
           ...currentEntry,
           closingBalance: currentEntry.closingBalance,
@@ -390,28 +419,7 @@ export const assetsSlice = createSlice({
       });
 
       // set up and calculate entries for overall block
-      const overallBlock = Object.values(entries.reduce((block, currentEntry) => {           
-        if (!block[currentEntry.id]) {
-          block[currentEntry.id] = {
-            ...currentEntry,
-            block: 'overall',
-            openingBalance: 0,
-            ROI: '0',
-          }
-        } else {
-          const entry = block[currentEntry.id];
-          block[currentEntry.id] = {
-            ...entry,
-            transfers: entry.transfers + currentEntry.transfers,
-            grossProfit: entry.grossProfit + currentEntry.grossProfit,
-            dueTaxes: entry.dueTaxes + currentEntry.dueTaxes,
-            netProfit: entry.netProfit + currentEntry.netProfit,
-            date: entry.date > currentEntry.date ? entry.date : currentEntry.date,
-            closingBalance: currentEntry.closingBalance,
-          }
-        }
-        return block;
-      }, {}));
+      const overallBlock = Object.values(overallBlockId);
 
       // calculate ROI for entries of overall block
       let allTransfers = [];      
