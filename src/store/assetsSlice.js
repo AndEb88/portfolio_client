@@ -378,7 +378,7 @@ export const assetsSlice = createSlice({
         groupWeightedTransfers[currentEntry.group][block] = (groupWeightedTransfers[currentEntry.group][block] ?? 0) + weightedTransfers;
         const ROI = netProfit ? (Math.round(netProfit / weightedTransfers * 1000) / 10).toFixed(1) : '-';
 
-        // set up overall entry and add
+        // set up overall entry or add
         if (!overallBlockId[currentEntry.id]) {
           overallBlockId[currentEntry.id] = {
             ...currentEntry,
@@ -390,10 +390,10 @@ export const assetsSlice = createSlice({
             openingBalance: 0,
             closingBalance: currentEntry.closingBalance,
             ROI: '-',
+            weightedTransfers,
           }
         } else {
           const entry = overallBlockId[currentEntry.id];
-          console.log(entry.netProfit + currentEntry.netProfit);
           overallBlockId[currentEntry.id] = {
             ...entry,
             transfers: entry.transfers + transfers,
@@ -402,6 +402,7 @@ export const assetsSlice = createSlice({
             netProfit: entry.netProfit + netProfit,
             date: entry.date > currentEntry.date ? entry.date : currentEntry.date,
             closingBalance: currentEntry.closingBalance,
+            weightedTransfers: entry.weightedTransfers + weightedTransfers,
           }
         }
 
@@ -418,30 +419,18 @@ export const assetsSlice = createSlice({
         }
       });
 
-      // set up and calculate entries for overall block
+      // remove ID keys from overallBlockId
       const overallBlock = Object.values(overallBlockId);
 
       // calculate ROI for entries of overall block
-      let allTransfers = [];      
-      Object.values(state.transfers).map(currentBlock => {
-        allTransfers.push(...currentBlock.entries);
-      });
-      
       const overallEntries = overallBlock.map(currentEntry => {
-        const transfersEntries = allTransfers.filter(currentTransfer => currentTransfer.title === currentEntry.title);
-        const weightedTransfers = transfersEntries.reduce((transfersSum, currentTransfer) => {
-          const transferDaysInvested = getDaysInvested(currentTransfer.date, currentEntry.date);
-          if (transferDaysInvested < 0) return transfersSum;
-          return transfersSum + currentTransfer.amount * transferDaysInvested / 365;
-        }, 0);
-        groupWeightedTransfers[currentEntry.group]['overall'] = (groupWeightedTransfers[currentEntry.group]['overall'] ?? 0) + weightedTransfers;
-        const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / weightedTransfers * 1000) / 10).toFixed(1) : '-';
+        groupWeightedTransfers[currentEntry.group][currentEntry.block] = (groupWeightedTransfers[currentEntry.group][currentEntry.block] ?? 0) + currentEntry.weightedTransfers;
+        const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / currentEntry.weightedTransfers * 1000) / 10).toFixed(1) : '-';
         return {
           ...currentEntry,
           ROI: ROI,
         }
-      });
-      
+      });   
 
       // populate item
       state.investments = populateBlocks(entries.concat(overallEntries));
@@ -467,7 +456,6 @@ export const assetsSlice = createSlice({
               title: groupKey,
               closingBalance: 0,
               netProfit: 0,
-              date: entry.date, //only one entry date per group - but entries might have different dates :(
             };
           }
           const overallEntry = overviewBlock[groupKey];
@@ -482,7 +470,6 @@ export const assetsSlice = createSlice({
 
       // calculate ROI for entries of overview item
       overviewEntries = overviewEntries.map(currentEntry => {
-        console.log(currentEntry.netProfit, groupWeightedTransfers[currentEntry.title][currentEntry.block]);
         const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / groupWeightedTransfers[currentEntry.title][currentEntry.block] * 1000) / 10).toFixed(1) : '-';
         return {
           ...currentEntry,
