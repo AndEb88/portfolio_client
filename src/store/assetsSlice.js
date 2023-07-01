@@ -349,25 +349,33 @@ export const assetsSlice = createSlice({
       // set up opening balances
       const closingBalances = {};
 
+      // set up weightedTransfers for overview item
+      let groupWeightedTransfers = {};
+      content[2].items[2].groups.map(currentGroup =>{
+        groupWeightedTransfers[currentGroup] = {}
+      })
+
       // set up and complement all entries
       const entries = rawEntries.map(currentEntry => {
         const block = currentEntry.block;
         const taxRate = getTaxRate(block);
-        const transfersEntries = state.transfers[block].entries.filter(currentTransfer => currentTransfer.title === currentEntry.title && currentEntry.date.includes(block));
+        const transfersEntries = state.transfers[block].entries.filter(currentTransfer => currentTransfer.title === currentEntry.title);
         const closingDaysPassed = getDaysPassed(currentEntry.date);
-        const weightedTransfers = transfersEntries.reduce((transfersSum, currentTransfer) => {
+        let weightedTransfers = transfersEntries.reduce((transfersSum, currentTransfer) => {
           const transferDaysPassed = getDaysPassed(currentTransfer.date);
           if (transferDaysPassed > closingDaysPassed) return transfersSum;
           return transfersSum + currentTransfer.amount * (closingDaysPassed - transferDaysPassed) / 365;
         }, 0);
-
+        
         const transfers = transfersEntries.reduce((transfersSum, currentTransfer) => {return transfersSum + currentTransfer.amount}, 0);
         const openingBalance = closingBalances[currentEntry.id] ?? 0;
         closingBalances[currentEntry.id] = currentEntry.closingBalance;
         const grossProfit = currentEntry.closingBalance - openingBalance - currentEntry.bonus + currentEntry.withheldTaxes - transfers;
         const dueTaxes = grossProfit * taxRate;
         const netProfit = grossProfit + currentEntry.bonus - grossProfit * taxRate;
-        const ROI = grossProfit ? (Math.round(netProfit / (openingBalance * closingDaysPassed / 365 + weightedTransfers) * 1000) / 10).toFixed(1) : '-';
+        weightedTransfers = weightedTransfers + openingBalance * closingDaysPassed / 365;
+        groupWeightedTransfers[currentEntry.group][block] = (groupWeightedTransfers[currentEntry.group][block] ?? 0) + weightedTransfers;
+        const ROI = netProfit ? (Math.round(netProfit / weightedTransfers * 1000) / 10).toFixed(1) : '-';
 
         return {
           ...currentEntry,
@@ -412,15 +420,13 @@ export const assetsSlice = createSlice({
       });
       
       const overallEntries = overallBlock.map(currentEntry => {
-        const daysBasis = getDaysInvested('2020-01-01', currentEntry.date);
         const transfersEntries = allTransfers.filter(currentTransfer => currentTransfer.title === currentEntry.title);
-
         const weightedTransfers = transfersEntries.reduce((transfersSum, currentTransfer) => {
           const transferDaysInvested = getDaysInvested(currentTransfer.date, currentEntry.date);
           if (transferDaysInvested < 0) return transfersSum;
           return transfersSum + currentTransfer.amount * transferDaysInvested / 365;
         }, 0);
-
+        groupWeightedTransfers[currentEntry.group]['overall'] = (groupWeightedTransfers[currentEntry.group]['overall'] ?? 0) + weightedTransfers;
         const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / weightedTransfers * 1000) / 10).toFixed(1) : '-';
         return {
           ...currentEntry,
@@ -431,12 +437,11 @@ export const assetsSlice = createSlice({
 
       // populate item
       state.investments = populateBlocks(entries.concat(overallEntries));
-      state.overview = {};
+      
       let overviewEntries = [];
-
-      // add closingBalance and netProfit for each block
       const blocks = Object.keys(state.investments).sort();
       blocks.map(currentBlock => {
+        // add closingBalance and netProfit for each block
         state.investments[currentBlock].closingBalance = state.investments[currentBlock].entries.reduce((blockClosingBalance, entry) => {
           return blockClosingBalance + entry.closingBalance;
         }, 0);
@@ -444,7 +449,7 @@ export const assetsSlice = createSlice({
           return blockNetProfit + entry.netProfit;
         }, 0);
         
-        // set up and calculate entries for overall item
+        // set up and calculate entries for overview item
         overviewEntries.push(...Object.values(state.investments[currentBlock].entries.reduce((overviewBlock, entry) => {
           const groupKey = entry.group;
           if (!overviewBlock[groupKey]) {
@@ -454,24 +459,41 @@ export const assetsSlice = createSlice({
               title: groupKey,
               closingBalance: 0,
               netProfit: 0,
+              date: entry.date, //only one entry date per group - but entries might have different dates :(
             };
           }
           const overallEntry = overviewBlock[groupKey];
           overviewBlock[groupKey] = {
             ...overallEntry,
             closingBalance: overallEntry.closingBalance + entry.closingBalance,
-            netProfit: overallEntry.netProfit + entry.netProfit
+            netProfit: overallEntry.netProfit + entry.netProfit 
           }
           return overviewBlock;
-        }, {})));
+        }, {})));        
       });
 
+      // calculate ROI for entries of overview item
+      overviewEntries = overviewEntries.map(currentEntry => {
+        console.log(currentEntry.netProfit, groupWeightedTransfers[currentEntry.title][currentEntry.block]);
+        const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / groupWeightedTransfers[currentEntry.title][currentEntry.block] * 1000) / 10).toFixed(1) : '-';
+        return {
+          ...currentEntry,
+          ROI,
+        }
+      })
+
       // populate item
-      state.overview = populateBlocks(overviewEntries);
+      state.overview = {...state.overview, ...populateBlocks(overviewEntries)};
 
-
-      //block netProfit & closingBalance missing, ROIs missing, investments missing
-
+      blocks.map(currentBlock => {
+        // add closingBalance and netProfit for each overview block
+        state.overview[currentBlock].closingBalance = state.overview[currentBlock].entries.reduce((blockClosingBalance, entry) => {
+          return blockClosingBalance + entry.closingBalance;
+        }, 0);
+        state.overview[currentBlock].netProfit = state.overview[currentBlock].entries.reduce((blockNetProfit, entry) => {
+          return blockNetProfit + entry.netProfit;
+        }, 0);
+      });
     },
 
     calcTransfers: (state, action) => {
