@@ -360,10 +360,11 @@ export const assetsSlice = createSlice({
         }, {})));   
       });
 
-      // retrieve existing investment entries
+      // retrieve existing resources entries
       if (state.overview) {
         Object.keys(state.overview).map(currentBlock => {
-          overviewEntries.push(...state.overview[currentBlock].entries);
+          const resourcesEntries = state.overview[currentBlock].entries.filter(currentEntry => currentEntry.group === 'Investments');
+          overviewEntries.push(...resourcesEntries);
         });
       }
       // populate item
@@ -514,10 +515,11 @@ export const assetsSlice = createSlice({
         }
       })
 
-      // retrieve existing investment entries
+      // retrieve existing resources entries
       if (state.overview) {
         Object.keys(state.overview).map(currentBlock => {
-          overviewEntries.push(...state.overview[currentBlock].entries);
+          const resourcesEntries = state.overview[currentBlock].entries.filter(currentEntry => currentEntry.group === 'Resources');
+          overviewEntries.push(...resourcesEntries);
         });
       }
       console.log(overviewEntries);
