@@ -360,11 +360,11 @@ export const assetsSlice = createSlice({
         }, {})));   
       });
 
-      // retrieve existing resources entries
+      // retrieve existing investments entries
       if (state.overview) {
         Object.keys(state.overview).map(currentBlock => {
-          const resourcesEntries = state.overview[currentBlock].entries.filter(currentEntry => currentEntry.group === 'Investments');
-          overviewEntries.push(...resourcesEntries);
+          const investmentsEntries = state.overview[currentBlock].entries.filter(currentEntry => currentEntry.group === 'Investments');
+          overviewEntries.push(...investmentsEntries);
         });
       }
       // populate item
@@ -515,6 +515,8 @@ export const assetsSlice = createSlice({
         }
       })
 
+      // TO DO: overall for resources missing (for overview item), netProfit in overview sum = NaN
+
       // retrieve existing resources entries
       if (state.overview) {
         Object.keys(state.overview).map(currentBlock => {
@@ -522,7 +524,6 @@ export const assetsSlice = createSlice({
           overviewEntries.push(...resourcesEntries);
         });
       }
-      console.log(overviewEntries);
       // populate item
       state.overview = populateBlocks(overviewEntries);
 
@@ -534,6 +535,7 @@ export const assetsSlice = createSlice({
         state.overview[currentBlock].netProfit = state.overview[currentBlock].entries.reduce((blockNetProfit, entry) => {
           return blockNetProfit + entry.netProfit ?? 0;
         }, 0);
+        console.log(state.overview[currentBlock].netProfit);
       });
     },
 
