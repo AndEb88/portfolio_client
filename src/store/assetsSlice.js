@@ -53,14 +53,6 @@ function getDaysPassed(date) {
   return daysPassed;
 }
 
-function getDaysInvested(investDate, date) {
-  const startDate = new Date(investDate);
-  const endDate = new Date (date); 
-  const timeDifference = endDate.getTime() - startDate.getTime();
-  const daysInvested = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));  
-  return daysInvested;
-}
-
 function populateBlocks(entries) {
   const item = entries.reduce((block, entry) => { 
     const blockKey = entry.block;
@@ -70,11 +62,8 @@ function populateBlocks(entries) {
     block[blockKey].entries.push(entry);
     return block;
   }, {});
-
-
   return item;
 }
-
 
 const syncAssets = createAsyncThunk(
   'assets/syncAssets',
@@ -335,13 +324,13 @@ export const assetsSlice = createSlice({
 
       let overviewEntries = [];
       const blocks = Object.keys(state.resources).sort();
-      blocks.map(currentBlock => {
+      blocks.forEach((currentBlock, currentBlockIndex) => {
         // add closingBalance for each block
         state.resources[currentBlock].closingBalance = state.resources[currentBlock].entries.reduce((blockClosingBalance, entry) => {
           return blockClosingBalance + entry.closingBalance;
         }, 0);
          // set up and calculate entries for overview item
-         overviewEntries.push(...Object.values(state.resources[currentBlock].entries.reduce((overviewBlock, entry) => {
+        const newEntries = Object.values(state.resources[currentBlock].entries.reduce((overviewBlock, entry) => {
           const groupKey = entry.group;
           if (!overviewBlock[groupKey]) {
             overviewBlock[groupKey] = {
@@ -357,24 +346,39 @@ export const assetsSlice = createSlice({
             closingBalance: overviewEntry.closingBalance + entry.closingBalance,
           }
           return overviewBlock;
-        }, {})));   
-      });
+        }, {}
+        )); 
+      overviewEntries.push(...newEntries);
+      if (currentBlockIndex === blocks.length - 1){
+         const overallEntries = newEntries.map(currentEntry => {
+          return {
+            ...currentEntry,
+            block: 'overall'
+          };
+        });
+        overviewEntries.push(...overallEntries);
+      }});
 
       // retrieve existing investments entries
       if (state.overview) {
-        Object.keys(state.overview).map(currentBlock => {
+        Object.keys(state.overview).forEach(currentBlock => {
           const investmentsEntries = state.overview[currentBlock].entries.filter(currentEntry => currentEntry.group === 'Investments');
           overviewEntries.push(...investmentsEntries);
         });
       }
       // populate item
       state.overview = populateBlocks(overviewEntries);
+      // netProfits get lost here!!!
 
-      blocks.map(currentBlock => {
-        // add closingBalance and netProfit for each overview block
-        state.overview[currentBlock].closingBalance = state.overview[currentBlock].entries.reduce((blockClosingBalance, entry) => {
+      blocks.forEach(currentBlock => {
+       // add closingBalance and netProfit for each overview block
+       state.overview[currentBlock].closingBalance = state.overview[currentBlock].entries.reduce((blockClosingBalance, entry) => {
           return blockClosingBalance + entry.closingBalance;
         }, 0);
+        state.overview[currentBlock].netProfit = state.overview[currentBlock].entries.reduce((blockNetProfit, entry) => {
+          return blockNetProfit + entry.netProfit ?? 0;
+        }, 0);
+        console.log(state.overview[currentBlock].netProfit);
       });
     },
 
@@ -514,8 +518,6 @@ export const assetsSlice = createSlice({
           ROI,
         }
       })
-
-      // TO DO: overall for resources missing (for overview item), netProfit in overview sum = NaN
 
       // retrieve existing resources entries
       if (state.overview) {
