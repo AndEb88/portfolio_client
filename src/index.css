@@ -261,6 +261,19 @@ a {
 
 
 /* -------------- */
+/* chart */
+/* -------------- */
+
+#display .chart-row {
+  height: 10rem;
+}
+
+#display .recharts-pie-label-line{
+  display: none;
+}
+
+
+/* -------------- */
 /* form */
 /* -------------- */
 

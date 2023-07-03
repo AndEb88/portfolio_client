@@ -1,6 +1,7 @@
 import {NavLink, useOutletContext} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, PureComponent} from 'react';
+import {PieChart, Pie, Sector, Cell, ResponsiveContainer} from 'recharts';
 
 import mockStore from '../utils/mockStore';
 import accountIcons from '../icons/accountIcons'
@@ -14,7 +15,7 @@ function Display() {
 
     const [mainIndex, itemIndex, main, item, form, block] = useOutletContext();
     const editPath = 'edit/' + block + '/';
-    const disableLink = (item === 'overview');
+    const disableLink = (item === 'dashboard');
 
     const dispatch = useDispatch();
     const itemStore = useSelector(state => selectAssetsItem(state, item));
@@ -27,6 +28,7 @@ function Display() {
     //if current year is not found, it has to be created!
     let itemComponent = (<h1>no item data available</h1>);
     let sumComponent = (<h1>no sum data available</h1>);
+    let pieChartComponent = (<></>);
 
     switch(status){
         case 'error':
@@ -40,7 +42,8 @@ function Display() {
         case 'idle':
             const itemBlock = itemStore[block];
             switch (itemIndex){
-                case 0: //Overview 
+                case 0: //Dashboard 
+                    let pieData = [];
                     itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                         const groupTitleComponent = createHeadlineComponent(group); 
                         const groupItemsComponent = itemBlock.entries
@@ -51,7 +54,8 @@ function Display() {
                             });                              
                         return (<>{groupTitleComponent}{groupItemsComponent}</>);          
                     });
-                    sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance);       
+                    sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance);
+                    pieChartComponent = createPieChartComponent(itemBlock.entries);    
                     break;
         
                 case 1: //Resources
@@ -86,8 +90,8 @@ function Display() {
                         const groupTitleComponent = createHeadlineComponent(group); 
                         const groupItemsComponent = itemBlock.entries
                             .filter(expanse => expanse.group === group)
-                            .map(expanse => createExpanseComponent(expanse));                               
-                        return (<>{groupTitleComponent}{groupItemsComponent}</>);          
+                            .map(expanse => createExpanseComponent(expanse)); 
+                        return groupItemsComponent.length > 0 ? (<>{groupTitleComponent}{groupItemsComponent}</>) : null;       
                     }); 
                     sumComponent = createSumComponent(itemBlock.amountMonthly, itemBlock.amountYearly);
                     break;
@@ -101,7 +105,13 @@ function Display() {
     }
 
 
-    const assetsComponent = (<>{itemComponent}{sumComponent}</>);
+    const assetsComponent = (
+        <>
+            {itemComponent}
+            {sumComponent}
+            {pieChartComponent}
+        </>
+    );
  
     function createHeadlineComponent (headline){ 
         return (
@@ -109,6 +119,38 @@ function Display() {
                 <div className='col-12 d-flex align-items-center'>
                     <h3>{headline}</h3>
                 </div>
+            </div>
+        );
+    } 
+    
+    function createPieChartComponent (entries){ 
+        const innerData = [
+            { name: 'Group A', value: 400 },
+            { name: 'Group B', value: 300 },
+            { name: 'Group C', value: 300 },
+            { name: 'Group D', value: 200 },
+          ];
+          const outerData = [
+            { name: 'A1', value: 100 },
+            { name: 'A2', value: 300 },
+            { name: 'B1', value: 100 },
+            { name: 'B2', value: 80 },
+            { name: 'B3', value: 40 },
+            { name: 'B4', value: 30 },
+            { name: 'B5', value: 50 },
+            { name: 'C1', value: 100 },
+            { name: 'C2', value: 200 },
+            { name: 'D1', value: 150 },
+            { name: 'D2', value: 50 },
+          ];
+        return ( // set somehow the inner html of tspan child components according to entries (via label prop)
+            <div className='row chart-row'>
+                <ResponsiveContainer maxWidth="100%" height="100%">
+                    <PieChart width={400} height={400}>
+                        <Pie data={innerData} dataKey="value" cx="50%" cy="50%" outerRadius={60} fill="#8884d8" />
+                        <Pie data={outerData} dataKey="value" cx="50%" cy="50%" innerRadius={70} outerRadius={80} fill="#82ca9d"/>
+                    </PieChart>
+                </ResponsiveContainer>
             </div>
         );
     }    
@@ -244,7 +286,7 @@ function Display() {
     return(
         <>
             <div className='container-fluid content' id='display'>
-                {assetsComponent} 
+                {assetsComponent}
             </div> 
         </>
     );

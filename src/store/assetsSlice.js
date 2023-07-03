@@ -15,7 +15,7 @@ const initialState = {}; //declare initial state mockDatabase
 // 8. ...replace NULL values with 0 or '' (or provide data at create and update right away?)
 // 9. ...calculate accumulated values for blocks
 // 10. ...calculate overall blocks
-// 11. ...calculate overview item
+// 11. ...calculate dashboard item
 // 11. Since one thunk triggers another, one can overwrite the other's state.status -> differantiate!
 // but if inner promise gets rejected, also the outer promise gets rejected :)
 // 12. treat rejected (inform), 'loading' (inform) and 'rejected' (inform and... ??!?) promises
@@ -78,7 +78,7 @@ const syncAssets = createAsyncThunk(
     thunkAPI.dispatch(assetsSlice.actions.calcInvestments(rawItems.investments));
     thunkAPI.dispatch(assetsSlice.actions.calcExpanses(rawItems.expanses));
     thunkAPI.dispatch(assetsSlice.actions.calcPension(rawItems.pension));
-    thunkAPI.dispatch(assetsSlice.actions.calcOverview());
+    thunkAPI.dispatch(assetsSlice.actions.calcdashboard());
     return response.data; 
     //returns {assets}
   }
@@ -94,11 +94,11 @@ const syncItem = createAsyncThunk(
     switch (item){
       case 'resources':
         thunkAPI.dispatch(assetsSlice.actions.calcResources(response.data.entries));
-        thunkAPI.dispatch(assetsSlice.actions.calcOverview());
+        thunkAPI.dispatch(assetsSlice.actions.calcdashboard());
         break;
       case 'investments':
         thunkAPI.dispatch(assetsSlice.actions.calcInvestments(response.data.entries));
-        thunkAPI.dispatch(assetsSlice.actions.calcOverview());
+        thunkAPI.dispatch(assetsSlice.actions.calcdashboard());
         break;
       case 'transfers':
         thunkAPI.dispatch(assetsSlice.actions.calcTransfers(response.data.entries));
@@ -124,7 +124,7 @@ const deleteAssetsEntry = createAsyncThunk(
     thunkAPI.dispatch(syncItem(item));
     if(item ==='transfers') {
       thunkAPI.dispatch(assetsSlice.actions.calcResources());
-      thunkAPI.dispatch(assetsSlice.actions.calcOverview());
+      thunkAPI.dispatch(assetsSlice.actions.calcdashboard());
     }
     return response.data; 
     //returns {item, entry}
@@ -140,7 +140,7 @@ const updateAssetsEntry = createAsyncThunk(
     thunkAPI.dispatch(syncItem(item));
     if(item ==='transfers') {
       thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
-      thunkAPI.dispatch(assetsSlice.actions.calcOverview());
+      thunkAPI.dispatch(assetsSlice.actions.calcdashboard());
     }
     return response.data; 
     //returns {item, entry}
@@ -159,7 +159,7 @@ const createAssetsEntry = createAsyncThunk(
     thunkAPI.dispatch(syncItem(item));
     if(item ==='transfers') {
       thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
-      thunkAPI.dispatch(assetsSlice.actions.calcOverview());
+      thunkAPI.dispatch(assetsSlice.actions.calcdashboard());
     }
     return response.data; 
     //returns {item, entry}
@@ -295,7 +295,7 @@ export const assetsSlice = createSlice({
   name: 'assets',
   initialState,
   reducers: {
-    calcOverview: (state, action) => {
+    calcdashboard: (state, action) => {
     // omit and populate within resources and investments!?
 
     },
@@ -322,33 +322,33 @@ export const assetsSlice = createSlice({
       // populate item
       state.resources = populateBlocks(entries);
 
-      let overviewEntries = [];
+      let dashboardEntries = [];
       const blocks = Object.keys(state.resources).sort();
       blocks.forEach((currentBlock, currentBlockIndex) => {
         // add closingBalance for each block
         state.resources[currentBlock].closingBalance = state.resources[currentBlock].entries.reduce((blockClosingBalance, entry) => {
           return blockClosingBalance + entry.closingBalance;
         }, 0);
-         // set up and calculate entries for overview item
-        const newEntries = Object.values(state.resources[currentBlock].entries.reduce((overviewBlock, entry) => {
+         // set up and calculate entries for dashboard item
+        const newEntries = Object.values(state.resources[currentBlock].entries.reduce((dashboardBlock, entry) => {
           const groupKey = entry.group;
-          if (!overviewBlock[groupKey]) {
-            overviewBlock[groupKey] = {
+          if (!dashboardBlock[groupKey]) {
+            dashboardBlock[groupKey] = {
               block: currentBlock,
               group: 'Resources',
               title: groupKey,
               closingBalance: 0,
             };
           }
-          const overviewEntry = overviewBlock[groupKey];
-          overviewBlock[groupKey] = {
-            ...overviewEntry,
-            closingBalance: overviewEntry.closingBalance + entry.closingBalance,
+          const dashboardEntry = dashboardBlock[groupKey];
+          dashboardBlock[groupKey] = {
+            ...dashboardEntry,
+            closingBalance: dashboardEntry.closingBalance + entry.closingBalance,
           }
-          return overviewBlock;
+          return dashboardBlock;
         }, {}
         )); 
-      overviewEntries.push(...newEntries);
+      dashboardEntries.push(...newEntries);
       if (currentBlockIndex === blocks.length - 1){
          const overallEntries = newEntries.map(currentEntry => {
           return {
@@ -356,29 +356,28 @@ export const assetsSlice = createSlice({
             block: 'overall'
           };
         });
-        overviewEntries.push(...overallEntries);
+        dashboardEntries.push(...overallEntries);
       }});
 
       // retrieve existing investments entries
-      if (state.overview) {
-        Object.keys(state.overview).forEach(currentBlock => {
-          const investmentsEntries = state.overview[currentBlock].entries.filter(currentEntry => currentEntry.group === 'Investments');
-          overviewEntries.push(...investmentsEntries);
+      if (state.dashboard) {
+        Object.keys(state.dashboard).forEach(currentBlock => {
+          const investmentsEntries = state.dashboard[currentBlock].entries.filter(currentEntry => currentEntry.group === 'Investments');
+          dashboardEntries.push(...investmentsEntries);
         });
       }
       // populate item
-      state.overview = populateBlocks(overviewEntries);
+      state.dashboard = populateBlocks(dashboardEntries);
       // netProfits get lost here!!!
 
-      blocks.forEach(currentBlock => {
-       // add closingBalance and netProfit for each overview block
-       state.overview[currentBlock].closingBalance = state.overview[currentBlock].entries.reduce((blockClosingBalance, entry) => {
+      Object.keys(state.dashboard).forEach(currentBlock => {
+       // add closingBalance and netProfit for each dashboard block
+       state.dashboard[currentBlock].closingBalance = state.dashboard[currentBlock].entries.reduce((blockClosingBalance, entry) => {
           return blockClosingBalance + entry.closingBalance;
         }, 0);
-        state.overview[currentBlock].netProfit = state.overview[currentBlock].entries.reduce((blockNetProfit, entry) => {
-          return blockNetProfit + entry.netProfit ?? 0;
+        state.dashboard[currentBlock].netProfit = state.dashboard[currentBlock].entries.reduce((blockNetProfit, entry) => {
+          return blockNetProfit + (entry.netProfit ?? 0);
         }, 0);
-        console.log(state.overview[currentBlock].netProfit);
       });
     },
 
@@ -390,7 +389,7 @@ export const assetsSlice = createSlice({
       const closingBalances = {};
       let overallBlockId = {};
 
-      // set up weightedTransfers for overview item
+      // set up weightedTransfers for dashboard item
       let groupWeightedTransfers = {};
       content[2].items[2].groups.map(currentGroup =>{
         groupWeightedTransfers[currentGroup] = {}
@@ -477,7 +476,7 @@ export const assetsSlice = createSlice({
       // populate item
       state.investments = populateBlocks(entries.concat(overallEntries));
       
-      let overviewEntries = [];
+      let dashboardEntries = [];
       const blocks = Object.keys(state.investments).sort();
       blocks.map(currentBlock => {
         // add closingBalance and netProfit for each block
@@ -488,11 +487,11 @@ export const assetsSlice = createSlice({
           return blockNetProfit + entry.netProfit;
         }, 0);
         
-        // set up and calculate entries for overview item
-        overviewEntries.push(...Object.values(state.investments[currentBlock].entries.reduce((overviewBlock, entry) => {
+        // set up and calculate entries for dashboard item
+        dashboardEntries.push(...Object.values(state.investments[currentBlock].entries.reduce((dashboardBlock, entry) => {
           const groupKey = entry.group;
-          if (!overviewBlock[groupKey]) {
-            overviewBlock[groupKey] = {
+          if (!dashboardBlock[groupKey]) {
+            dashboardBlock[groupKey] = {
               block: currentBlock,
               group: 'Investments',
               title: groupKey,
@@ -500,18 +499,18 @@ export const assetsSlice = createSlice({
               netProfit: 0,
             };
           }
-          const overviewEntry = overviewBlock[groupKey];
-          overviewBlock[groupKey] = {
-            ...overviewEntry,
-            closingBalance: overviewEntry.closingBalance + entry.closingBalance,
-            netProfit: overviewEntry.netProfit + entry.netProfit 
+          const dashboardEntry = dashboardBlock[groupKey];
+          dashboardBlock[groupKey] = {
+            ...dashboardEntry,
+            closingBalance: dashboardEntry.closingBalance + entry.closingBalance,
+            netProfit: dashboardEntry.netProfit + entry.netProfit 
           }
-          return overviewBlock;
+          return dashboardBlock;
         }, {})));        
       });
 
-      // calculate ROI for entries of overview item
-      overviewEntries = overviewEntries.map(currentEntry => {
+      // calculate ROI for entries of dashboard item
+      dashboardEntries = dashboardEntries.map(currentEntry => {
         const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / groupWeightedTransfers[currentEntry.title][currentEntry.block] * 1000) / 10).toFixed(1) : '-';
         return {
           ...currentEntry,
@@ -520,24 +519,24 @@ export const assetsSlice = createSlice({
       })
 
       // retrieve existing resources entries
-      if (state.overview) {
-        Object.keys(state.overview).map(currentBlock => {
-          const resourcesEntries = state.overview[currentBlock].entries.filter(currentEntry => currentEntry.group === 'Resources');
-          overviewEntries.push(...resourcesEntries);
+      if (state.dashboard) {
+        Object.keys(state.dashboard).map(currentBlock => {
+          const resourcesEntries = state.dashboard[currentBlock].entries.filter(currentEntry => currentEntry.group === 'Resources');
+          dashboardEntries.push(...resourcesEntries);
         });
       }
       // populate item
-      state.overview = populateBlocks(overviewEntries);
+      state.dashboard = populateBlocks(dashboardEntries);
 
       blocks.map(currentBlock => {
-        // add closingBalance and netProfit for each overview block
-        state.overview[currentBlock].closingBalance = state.overview[currentBlock].entries.reduce((blockClosingBalance, entry) => {
+        // add closingBalance and netProfit for each dashboard block
+        state.dashboard[currentBlock].closingBalance = state.dashboard[currentBlock].entries.reduce((blockClosingBalance, entry) => {
           return blockClosingBalance + entry.closingBalance;
         }, 0);
-        state.overview[currentBlock].netProfit = state.overview[currentBlock].entries.reduce((blockNetProfit, entry) => {
-          return blockNetProfit + entry.netProfit ?? 0;
+        state.dashboard[currentBlock].netProfit = state.dashboard[currentBlock].entries.reduce((blockNetProfit, entry) => {
+          return blockNetProfit + (entry.netProfit ?? 0);
         }, 0);
-        console.log(state.overview[currentBlock].netProfit);
+        console.log(state.dashboard[currentBlock].netProfit);
       });
     },
 

@@ -39,8 +39,8 @@ const content = [
         description: 'Investments description...',      
         items: [
             {
-                route: 'overview', 
-                title: 'Overview', 
+                route: 'dashboard', 
+                title: 'Dashboard', 
                 edit: false, 
                 create: false, 
                 add: false,
