@@ -9,6 +9,7 @@ import content, {colors} from '../utils/content';
 import {sumIcon} from '../icons/svgIcons';
 import {selectAssetsItem} from '../store/assetsSlice';
 import {toAmount, toPercent} from '../utils/assetsFunctions';
+import { color } from 'd3-color';
 
 
 function Display() {
@@ -132,26 +133,26 @@ function Display() {
                 centerData.push({
                     name: currentEntry.title,
                     value: - currentEntry.closingBalance,
-                    class: 'liabilities-cell',
+                    class: 'overlay-cell',
                 });
             } else {
                 innerData.push({
                     name: currentEntry.title,
                     value: currentEntry.closingBalance,
                     label: currentEntry.title,
-                    class: 'closingBalance-cell',
+                    class: 'balance-cell',
                 });
                 outerData.push({
                     name: currentEntry.title ,
                     value: currentEntry.closingBalance - (currentEntry.netProfit ?? 0),
                     label: currentEntry.title,
-                    class: 'openingBalance-cell',
+                    class: 'invisible-cell',
                 });
                 outerData.push({
                     name: currentEntry.title + ' Profit',
                     value: currentEntry.netProfit ?? 0,
                     label: currentEntry.ROI ?? '',
-                    class: 'netProfit-cell',
+                    class: 'profit-cell',
                 });
             }
         })  
@@ -160,21 +161,21 @@ function Display() {
             <div className='row chart-row'>
                 <ResponsiveContainer maxWidth="100%" height="100%">
                     <PieChart width={400} height={400}>
-                        <Pie data={centerData} dataKey="value" cx="50%" cy="50%" outerRadius={40}>
+                        <Pie data={centerData} dataKey="value" cx="50%" cy="50%" outerRadius={100}>
                             {centerData.map((currentData, index) => (
                                 <Cell className={currentData.class} key={`cell-${index}`}/>
                             ))}
                         </Pie>
-                        <Pie data={innerData} dataKey="value" cx="50%" cy="50%" innerRadius={40} outerRadius={60}>
-                            <LabelList dataKey="label" position='outside'/>
+                        <Pie data={innerData} dataKey="value" cx="50%" cy="50%" innerRadius={10} outerRadius={80} fill={colors.accentColor} stroke={colors.backgroundColor}>
+                            <LabelList dataKey="label" position='outside' stroke='none'/>
                             {innerData.map((currentData, index) => (
                                 <Cell className={currentData.class} key={`cell-${index}`}/>
                             ))}
                         </Pie>
-                        <Pie data={outerData} dataKey="value" cx="50%" cy="50%" innerRadius={65} outerRadius={75} minAngle='1'>
-                            <LabelList dataKey="label" position='outside'/>
+                        <Pie data={outerData} dataKey="value" cx="50%" cy="50%" innerRadius={110} outerRadius={115} minAngle='1' fill={colors.highlightColor} stroke='none'>
+                            <LabelList dataKey="label" position='end' fill='red'/>
                             {outerData.map((currentData, index) => (
-                                <Cell className={currentData.class} key={`cell-${index}`}/>
+                                <Cell className={currentData.class} key={`cell-${index}`} fill={colors.accentColor}/>
                             ))}
                         </Pie>
   

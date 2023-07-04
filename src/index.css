@@ -268,22 +268,21 @@ a {
   height: 14rem;
 }
 
-#display .liabilities-cell{
+#display .overlay-cell{
   fill: var(--foregroundColor);
   stroke: var(--foregroundColor);
+  z-index: 300;
 }
 
-#display .closingBalance-cell{
-  fill: var(--accentColor);
-  stroke: var(--backgroundColor);
+#display .balance-cell{
+
+  /* stroke: var(--backgroundColor); */
 }
 
-#display .netProfit-cell{
-  fill: var(--highlightColor);
-  stroke: none;
+#display .profit-cell{
 }
 
-#display .openingBalance-cell{
+#display .invisible-cell{
   display: none;
 }
 
