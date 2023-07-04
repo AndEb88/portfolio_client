@@ -415,7 +415,7 @@ export const assetsSlice = createSlice({
         const netProfit = grossProfit + currentEntry.bonus - grossProfit * taxRate;
         weightedTransfers = weightedTransfers + openingBalance * closingDaysPassed / 365;
         groupWeightedTransfers[currentEntry.group][block] = (groupWeightedTransfers[currentEntry.group][block] ?? 0) + weightedTransfers;
-        const ROI = netProfit ? (Math.round(netProfit / weightedTransfers * 1000) / 10).toFixed(1) : '-';
+        const ROI = netProfit ? (Math.round(netProfit / weightedTransfers * 10000) / 100).toFixed(2) : '-';
 
         // set up overall entry 
         if (!overallBlockId[currentEntry.id]) {
@@ -466,7 +466,7 @@ export const assetsSlice = createSlice({
       // calculate ROI for entries of overall block
       const overallEntries = overallBlock.map(currentEntry => {
         groupWeightedTransfers[currentEntry.group][currentEntry.block] = (groupWeightedTransfers[currentEntry.group][currentEntry.block] ?? 0) + currentEntry.weightedTransfers;
-        const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / currentEntry.weightedTransfers * 1000) / 10).toFixed(1) : '-';
+        const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / currentEntry.weightedTransfers * 10000) / 100).toFixed(2) : '-';
         return {
           ...currentEntry,
           ROI: ROI,
@@ -511,7 +511,7 @@ export const assetsSlice = createSlice({
 
       // calculate ROI for entries of dashboard item
       dashboardEntries = dashboardEntries.map(currentEntry => {
-        const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / groupWeightedTransfers[currentEntry.title][currentEntry.block] * 1000) / 10).toFixed(1) : '-';
+        const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / groupWeightedTransfers[currentEntry.title][currentEntry.block] * 10000) / 100).toFixed(2) : '-';
         return {
           ...currentEntry,
           ROI,
@@ -536,7 +536,6 @@ export const assetsSlice = createSlice({
         state.dashboard[currentBlock].netProfit = state.dashboard[currentBlock].entries.reduce((blockNetProfit, entry) => {
           return blockNetProfit + (entry.netProfit ?? 0);
         }, 0);
-        console.log(state.dashboard[currentBlock].netProfit);
       });
     },
 

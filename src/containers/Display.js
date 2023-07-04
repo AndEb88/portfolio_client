@@ -1,14 +1,14 @@
 import {NavLink, useOutletContext} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
 import {useState, useEffect, PureComponent} from 'react';
-import {PieChart, Pie, Sector, Cell, ResponsiveContainer} from 'recharts';
+import {PieChart, Pie, Sector, Cell, LabelList, ResponsiveContainer} from 'recharts';
 
 import mockStore from '../utils/mockStore';
 import accountIcons from '../icons/accountIcons'
-import content from '../utils/content';
+import content, {colors} from '../utils/content';
 import {sumIcon} from '../icons/svgIcons';
 import {selectAssetsItem} from '../store/assetsSlice';
-import {toAmount} from '../utils/assetsFunctions';
+import {toAmount, toPercent} from '../utils/assetsFunctions';
 
 
 function Display() {
@@ -123,32 +123,61 @@ function Display() {
         );
     } 
     
-    function createPieChartComponent (entries){ 
-        const innerData = [
-            { name: 'Group A', value: 400 },
-            { name: 'Group B', value: 300 },
-            { name: 'Group C', value: 300 },
-            { name: 'Group D', value: 200 },
-          ];
-          const outerData = [
-            { name: 'A1', value: 100 },
-            { name: 'A2', value: 300 },
-            { name: 'B1', value: 100 },
-            { name: 'B2', value: 80 },
-            { name: 'B3', value: 40 },
-            { name: 'B4', value: 30 },
-            { name: 'B5', value: 50 },
-            { name: 'C1', value: 100 },
-            { name: 'C2', value: 200 },
-            { name: 'D1', value: 150 },
-            { name: 'D2', value: 50 },
-          ];
-        return ( // set somehow the inner html of tspan child components according to entries (via label prop)
+    function createPieChartComponent (entries){
+        let centerData = [];
+        let innerData = [];
+        let outerData = [];
+        entries.forEach(currentEntry => {
+            if (currentEntry.title === 'Liabilities'){
+                centerData.push({
+                    name: currentEntry.title,
+                    value: - currentEntry.closingBalance,
+                    class: 'liabilities-cell',
+                });
+            } else {
+                innerData.push({
+                    name: currentEntry.title,
+                    value: currentEntry.closingBalance,
+                    label: currentEntry.title,
+                    class: 'closingBalance-cell',
+                });
+                outerData.push({
+                    name: currentEntry.title ,
+                    value: currentEntry.closingBalance - (currentEntry.netProfit ?? 0),
+                    label: currentEntry.title,
+                    class: 'openingBalance-cell',
+                });
+                outerData.push({
+                    name: currentEntry.title + ' Profit',
+                    value: currentEntry.netProfit ?? 0,
+                    label: currentEntry.ROI ?? '',
+                    class: 'netProfit-cell',
+                });
+            }
+        })  
+       
+        return (
             <div className='row chart-row'>
                 <ResponsiveContainer maxWidth="100%" height="100%">
                     <PieChart width={400} height={400}>
-                        <Pie data={innerData} dataKey="value" cx="50%" cy="50%" outerRadius={60} fill="#8884d8" />
-                        <Pie data={outerData} dataKey="value" cx="50%" cy="50%" innerRadius={70} outerRadius={80} fill="#82ca9d"/>
+                        <Pie data={centerData} dataKey="value" cx="50%" cy="50%" outerRadius={40}>
+                            {centerData.map((currentData, index) => (
+                                <Cell className={currentData.class} key={`cell-${index}`}/>
+                            ))}
+                        </Pie>
+                        <Pie data={innerData} dataKey="value" cx="50%" cy="50%" innerRadius={40} outerRadius={60}>
+                            <LabelList dataKey="label" position='outside'/>
+                            {innerData.map((currentData, index) => (
+                                <Cell className={currentData.class} key={`cell-${index}`}/>
+                            ))}
+                        </Pie>
+                        <Pie data={outerData} dataKey="value" cx="50%" cy="50%" innerRadius={65} outerRadius={75} minAngle='1'>
+                            <LabelList dataKey="label" position='outside'/>
+                            {outerData.map((currentData, index) => (
+                                <Cell className={currentData.class} key={`cell-${index}`}/>
+                            ))}
+                        </Pie>
+  
                     </PieChart>
                 </ResponsiveContainer>
             </div>
@@ -183,10 +212,10 @@ function Display() {
                     </div>
                     <div className='col-3 text-end'>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{entry.ROI} <span className='unit'>%</span></h4>
+                            <h4>{toPercent(entry.ROI, true)} <span className='unit'>%</span></h4>
                         </div>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{toAmount(entry.netProfit)} <span className='unit'>€</span></h4>
+                            <h4>{toAmount(entry.netProfit, true)} <span className='unit'>€</span></h4>
                         </div>
                     </div>        
                     <div className='col-3 text-end'>
@@ -266,7 +295,7 @@ function Display() {
                     <h3>Sum</h3>
                 </div>
                 <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                    {left && (<h4>{toAmount(left)}<span className='unit'> €</span></h4>)}
+                    {left && (<h4>{toAmount(left, true)}<span className='unit'> €</span></h4>)}
                 </div>        
                 <div className='col-3 text-end d-flex align-items-center justify-content-end'>
                     <h4>{toAmount(right)}<span className='unit'> €</span></h4>

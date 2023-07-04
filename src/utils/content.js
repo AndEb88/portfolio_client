@@ -1,3 +1,11 @@
+export const colors = {
+    backgroundColor: '#0B0C10', /* =rgba(11, 12, 16, 1) */
+    foregroundColor: '#1F2833', /* =rgba(31, 40, 51, 1) */
+    textColor: '#C5C6C7', /* =rgba(197, 198, 199, 1) */
+    accentColor: '#45A29E', /* =rgba(69, 162, 158, 1) */
+    highlightColor: '#66FCF1'
+};
+
 const content = [
     {
         route: 'about', 

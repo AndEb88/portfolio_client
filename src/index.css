@@ -265,12 +265,29 @@ a {
 /* -------------- */
 
 #display .chart-row {
-  height: 10rem;
+  height: 14rem;
 }
 
-#display .recharts-pie-label-line{
+#display .liabilities-cell{
+  fill: var(--foregroundColor);
+  stroke: var(--foregroundColor);
+}
+
+#display .closingBalance-cell{
+  fill: var(--accentColor);
+  stroke: var(--backgroundColor);
+}
+
+#display .netProfit-cell{
+  fill: var(--highlightColor);
+  stroke: none;
+}
+
+#display .openingBalance-cell{
   display: none;
 }
+
+
 
 
 /* -------------- */
