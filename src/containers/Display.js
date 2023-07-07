@@ -209,10 +209,10 @@ function Display() {
                     </div>
                     <div className='col-3 text-end'>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{toPercentElement(entry.ROI, true)} <span className='unit'>%</span></h4>
+                            <h4>{toPercentElement(entry.ROI)} <span className='unit'>%</span></h4>
                         </div>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{toAmountElement(entry.netProfit, true)} <span className='unit'>€</span></h4>
+                            <h4>{toAmountElement(entry.netProfit)} <span className='unit'>€</span></h4>
                         </div>
                     </div>        
                     <div className='col-3 text-end'>
@@ -292,7 +292,7 @@ function Display() {
                     <h3>Sum</h3>
                 </div>
                 <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                    {left && (<h4>{toAmountElement(left, true)}<span className='unit'> €</span></h4>)}
+                    {left && (<h4>{toAmountElement(left)}<span className='unit'> €</span></h4>)}
                 </div>        
                 <div className='col-3 text-end d-flex align-items-center justify-content-end'>
                     <h4>{toAmountElement(right)}<span className='unit'> €</span></h4>

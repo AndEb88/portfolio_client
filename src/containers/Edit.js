@@ -5,7 +5,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
 import {selectAssetsItem} from '../store/assetsSlice';
-
+import {toAmount, toPercent, toNumber} from '../utils/assetsFunctions';
 
 function Edit() {
 
@@ -37,9 +37,27 @@ function Edit() {
               [name]: checked,
             }));
           } else {
+            let newValue = '';
+            switch (type) {
+                case 'text':
+                    newValue = value;
+                    break;
+                case 'number':
+                    newValue = toNumber(value);
+                    break;
+                case 'percent':
+                    newValue = toNumber(value);
+                    break;
+                case 'date':
+                    newValue = value;
+                    break; 
+                case 'group':
+                    newValue = value;
+                    break;         
+            }
             setFormData((prevFormData) => ({
               ...prevFormData,
-              [name]: value,
+              [name]: newValue,
             }));
           }
       };
@@ -74,8 +92,10 @@ function Edit() {
                             </div>
                             <div className='col-5 text-end'>
                                 {formEntry.type === 'text' && <input type='text' name={formEntry.name} value={formData[formEntry.name]}></input>}
-                                {formEntry.type === 'number' && <input className='text-end' type='number' name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}></input>}
-                                {formEntry.type === 'display' && <p name={formEntry.name}>{formData[formEntry.name]}</p>}
+                                {formEntry.type === 'number' && <input className='text-end' type='text' name={formEntry.name} value={toAmount(formData[formEntry.name])} onChange={handleChange}></input>}
+                                {formEntry.type === 'percent' && <input className='text-end' type='text' name={formEntry.name} value={toPercent(formData[formEntry.name])} onChange={handleChange}></input>}
+                                {formEntry.type === 'displayNumber' && <p name={formEntry.name}>{toAmount(formData[formEntry.name])}</p>}
+                                {formEntry.type === 'displayText' && <p name={formEntry.name}>{formData[formEntry.name]}</p>}
                                 {formEntry.type === 'date' && <input type='date' name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}/>}
                                 {formEntry.type === 'group' && (
                                     <select name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}>

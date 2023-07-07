@@ -99,6 +99,10 @@ a {
   color: var(--accentColor);
 }
 
+.highlight-color{
+  color: var(--highlightColor);
+}
+
 .big-margin {
   margin-bottom: 1.5rem;
 }
@@ -251,42 +255,13 @@ a {
 }
 
 #display .sum-row {
-  color: var(--accentColor);
+  color: var(--highlightColor);
   background-color: var(--backgroundColor);
 }
 
 #display .decimals {
   font-size: 0.7rem;
 }
-
-
-/* -------------- */
-/* chart */
-/* -------------- */
-
-#display .chart-row {
-  height: 14rem;
-}
-
-#display .overlay-cell{
-  fill: var(--foregroundColor);
-  stroke: var(--foregroundColor);
-  z-index: 300;
-}
-
-#display .balance-cell{
-
-  /* stroke: var(--backgroundColor); */
-}
-
-#display .profit-cell{
-}
-
-#display .invisible-cell{
-  display: none;
-}
-
-
 
 
 /* -------------- */
