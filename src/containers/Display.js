@@ -8,8 +8,8 @@ import accountIcons from '../icons/accountIcons'
 import content, {colors} from '../utils/content';
 import {sumIcon} from '../icons/svgIcons';
 import {selectAssetsItem} from '../store/assetsSlice';
-import {toAmount, toPercent} from '../utils/assetsFunctions';
-import { color } from 'd3-color';
+import {toAmountElement, toPercentElement} from '../utils/assetsFunctions';
+import {color} from 'd3-color';
 
 
 function Display() {
@@ -21,10 +21,6 @@ function Display() {
     const dispatch = useDispatch();
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const status = useSelector(state => state.assets.status);
-    console.log(`current status = ${status}`);
-    console.log(`current store = ${itemStore}`);
-
-
 
     //if current year is not found, it has to be created!
     let itemComponent = (<h1>no item data available</h1>);
@@ -125,41 +121,41 @@ function Display() {
     } 
     
     function createPieChartComponent (entries){
-        let centerData = [];
-        let innerData = [];
-        let outerData = [];
-        entries.forEach(currentEntry => {
-            if (currentEntry.title === 'Liabilities'){
-                centerData.push({
-                    name: currentEntry.title,
-                    value: - currentEntry.closingBalance,
-                    class: 'overlay-cell',
-                });
-            } else {
-                innerData.push({
-                    name: currentEntry.title,
-                    value: currentEntry.closingBalance,
-                    label: currentEntry.title,
-                    class: 'balance-cell',
-                });
-                outerData.push({
-                    name: currentEntry.title ,
-                    value: currentEntry.closingBalance - (currentEntry.netProfit ?? 0),
-                    label: currentEntry.title,
-                    class: 'invisible-cell',
-                });
-                outerData.push({
-                    name: currentEntry.title + ' Profit',
-                    value: currentEntry.netProfit ?? 0,
-                    label: currentEntry.ROI ?? '',
-                    class: 'profit-cell',
-                });
-            }
-        })  
+        // let centerData = [];
+        // let innerData = [];
+        // let outerData = [];
+        // entries.forEach(currentEntry => {
+        //     if (currentEntry.title === 'Liabilities'){
+        //         centerData.push({
+        //             name: currentEntry.title,
+        //             value: - currentEntry.closingBalance,
+        //             class: 'overlay-cell',
+        //         });
+        //     } else {
+        //         innerData.push({
+        //             name: currentEntry.title,
+        //             value: currentEntry.closingBalance,
+        //             label: currentEntry.title,
+        //             class: 'balance-cell',
+        //         });
+        //         outerData.push({
+        //             name: currentEntry.title ,
+        //             value: currentEntry.closingBalance - (currentEntry.netProfit ?? 0),
+        //             label: currentEntry.title,
+        //             class: 'invisible-cell',
+        //         });
+        //         outerData.push({
+        //             name: currentEntry.title + ' Profit',
+        //             value: currentEntry.netProfit ?? 0,
+        //             label: currentEntry.ROI ?? '',
+        //             class: 'profit-cell',
+        //         });
+        //     }
+        // })  
        
         return (
             <div className='row chart-row'>
-                <ResponsiveContainer maxWidth="100%" height="100%">
+                {/* <ResponsiveContainer maxWidth="100%" height="100%">
                     <PieChart width={400} height={400}>
                         <Pie data={centerData} dataKey="value" cx="50%" cy="50%" outerRadius={100}>
                             {centerData.map((currentData, index) => (
@@ -180,7 +176,7 @@ function Display() {
                         </Pie>
   
                     </PieChart>
-                </ResponsiveContainer>
+                </ResponsiveContainer> */}
             </div>
         );
     }    
@@ -195,7 +191,7 @@ function Display() {
                     </div>
                     <div className='col-6 text-end'>
                           <div className='row d-flex align-items-center'>
-                            <h4>{toAmount(entry.closingBalance)} <span className='unit'>€</span></h4>
+                            <h4>{toAmountElement(entry.closingBalance)} <span className='unit'>€</span></h4>
                         </div>
                     </div>
                 </div>
@@ -213,15 +209,15 @@ function Display() {
                     </div>
                     <div className='col-3 text-end'>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{toPercent(entry.ROI, true)} <span className='unit'>%</span></h4>
+                            <h4>{toPercentElement(entry.ROI, true)} <span className='unit'>%</span></h4>
                         </div>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{toAmount(entry.netProfit, true)} <span className='unit'>€</span></h4>
+                            <h4>{toAmountElement(entry.netProfit, true)} <span className='unit'>€</span></h4>
                         </div>
                     </div>        
                     <div className='col-3 text-end'>
                           <div className='row d-flex align-items-center'>
-                            <h4>{toAmount(entry.closingBalance)} <span className='unit'>€</span></h4>
+                            <h4>{toAmountElement(entry.closingBalance)} <span className='unit'>€</span></h4>
                         </div>
                     </div>
                 </div>
@@ -240,7 +236,7 @@ function Display() {
                         <p>{entry.date}</p>
                     </div>        
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{toAmount(entry.amount)} <span className='unit'>€</span></p>
+                        <p>{toAmountElement(entry.amount)} <span className='unit'>€</span></p>
                     </div>
                 </div>
             </NavLink>
@@ -255,10 +251,10 @@ function Display() {
                         <p>{entry.title}</p>
                     </div>
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{toAmount(entry.amountMonthly)} <span className='unit'>€</span></p>
+                        <p>{toAmountElement(entry.amountMonthly)} <span className='unit'>€</span></p>
                     </div>        
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{toAmount(entry.amountYearly)} <span className='unit'>€</span></p>
+                        <p>{toAmountElement(entry.amountYearly)} <span className='unit'>€</span></p>
                     </div>
                 </div>
             </NavLink>
@@ -278,11 +274,11 @@ function Display() {
                             <h4>{entry.ROI} <span className='unit'>%</span></h4>
                         </div>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{toAmount(entry.expected)} <span className='unit'>€</span></h4>
+                            <h4>{toAmountElement(entry.expected)} <span className='unit'>€</span></h4>
                         </div>
                     </div>          
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <h4>{toAmount(entry.amount)}<span className='unit'> €</span></h4>
+                        <h4>{toAmountElement(entry.amount)}<span className='unit'> €</span></h4>
                     </div>
                 </div>
             </NavLink>
@@ -296,10 +292,10 @@ function Display() {
                     <h3>Sum</h3>
                 </div>
                 <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                    {left && (<h4>{toAmount(left, true)}<span className='unit'> €</span></h4>)}
+                    {left && (<h4>{toAmountElement(left, true)}<span className='unit'> €</span></h4>)}
                 </div>        
                 <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                    <h4>{toAmount(right)}<span className='unit'> €</span></h4>
+                    <h4>{toAmountElement(right)}<span className='unit'> €</span></h4>
                 </div>
             </div>
         );
@@ -314,11 +310,9 @@ function Display() {
     }
    
     return(
-        <>
-            <div className='container-fluid content' id='display'>
-                {assetsComponent}
-            </div> 
-        </>
+        <div className='container-fluid content' id='display'>
+            {assetsComponent}
+        </div> 
     );
 }
 

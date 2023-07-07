@@ -1,8 +1,10 @@
 import {useParams, useOutletContext} from 'react-router-dom';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
+import {selectAssetsItem} from '../store/assetsSlice';
 
 
 function Edit() {
@@ -16,10 +18,16 @@ function Edit() {
     const [mainIndex, itemIndex, main, item, form] = useOutletContext();
     const {block, id} = useParams();
     
-    
-    let entry = mockStore[main][item][block].entries.find(currentEntry => currentEntry.id == id);
+    const itemStore = useSelector(state => selectAssetsItem(state, item));
+    const status = useSelector(state => state.assets.status);
+    const [formData, setFormData] = useState({});
 
-    const [formData, setFormData] = useState(entry);
+    useEffect(() => {
+        if(status === 'idle'){
+            const entry = itemStore[block].entries.find(currentEntry => currentEntry.id == id);
+            setFormData(entry);
+        }
+      }, [status]);
 
     const handleChange = (event) => {
         const {name, value, type, checked} = event.target;
@@ -41,8 +49,19 @@ function Edit() {
         // Process form data
       };
 
-    return(         
-        <div className='container-fluid content' id='edit'>
+      let editComponent = (<h1>no edit data available</h1>);
+    
+      switch(status){
+        case 'error':
+
+            break;
+            
+        case 'loading':
+
+            break;
+
+        case 'idle':
+            editComponent = (
             <form onSubmit={handleSubmit} onChange={handleChange}>
                 <div className='form-container'>                    
                     {content[mainIndex].items[itemIndex].editForm.map(formEntry => (
@@ -93,7 +112,15 @@ function Edit() {
                 <div className='row form-row d-flex justify-content-center'>
                     <button className='form-button' type='submit'>Save</button>
                 </div>   
-            </form>              
+            </form>
+            ); 
+
+            break;
+        }
+    
+    return(         
+        <div className='container-fluid content' id='edit'>
+            {editComponent}           
         </div> 
     );
 }

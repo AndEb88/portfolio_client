@@ -1,4 +1,4 @@
-export function toAmount (number, sign = false){
+export function toAmountElement (number, sign = false){
     let prefix = '';
     const integer = Math.floor(number).toLocaleString();
     const decimals = (number % 1).toFixed(2).slice(2);
@@ -6,7 +6,7 @@ export function toAmount (number, sign = false){
     return (<>{prefix}{integer}<span class='decimals'> {decimals}</span></>)
 }
 
-export function toPercent (number, sign = false){
+export function toPercentElement (number, sign = false){
     let prefix = '';
     const integer = Math.floor(number).toLocaleString();
     const decimals = (number % 1).toFixed(2).slice(2);

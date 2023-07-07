@@ -23,13 +23,9 @@ function App() {
   const mainIndex = main ? content.findIndex(currentMain => currentMain.route === main) : -1;
   const itemIndex = item ? content[mainIndex].items.findIndex(currentItem => currentItem.route === item) : -1;
   const blockList = store[item] ? Object.keys(store[item]) : [];
-  //sort will be handled when fetching data form database - not required here anymore!?
-
 
   useEffect(() => {
     dispatch(syncAssets());
-    console.log(`dispatching syncAssets thunk`);
-    console.log(`current item = ${item}`);
   }, [])
 
   const [blocks, setBlocks] = useState({
