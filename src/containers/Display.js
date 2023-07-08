@@ -197,7 +197,7 @@ function Display() {
             <NavLink to={disableLink ? null : editPath + entry.id} key={`resource-${entry.id ?? entry.title}`} className={disableLink && 'nav-link-disabled'}> 
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
-                        <img className={entry.pending && 'pending-img'} src={findIcon(entry)}/>
+                        <img className={!entry.pending && (entry.closingBalance < 0 ? 'negative-img' : 'accent-img')} src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
                     <div className='col-6 text-end'>
@@ -215,20 +215,20 @@ function Display() {
             <NavLink to={disableLink ? null : editPath + entry.id} key={`investment-${entry.id ?? entry.title}`} className={disableLink && 'nav-link-disabled'}> 
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
-                        <img className={entry.pending && 'pending-img'} src={findIcon(entry)}/>
+                        <img className={!entry.pending && (entry.ROI < 0 ? 'negative-img' : 'accent-img')} src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
                     <div className='col-3 text-end'>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{entry.ROI} <span className='unit'>%</span></h4>
+                            <h4 className={entry.ROI < 0 ? 'negative-color' : 'accent-color'}>{entry.ROI} <span className='unit'>%</span></h4>
                         </div>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{toAmountElement(entry.netProfit)} <span className='unit'>€</span></h4>
+                            <h4 className={entry.netProfit < 0 ? 'negative-color' : 'accent-color'}>{toAmountElement(entry.netProfit)}</h4>
                         </div>
                     </div>        
                     <div className='col-3 text-end'>
                           <div className='row d-flex align-items-center'>
-                            <h4>{toAmountElement(entry.closingBalance)} <span className='unit'>€</span></h4>
+                            <h4>{toAmountElement(entry.closingBalance)}</h4>
                         </div>
                     </div>
                 </div>
@@ -247,7 +247,7 @@ function Display() {
                         <p>{entry.date}</p>
                     </div>        
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{toAmountElement(entry.amount)} <span className='unit'>€</span></p>
+                        <p className={entry.amount < 0 ? 'negative-color' : 'accent-color'}>{toAmountElement(entry.amount)}</p>
                     </div>
                 </div>
             </NavLink>
@@ -262,10 +262,10 @@ function Display() {
                         <p>{entry.title}</p>
                     </div>
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{toAmountElement(entry.amountMonthly)} <span className='unit'>€</span></p>
+                        <p className={entry.amountMonthly < 0 ? 'negative-color' : 'accent-color'}>{toAmountElement(entry.amountMonthly)}</p>
                     </div>        
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p>{toAmountElement(entry.amountYearly)} <span className='unit'>€</span></p>
+                        <p className={entry.amountYearly < 0 ? 'negative-color' : 'accent-color'}>{toAmountElement(entry.amountYearly)}</p>
                     </div>
                 </div>
             </NavLink>
@@ -277,19 +277,19 @@ function Display() {
             <NavLink to={editPath + entry.id} key={`pension-${entry.id}`}>      
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
-                        <img className={entry.pending && 'pending-img'} src={findIcon(entry)}/>
+                        <img className={!entry.pending && 'accent-img'} src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
                     <div className='col-3 text-end'>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{entry.ROI} <span className='unit'>%</span></h4>
+                            <h4 className={entry.ROI < 0 ? 'negative-color' : 'accent-color'}>{entry.ROI} <span className='unit'>%</span></h4>
                         </div>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{toAmountElement(entry.expected)} <span className='unit'>€</span></h4>
+                            <h4 className={entry.expected < 0 ? 'negative-color' : 'accent-color'}>{toAmountElement(entry.expected)}</h4>
                         </div>
                     </div>          
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <h4>{toAmountElement(entry.amount)}<span className='unit'> €</span></h4>
+                        <h4 >{toAmountElement(entry.amount)}</h4>
                     </div>
                 </div>
             </NavLink>
@@ -303,10 +303,10 @@ function Display() {
                     <h3>Sum</h3>
                 </div>
                 <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                    {left && (<h4>{toAmountElement(left)}<span className='unit'> €</span></h4>)}
+                    {left && (<h4 className={left < 0 ? 'negative-color' : 'accent-color'}>{toAmountElement(left)}</h4>)}
                 </div>        
                 <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                    <h4>{toAmountElement(right)}<span className='unit'> €</span></h4>
+                    <h4>{toAmountElement(right)}</h4>
                 </div>
             </div>
         );

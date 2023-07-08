@@ -73,7 +73,7 @@ function Edit() {
             <form onSubmit={handleSubmit} onChange={handleChange}>
                 <div className='form-container'>                    
                     {content[mainIndex].items[itemIndex].editForm.map((formEntry, index) => (
-                        <div key={`entry-${index}-${formEntry.name}`} className={`row form-row ${formEntry.accent && 'accent-color'} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
+                        <div key={`entry-${index}-${formEntry.name}`} className={`row form-row ${formEntry.colored && (formData[formEntry.name] < 0 ? 'negative-color' : 'accent-color')} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
                             <div className='col-5'>
                                 <p>{formEntry.title}</p>
                             </div>
@@ -162,7 +162,7 @@ function Edit() {
                             <div className='col-12'>
                                 <div className='form-check form-switch d-flex align-items-center form-row-bold'>
                                     <label className='form-check-label' htmlFor='freeze-switch'>Freeze</label>
-                                    <input name='pending' checked={formData.pending} className='form-check-input' type='checkbox' role='switch' id='freeze-switch'/>
+                                    <input name='pending' checked={!formData.pending} className='form-check-input' type='checkbox' role='switch' id='freeze-switch'/>
                                 </div>
                             </div>
                         </div>}                                              

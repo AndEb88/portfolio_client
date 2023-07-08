@@ -42,6 +42,7 @@
   --textColor: #C5C6C7; /* =rgba(197, 198, 199, 1) */
   --accentColor: #45A29E; /* =rgba(69, 162, 158, 1) */
   --highlightColor: #66FCF1;
+  --negativeColor: #a7467c;
 }
 
 
@@ -101,6 +102,10 @@ a {
 
 .highlight-color{
   color: var(--highlightColor);
+}
+
+.negative-color{
+  color: var(--negativeColor);
 }
 
 .big-margin {
@@ -202,15 +207,20 @@ a {
 .content img {
   max-height: 70%;
   border-radius: 50%;
-  border: 2px solid var(--accentColor);
-  box-shadow: 0px 0px 5px 1px var(--accentColor);
+  border: 2px solid var(--textColor);
+  box-shadow: 0px 0px 5px 1px var(--textColor);
   background-color:var(--textColor);
 
 }
 
-.content .pending-img {
-  border: 2px solid var(--textColor);
-  box-shadow: 0px 0px 5px 1px var(--textColor);
+.content .negative-img {
+  border: 2px solid var(--negativeColor);
+  box-shadow: 0px 0px 5px 1px var(--negativeColor);
+}
+
+.content .accent-img {
+  border: 2px solid var(--accentColor);
+  box-shadow: 0px 0px 5px 1px var(--accentColor);
 }
 
 .content-row {
@@ -262,7 +272,6 @@ a {
 }
 
 #display .sum-row {
-  color: var(--highlightColor);
   background-color: var(--backgroundColor);
 }
 
