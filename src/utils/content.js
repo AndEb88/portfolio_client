@@ -110,7 +110,7 @@ const content = [
                 edit: true, 
                 create: true, 
                 add: true,
-                // groups must be calculated dynamically depending on set year
+                // groups (accounts) must be calculated dynamically depending on set year
                 // therefore transfer groups are retrieved 'ad hoc' from selected block in store
                 editForm: [
                     {name: 'title', title: 'Title', operator: '', type: 'account', unit: '', margin: true, bold: true},
@@ -149,7 +149,7 @@ const content = [
                 edit: true, 
                 create: true, 
                 freeze: true,
-                groups: ['Private', 'Public', 'Employer'],
+                groups: ['Public', 'Employer', 'Private'],
                 editForm: [
                     {name: 'group', title: 'Group', operator: '', type: 'group', unit: '', bold: true},
                     {name: 'title', title: 'Title', operator: '', type: 'text', unit: '', margin: true, bold: true},
@@ -173,7 +173,7 @@ const content = [
         title: 'Foo Bar',
         items: [
             {route: 'foobar', title: 'Foo Bar', edit: false, create: false, add: false}, 
-            {route: 'foobar', title: 'Fooo Bar', edit: false, create: false, add: false}
+            {route: 'fooobar', title: 'Fooo Bar', edit: false, create: false, add: false}
         ],
         description: 'Foo Bar description...'
     }

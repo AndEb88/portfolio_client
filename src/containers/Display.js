@@ -112,7 +112,7 @@ function Display() {
  
     function createHeadlineComponent (headline){ 
         return (
-            <div key={headline} className='row content-row headline-row'>
+            <div key={`headline-${headline}`} className='row content-row headline-row'>
                 <div className='col-12 d-flex align-items-center'>
                     <h3>{headline}</h3>
                 </div>
@@ -183,10 +183,10 @@ function Display() {
 
     function createResourceComponent (entry){ 
         return (
-            <NavLink to={disableLink ? null : editPath + entry.id} key={entry.id} className={disableLink && 'nav-link-disabled'}> 
+            <NavLink to={disableLink ? null : editPath + entry.id} key={`resource-${entry.id ?? entry.title}`} className={disableLink && 'nav-link-disabled'}> 
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
-                        <img src={findIcon(entry)}/>
+                        <img className={entry.pending && 'pending-img'} src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
                     <div className='col-6 text-end'>
@@ -201,15 +201,15 @@ function Display() {
 
     function createInvestmentComponent (entry){ 
         return (
-            <NavLink to={disableLink ? null : editPath + entry.id} key={entry.id} className={disableLink && 'nav-link-disabled'}> 
+            <NavLink to={disableLink ? null : editPath + entry.id} key={`investment-${entry.id ?? entry.title}`} className={disableLink && 'nav-link-disabled'}> 
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
-                        <img src={findIcon(entry)}/>
+                        <img className={entry.pending && 'pending-img'} src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
                     <div className='col-3 text-end'>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4>{toPercentElement(entry.ROI)} <span className='unit'>%</span></h4>
+                            <h4>{entry.ROI} <span className='unit'>%</span></h4>
                         </div>
                         <div className='row h-50 d-flex align-items-center'>
                             <h4>{toAmountElement(entry.netProfit)} <span className='unit'>€</span></h4>
@@ -227,7 +227,7 @@ function Display() {
 
     function createTransferComponent (entry){
         return (
-            <NavLink to={editPath + entry.id} key={entry.id}>      
+            <NavLink to={editPath + entry.id} key={`transfer-${entry.id}`}>      
                 <div className='row content-row small-row'>
                     <div className='col-5 d-flex align-items-center'>
                         <p>{entry.title}</p>
@@ -245,7 +245,7 @@ function Display() {
 
     function createExpanseComponent (entry){
         return (
-            <NavLink to={editPath + entry.id} key={entry.id}>      
+            <NavLink to={editPath + entry.id} key={`expanse-${entry.id}`}>      
                 <div className='row content-row small-row'>
                     <div className='col-6 d-flex align-items-center'>
                         <p>{entry.title}</p>
@@ -263,10 +263,10 @@ function Display() {
 
     function createPensionComponent (entry){
         return (
-            <NavLink to={editPath + entry.id} key={entry.id}>      
+            <NavLink to={editPath + entry.id} key={`pension-${entry.id}`}>      
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
-                        <img src={findIcon(entry)}/>
+                        <img className={entry.pending && 'pending-img'} src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
                     <div className='col-3 text-end'>

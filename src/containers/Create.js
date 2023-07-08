@@ -53,7 +53,10 @@ function Create() {
                                 {formEntry.type === 'number' && <input className='text-end' type='number' name={formEntry.name} onChange={handleChange}></input>}
                                 {formEntry.type === 'date' && <input type='date' name={formEntry.name} onChange={handleChange}/>}
                                 {formEntry.type === 'group' && (
-                                    <select name={formEntry.name} defaultValue='Select...' value={formData[formEntry.name]} onChange={handleChange}>                                      
+                                    <select name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}>
+                                        <option disabled selected value=''>
+                                            Select...
+                                        </option>                                      
                                         {content[mainIndex].items[itemIndex].groups.map(group => (
                                             <option key={group} value={group}>
                                                 {group}

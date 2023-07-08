@@ -338,12 +338,14 @@ export const assetsSlice = createSlice({
               group: 'Resources',
               title: groupKey,
               closingBalance: 0,
+              pending: entry.pending,
             };
           }
           const dashboardEntry = dashboardBlock[groupKey];
           dashboardBlock[groupKey] = {
             ...dashboardEntry,
             closingBalance: dashboardEntry.closingBalance + entry.closingBalance,
+            pending: dashboardEntry && entry.pending,
           }
           return dashboardBlock;
         }, {}
@@ -368,7 +370,6 @@ export const assetsSlice = createSlice({
       }
       // populate item
       state.dashboard = populateBlocks(dashboardEntries);
-      // netProfits get lost here!!!
 
       Object.keys(state.dashboard).forEach(currentBlock => {
        // add closingBalance and netProfit for each dashboard block
@@ -415,7 +416,7 @@ export const assetsSlice = createSlice({
         const netProfit = grossProfit + currentEntry.bonus - grossProfit * taxRate;
         weightedTransfers = weightedTransfers + openingBalance * closingDaysPassed / 365;
         groupWeightedTransfers[currentEntry.group][block] = (groupWeightedTransfers[currentEntry.group][block] ?? 0) + weightedTransfers;
-        const ROI = netProfit ? (Math.round(netProfit / weightedTransfers * 10000) / 100).toFixed(2) : '-';
+        const ROI = netProfit ? (Math.round(netProfit / weightedTransfers * 10000) / 100).toFixed(1) : '-';
 
         // set up overall entry 
         if (!overallBlockId[currentEntry.id]) {
@@ -430,6 +431,7 @@ export const assetsSlice = createSlice({
             closingBalance: currentEntry.closingBalance,
             ROI: '-',
             weightedTransfers,
+            pending: currentEntry.pending,
           }
         } 
         // ..or add to existing entry
@@ -444,6 +446,7 @@ export const assetsSlice = createSlice({
             date: entry.date > currentEntry.date ? entry.date : currentEntry.date,
             closingBalance: currentEntry.closingBalance,
             weightedTransfers: entry.weightedTransfers + weightedTransfers,
+            pending: entry.pending || currentEntry.pending,
           }
         }
 
@@ -466,7 +469,7 @@ export const assetsSlice = createSlice({
       // calculate ROI for entries of overall block
       const overallEntries = overallBlock.map(currentEntry => {
         groupWeightedTransfers[currentEntry.group][currentEntry.block] = (groupWeightedTransfers[currentEntry.group][currentEntry.block] ?? 0) + currentEntry.weightedTransfers;
-        const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / currentEntry.weightedTransfers * 10000) / 100).toFixed(2) : '-';
+        const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / currentEntry.weightedTransfers * 10000) / 100).toFixed(1) : '-';
         return {
           ...currentEntry,
           ROI: ROI,
@@ -497,13 +500,15 @@ export const assetsSlice = createSlice({
               title: groupKey,
               closingBalance: 0,
               netProfit: 0,
+              pending: entry.pending,
             };
           }
           const dashboardEntry = dashboardBlock[groupKey];
           dashboardBlock[groupKey] = {
             ...dashboardEntry,
             closingBalance: dashboardEntry.closingBalance + entry.closingBalance,
-            netProfit: dashboardEntry.netProfit + entry.netProfit 
+            netProfit: dashboardEntry.netProfit + entry.netProfit,
+            pending: dashboardEntry.pending || entry.pending,
           }
           return dashboardBlock;
         }, {})));        

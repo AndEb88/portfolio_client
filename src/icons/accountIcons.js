@@ -7,6 +7,11 @@ import cashIcon from './accounts/cash.jpg';
 import liabilitiesIcon from './accounts/liabilities.jpg';
 import pensionIcon from './accounts/pension.png';
 
+// PNG 120x120 or convert to SVG
+// find icons by pressing Ctrl + U on site and searching favicon
+// or take a screenshot and edit PNG with Paint 3D (Seitenverhältnis sperren, Bildgröße mit Zeichenbereich anpassen, zuschneiden 1:1)
+// and make the white background (for default icons) transparent: https://onlinepngtools.com/create-transparent-png
+
 const accountIcons = [
     {title: 'P2P', source: p2pIcon},
     {title: 'Stock Market', source: stockMarketIcon},

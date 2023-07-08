@@ -50,3 +50,6 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 - SEO
 - stacked area chart (rechart) for dashboard
 - stacked area chart for investments/edit
+- progressive web app
+- responsiveness
+- clean up unused imports and variables

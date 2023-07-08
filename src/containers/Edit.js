@@ -29,35 +29,25 @@ function Edit() {
         }
       }, [status]);
 
+    const handleFocus = (event) => {
+        const {name} = event.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: null,
+          }));
+    };
+
     const handleChange = (event) => {
         const {name, value, type, checked} = event.target;
         if (type === 'checkbox') {
             setFormData((prevFormData) => ({
               ...prevFormData,
-              [name]: checked,
+              [name]: !checked,
             }));
           } else {
-            let newValue = '';
-            switch (type) {
-                case 'text':
-                    newValue = value;
-                    break;
-                case 'number':
-                    newValue = toNumber(value);
-                    break;
-                case 'percent':
-                    newValue = toNumber(value);
-                    break;
-                case 'date':
-                    newValue = value;
-                    break; 
-                case 'group':
-                    newValue = value;
-                    break;         
-            }
             setFormData((prevFormData) => ({
               ...prevFormData,
-              [name]: newValue,
+              [name]: value,
             }));
           }
       };
@@ -82,8 +72,8 @@ function Edit() {
             editComponent = (
             <form onSubmit={handleSubmit} onChange={handleChange}>
                 <div className='form-container'>                    
-                    {content[mainIndex].items[itemIndex].editForm.map(formEntry => (
-                        <div key={formEntry.name} className={`row form-row ${formEntry.accent && 'accent-color'} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
+                    {content[mainIndex].items[itemIndex].editForm.map((formEntry, index) => (
+                        <div key={`entry-${index}-${formEntry.name}`} className={`row form-row ${formEntry.accent && 'accent-color'} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
                             <div className='col-5'>
                                 <p>{formEntry.title}</p>
                             </div>
@@ -91,24 +81,72 @@ function Edit() {
                                 <p>{formEntry.operator}</p>
                             </div>
                             <div className='col-5 text-end'>
-                                {formEntry.type === 'text' && <input type='text' name={formEntry.name} value={formData[formEntry.name]}></input>}
-                                {formEntry.type === 'number' && <input className='text-end' type='text' name={formEntry.name} value={toAmount(formData[formEntry.name])} onChange={handleChange}></input>}
-                                {formEntry.type === 'percent' && <input className='text-end' type='text' name={formEntry.name} value={toPercent(formData[formEntry.name])} onChange={handleChange}></input>}
-                                {formEntry.type === 'displayNumber' && <p name={formEntry.name}>{toAmount(formData[formEntry.name])}</p>}
-                                {formEntry.type === 'displayText' && <p name={formEntry.name}>{formData[formEntry.name]}</p>}
-                                {formEntry.type === 'date' && <input type='date' name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}/>}
+                                {formEntry.type === 'text' && 
+                                    <input 
+                                        type='text' 
+                                        name={formEntry.name} 
+                                        value={formData[formEntry.name]}>
+                                    </input>
+                                }
+                                {formEntry.type === 'number' && 
+                                    <input 
+                                        className='text-end' 
+                                        type='number' 
+                                        name={formEntry.name} 
+                                        value={formData[formEntry.name] || ''} 
+                                        onChange={handleChange}
+                                        onFocus={handleFocus}>
+                                    </input>
+                                }
+                                {formEntry.type === 'percent' && 
+                                    <input 
+                                        className='text-end' 
+                                        type='number'
+                                         name={formEntry.name} 
+                                         value={formData[formEntry.name]} 
+                                         onChange={handleChange}>
+                                    </input>
+                                }
+                                {formEntry.type === 'displayNumber' && 
+                                    <p name={formEntry.name}>
+                                        {toAmount(formData[formEntry.name])}
+                                    </p>
+                                }
+                                {formEntry.type === 'displayText' && 
+                                    <p name={formEntry.name}>
+                                        {formData[formEntry.name]}
+                                    </p>
+                                }
+                                {formEntry.type === 'date' && 
+                                    <input type='date' 
+                                        name={formEntry.name} 
+                                        value={formData[formEntry.name]} 
+                                        onChange={handleChange}
+                                    />
+                                }
                                 {formEntry.type === 'group' && (
-                                    <select name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}>
+                                    <select 
+                                        name={formEntry.name} 
+                                        value={formData[formEntry.name]} 
+                                        onChange={handleChange}>
                                         {content[mainIndex].items[itemIndex].groups.map(group => 
-                                            <option key={group} value={group} selected={(group === formData[formEntry.name]) ? true : false}>
+                                            <option 
+                                                key={group} 
+                                                value={group}>
                                                 {group}
                                             </option>
                                         )}
-                                    </select>)}
+                                    </select>
+                                )}
                                 {formEntry.type === 'account' && (
-                                    <select name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}>
+                                    <select 
+                                        name={formEntry.name} 
+                                        value={formData[formEntry.name]} 
+                                        onChange={handleChange}>
                                         {mockStore.assets.investments.overall.entries.sort((a, b) => a.title.localeCompare(b.title)).map(entry => 
-                                            <option key={entry.id}value={entry.title} selected={(entry.title === formData[formEntry.name]) ? true : false}>
+                                            <option 
+                                                key={entry.id}
+                                                value={entry.title}>
                                                 {entry.title}
                                             </option>
                                         )}
@@ -123,8 +161,8 @@ function Edit() {
                         <div className='row form-row'>
                             <div className='col-12'>
                                 <div className='form-check form-switch d-flex align-items-center form-row-bold'>
-                                    <label className='form-check-label' for='freeze-switch'>Freeze</label>
-                                    <input name='frozen' checked={formData.frozen} className='form-check-input' type='checkbox' role='switch' id='freeze-switch'/>
+                                    <label className='form-check-label' htmlFor='freeze-switch'>Freeze</label>
+                                    <input name='pending' checked={formData.pending} className='form-check-input' type='checkbox' role='switch' id='freeze-switch'/>
                                 </div>
                             </div>
                         </div>}                                              
