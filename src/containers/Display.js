@@ -38,13 +38,15 @@ function Display() {
 
         case 'idle':
             const itemBlock = itemStore[block];
+            let entries = [...itemBlock.entries];
             switch (itemIndex){
                 case 0: //Dashboard 
                     let pieData = [];
                     itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                         const groupTitleComponent = createHeadlineComponent(group); 
-                        const groupItemsComponent = itemBlock.entries
+                        const groupItemsComponent = entries
                             .filter(account => account.group === group)
+                            .sort((a, b) => a.title.localeCompare(b.title))
                             .map(account => {
                                 if(group === content[2].items[1].title) return createResourceComponent(account);
                                 if(group === content[2].items[2].title) return createInvestmentComponent(account);
@@ -52,14 +54,15 @@ function Display() {
                         return (<>{groupTitleComponent}{groupItemsComponent}</>);          
                     });
                     sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance);
-                    pieChartComponent = createPieChartComponent(itemBlock.entries);    
+                    pieChartComponent = createPieChartComponent(entries);    
                     break;
         
                 case 1: //Resources
                     itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                         const groupTitleComponent = createHeadlineComponent(group); 
-                        const groupItemsComponent = itemBlock.entries
+                        const groupItemsComponent = entries
                             .filter(account => account.group === group)
+                            .sort((a, b) => a.title.localeCompare(b.title))
                             .map(account => createResourceComponent(account));                               
                         return (<>{groupTitleComponent}{groupItemsComponent}</>);          
                     });
@@ -69,24 +72,30 @@ function Display() {
                 case 2: //Investments
                     itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                         const groupTitleComponent = createHeadlineComponent(group); 
-                        const groupItemsComponent = itemBlock.entries
+                        const groupItemsComponent = entries
                             .filter(account => account.group === group)
-                            .map(account => createInvestmentComponent(account));                               
+                            .sort((a, b) => a.title.localeCompare(b.title))
+                            .map(account => {
+                                if(account.openingBalance !== 0 || account.transfers !==  0) return createInvestmentComponent(account);
+                            });                               
                         return (<>{groupTitleComponent}{groupItemsComponent}</>);          
                     });
                     sumComponent = createSumComponent(itemBlock.netProfit, itemBlock.closingBalance);
                     break;
         
                 case 3: // Transfers
-                    itemComponent = itemBlock.entries.map(transfer => createTransferComponent(transfer));
+                    itemComponent = entries
+                        .sort((a, b) => b.date.localeCompare(a.date))
+                        .map(transfer => createTransferComponent(transfer));
                     sumComponent = createSumComponent(null, itemBlock.amount);
                     break;
         
                 case 4: //Expanses
                     itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                         const groupTitleComponent = createHeadlineComponent(group); 
-                        const groupItemsComponent = itemBlock.entries
+                        const groupItemsComponent = entries
                             .filter(expanse => expanse.group === group)
+                            .sort((a, b) => a.title.localeCompare(b.title))
                             .map(expanse => createExpanseComponent(expanse)); 
                         return groupItemsComponent.length > 0 ? (<>{groupTitleComponent}{groupItemsComponent}</>) : null;       
                     }); 
@@ -94,7 +103,9 @@ function Display() {
                     break;
         
                 case 5: //Pension        
-                    itemComponent = itemBlock.entries.map(account => createPensionComponent (account));
+                    itemComponent = entries
+                        .sort((a, b) => a.title.localeCompare(b.title))
+                        .map(account => createPensionComponent (account));
                     sumComponent = createSumComponent(itemBlock.expected, itemBlock.amount);
                  break;
             }

@@ -203,14 +203,14 @@ a {
   max-height: 70%;
   border-radius: 50%;
   border: 2px solid var(--accentColor);
-  box-shadow: 0px 0px 10px 1px var(--accentColor);
+  box-shadow: 0px 0px 5px 1px var(--accentColor);
   background-color:var(--textColor);
 
 }
 
 .content .pending-img {
   border: 2px solid var(--textColor);
-  box-shadow: 0px 0px 10px 1px var(--textColor);
+  box-shadow: 0px 0px 5px 1px var(--textColor);
 }
 
 .content-row {
