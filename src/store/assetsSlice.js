@@ -45,6 +45,26 @@ function getTaxRate(year) {
   }
 }
 
+function roundAmount(number){
+  let rounded = Math.round(number * 100) / 100;
+  if(rounded === 0){
+    rounded = Math.abs(rounded);
+  }
+  return rounded;
+}
+
+function calcROI(profit, transfers){
+  if(!profit){
+    return '-';
+  }
+  const number = profit / transfers;
+  let rounded = Math.round(number * 1000) / 10;
+  if(rounded === 0){
+    rounded = Math.abs(rounded);
+  }
+  return rounded.toFixed(1);
+}
+
 function getDaysPassed(date) {
   const providedDate = new Date(date);
   const startOfYear = new Date(providedDate.getFullYear(), 0, 1);   
@@ -311,11 +331,11 @@ export const assetsSlice = createSlice({
       const entries = rawEntries.map(currentEntry => {
         const openingBalance = closingBalances[currentEntry.id] ?? 0;
         closingBalances[currentEntry.id] = currentEntry.closingBalance;
-        const difference = currentEntry.closingBalance - openingBalance;
+        const transfers = currentEntry.closingBalance - openingBalance;
         return {
           ...currentEntry,
           openingBalance,
-          difference,
+          transfers,
         }
       });
 
@@ -402,21 +422,27 @@ export const assetsSlice = createSlice({
         const taxRate = getTaxRate(block);
         const transfersEntries = state.transfers[block].entries.filter(currentTransfer => currentTransfer.title === currentEntry.title);
         const closingDaysPassed = getDaysPassed(currentEntry.date);
-        let weightedTransfers = transfersEntries.reduce((transfersSum, currentTransfer) => {
+        let transfers = 0;
+        let weightedTransfers = 0;
+        transfersEntries.forEach(currentTransfer => {
           const transferDaysPassed = getDaysPassed(currentTransfer.date);
-          if (transferDaysPassed > closingDaysPassed) return transfersSum;
-          return transfersSum + currentTransfer.amount * (closingDaysPassed - transferDaysPassed) / 365;
-        }, 0);
-        
-        const transfers = transfersEntries.reduce((transfersSum, currentTransfer) => {return transfersSum + currentTransfer.amount}, 0);
+          if(transferDaysPassed < closingDaysPassed){
+            transfers = transfers + currentTransfer.amount;
+            weightedTransfers = weightedTransfers + currentTransfer.amount * (closingDaysPassed - transferDaysPassed) / 365;
+          }
+        });
         const openingBalance = closingBalances[currentEntry.id] ?? 0;
         closingBalances[currentEntry.id] = currentEntry.closingBalance;
-        const grossProfit = currentEntry.closingBalance - openingBalance - currentEntry.bonus + currentEntry.withheldTaxes - transfers;
-        const dueTaxes = grossProfit * taxRate;
-        const netProfit = grossProfit + currentEntry.bonus - grossProfit * taxRate;
+        const grossProfit = roundAmount(currentEntry.closingBalance - openingBalance - currentEntry.bonus + currentEntry.withheldTaxes - transfers);
+        const dueTaxes = roundAmount(grossProfit * taxRate);
+        const netProfit = grossProfit + currentEntry.bonus - dueTaxes;
         weightedTransfers = weightedTransfers + openingBalance * closingDaysPassed / 365;
         groupWeightedTransfers[currentEntry.group][block] = (groupWeightedTransfers[currentEntry.group][block] ?? 0) + weightedTransfers;
-        const ROI = netProfit ? (Math.round(netProfit / weightedTransfers * 10000) / 100).toFixed(1) : '-';
+        const ROI = calcROI(netProfit, weightedTransfers);
+
+        if(currentEntry.title === 'Riester I' && block === '2023'){
+          console.log(currentEntry.closingBalance - openingBalance - currentEntry.bonus + currentEntry.withheldTaxes - transfers);
+        }
 
         // set up overall entry 
         if (!overallBlockId[currentEntry.id]) {
@@ -469,7 +495,7 @@ export const assetsSlice = createSlice({
       // calculate ROI for entries of overall block
       const overallEntries = overallBlock.map(currentEntry => {
         groupWeightedTransfers[currentEntry.group][currentEntry.block] = (groupWeightedTransfers[currentEntry.group][currentEntry.block] ?? 0) + currentEntry.weightedTransfers;
-        const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / currentEntry.weightedTransfers * 10000) / 100).toFixed(1) : '-';
+        const ROI = calcROI(currentEntry.netProfit, currentEntry.weightedTransfers);
         return {
           ...currentEntry,
           ROI: ROI,
@@ -516,7 +542,7 @@ export const assetsSlice = createSlice({
 
       // calculate ROI for entries of dashboard item
       dashboardEntries = dashboardEntries.map(currentEntry => {
-        const ROI = currentEntry.netProfit ? (Math.round(currentEntry.netProfit / groupWeightedTransfers[currentEntry.title][currentEntry.block] * 10000) / 100).toFixed(2) : '-';
+        const ROI = calcROI(currentEntry.netProfit, groupWeightedTransfers[currentEntry.title][currentEntry.block]);
         return {
           ...currentEntry,
           ROI,

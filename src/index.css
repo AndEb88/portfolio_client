@@ -104,6 +104,10 @@ a {
   color: var(--highlightColor);
 }
 
+.positive-color {
+  color: var(--accentColor);
+}
+
 .negative-color{
   color: var(--negativeColor);
 }
@@ -210,7 +214,6 @@ a {
   border: 2px solid var(--textColor);
   box-shadow: 0px 0px 5px 1px var(--textColor);
   background-color:var(--textColor);
-
 }
 
 .content .negative-img {
@@ -218,9 +221,29 @@ a {
   box-shadow: 0px 0px 5px 1px var(--negativeColor);
 }
 
-.content .accent-img {
+.content .positive-img {
   border: 2px solid var(--accentColor);
-  box-shadow: 0px 0px 5px 1px var(--accentColor);
+  box-shadow: 0px 0px 10px 1px var(--accentColor);
+}
+
+.content .negative-img {
+  border: 2px solid var(--negativeColor);
+  box-shadow: 0px 0px 5px 1px var(--negativeColor);
+}
+
+.content .pending-img {
+  border: 2px solid var(--textColor);
+  box-shadow: 0px 0px 2px 1px var(--textColor);
+}
+
+.content .negative-pending-img {
+  border: 2px solid var(--negativeColor);
+  box-shadow: 0px 0px 2px 1px var(--negativeColor);
+}
+
+.content .positive-pending-img {
+  border: 2px solid var(--accentColor);
+  box-shadow: 0px 0px 2px 1px var(--accentColor);
 }
 
 .content-row {
@@ -261,7 +284,8 @@ a {
 
 #display .small-row {
   height: 2.5rem;
-  margin: 0.3rem;
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
 }
 
 #display .headline-row {

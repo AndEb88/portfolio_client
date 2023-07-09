@@ -20,7 +20,7 @@ function Edit() {
     
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const status = useSelector(state => state.assets.status);
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState({});    
 
     useEffect(() => {
         if(status === 'idle'){
@@ -73,7 +73,7 @@ function Edit() {
             <form onSubmit={handleSubmit} onChange={handleChange}>
                 <div className='form-container'>                    
                     {content[mainIndex].items[itemIndex].editForm.map((formEntry, index) => (
-                        <div key={`entry-${index}-${formEntry.name}`} className={`row form-row ${formEntry.colored && (formData[formEntry.name] < 0 ? 'negative-color' : 'accent-color')} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
+                        <div key={`entry-${index}-${formEntry.name}`} className={`row form-row ${formEntry.colored && (formData[formEntry.name] < 0 ? 'negative-color' : formData[formEntry.name] > 0 ? 'positive-color' : '')} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
                             <div className='col-5'>
                                 <p>{formEntry.title}</p>
                             </div>

@@ -53,3 +53,27 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 - progressive web app
 - responsiveness
 - clean up unused imports and variables
+
+# Hints
+
+## Resources
+- Resources/ Cash: retrieve closing balance by downloading transfers .csv from bank and deduce transfers accordingly from current balance (calculate backwards!)
+
+## Investments
+- Investments/ Stock Market: enter saved taxes from Freibetrag to bonus AND paid taxes (Freibetrag will be considered in due taxes but then added as bonus)
+- Investments/ Stock Market: balance is equal gross investment amount, therefore the actual amount might be less (taxes and profit are calculated for delta within current year, so the accumulated balance is correct)
+- Investments/ P2P: extract profit from tax statement and derive closing balance accordingly
+- Investments/ Other / Allianz: closing balance = 'garantierte einmalige Kapitalzahlung bei Kündigung zum 01.09. des Folgejahres' (Services/ Kündigung) or (Postfach/ Bestätigung) in November of the following year
+- Investments/ Other/ Riester I: closing balance = 'Gesamtleistung bei Tod' (Services/ Tod) or 'Altersvorsorgevermögen Stand am 31.12.' (Postfach/ Auskunft) in January of the following year
+- Investments/ Other/ Riester II: closing balance = 'Gesamtleistung bei Tod' (Services/ Tod) or 'Altersvorsorgevermögen Stand am 31.12.' (Postfach/ Auskunft) in June of the following year
+
+## Pension
+- Pension/ Statutory: amount = 'bei 1% Anpassungssatz'
+- Pension/ Allianz: amount = 'Garantierente' (Postfach/ Bestätigung) in November of the following year
+- Pension/ Riester I: amount = 'monatliche, erreichte garantierte Rente' (Postfach/ Auskunft) in January of the following year 
+- Pension/ Riester II: amount = 'monatliche, erreichte garantierte Rente' (Postfach/ Auskunft) in June of the following year 
+- Pension/ Conti+: expected = 'Hochrechnungen -> ContiPLUS' (with 2% yearly salary increase)
+
+
+
+

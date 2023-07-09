@@ -67,7 +67,7 @@ const content = [
                     {name: 'title', title: 'Title', operator: '', type: 'text', unit: '', bold: true, margin: true},
                     {name: 'closingBalance', title: 'Closing Balance', operator: '', type: 'number', unit: '€'},
                     {name: 'openingBalance', title: 'Opening Balance', operator: '-', type: 'displayNumber', unit: '€'},
-                    {name: 'difference', title: 'Difference', operator: '=', type: 'displayNumber', unit: '€', margin: true, colored: true},
+                    {name: 'transfers', title: 'Transfers', operator: '=', type: 'displayNumber', unit: '€', margin: true, colored: true},
 
                 ],
                 createForm: [
