@@ -25,3 +25,15 @@ export function toPercent (number){
 export function toNumber (text){
     return parseFloat(text.replace('.', '').replace(',', '.'));
 }
+
+export function toDate (date){
+    const [year, month, day] = date.split('-');
+    const formattedDate = `${day}.${month}.${year}`;
+    return formattedDate;
+}
+
+export function toShortDate (date){
+    const [year, month, day] = date.split('-');
+    const formattedDate = `${day}.${month}.`;
+    return formattedDate;
+}

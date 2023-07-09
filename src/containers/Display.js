@@ -8,7 +8,7 @@ import accountIcons from '../icons/accountIcons'
 import content, {colors} from '../utils/content';
 import {sumIcon} from '../icons/svgIcons';
 import {selectAssetsItem} from '../store/assetsSlice';
-import {toAmountElement, toPercentElement} from '../utils/assetsFunctions';
+import {toAmountElement, toPercentElement, toShortDate} from '../utils/assetsFunctions';
 import {color} from 'd3-color';
 
 
@@ -244,7 +244,7 @@ function Display() {
                         <p>{entry.title}</p>
                     </div>
                     <div className='col-4 text-end d-flex align-items-center justify-content-end'>
-                        <p>{entry.date}</p>
+                        <p>{toShortDate(entry.date)}</p>
                     </div>        
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
                         <p className={entry.amount < 0 ? 'negative-color' : 'positive-color'}>{toAmountElement(entry.amount)}</p>

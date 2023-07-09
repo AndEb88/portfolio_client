@@ -5,7 +5,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
 import {selectAssetsItem} from '../store/assetsSlice';
-import {toAmount, toPercent, toNumber} from '../utils/assetsFunctions';
+import {toAmount, toPercent, toNumber, toDate} from '../utils/assetsFunctions';
 
 function Edit() {
 
@@ -20,7 +20,7 @@ function Edit() {
     
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const status = useSelector(state => state.assets.status);
-    const [formData, setFormData] = useState({});    
+    const [formData, setFormData] = useState({}); 
 
     useEffect(() => {
         if(status === 'idle'){
@@ -29,13 +29,13 @@ function Edit() {
         }
       }, [status]);
 
-    const handleFocus = (event) => {
-        const {name} = event.target;
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: null,
-          }));
-    };
+    // const handleFocus = (event) => {
+    //     const {name} = event.target;
+    //     setFormData((prevFormData) => ({
+    //         ...prevFormData,
+    //         [name]: null,
+    //       }));
+    // };
 
     const handleChange = (event) => {
         const {name, value, type, checked} = event.target;
@@ -88,34 +88,23 @@ function Edit() {
                                         value={formData[formEntry.name]}>
                                     </input>
                                 }
-                                {formEntry.type === 'number' && 
+                                {formEntry.type === 'number' && formData.pending &&
                                     <input 
                                         className='text-end' 
                                         type='number' 
                                         name={formEntry.name} 
                                         value={formData[formEntry.name] || ''} 
-                                        onChange={handleChange}
-                                        onFocus={handleFocus}>
+                                        onChange={handleChange}>
                                     </input>
                                 }
-                                {formEntry.type === 'percent' && 
+                                {formEntry.type === 'percent' && formData.pending &&
                                     <input 
-                                        className='text-end' 
+                                        className='text-end'
                                         type='number'
-                                         name={formEntry.name} 
-                                         value={formData[formEntry.name]} 
-                                         onChange={handleChange}>
+                                        name={formEntry.name} 
+                                        value={formData[formEntry.name]} 
+                                        onChange={handleChange}>
                                     </input>
-                                }
-                                {formEntry.type === 'displayNumber' && 
-                                    <p name={formEntry.name}>
-                                        {toAmount(formData[formEntry.name])}
-                                    </p>
-                                }
-                                {formEntry.type === 'displayText' && 
-                                    <p name={formEntry.name}>
-                                        {formData[formEntry.name]}
-                                    </p>
                                 }
                                 {formEntry.type === 'date' && 
                                     <input type='date' 
@@ -123,6 +112,28 @@ function Edit() {
                                         value={formData[formEntry.name]} 
                                         onChange={handleChange}
                                     />
+                                }
+                                {(formEntry.type === 'displayNumber' ||  (formEntry.type === 'number' && !formData.pending)) &&
+                                    <p name={formEntry.name}>
+                                        {toAmount(formData[formEntry.name])}
+                                    </p>
+                                }
+                                {(formEntry.type === 'displayPercent' ||  (formEntry.type === 'percent' && !formData.pending)) &&
+                                    <p name={formEntry.name}>
+                                        {toPercent(formData[formEntry.name])}
+                                    </p>
+                                }
+                                {formEntry.type === 'displayText' &&
+                                    <p name={formEntry.name}>
+                                        {formData[formEntry.name]}
+                                    </p>
+                                }
+                                {formEntry.type === 'displayDate' && 
+                                    <p                                         
+                                        className='text-end' 
+                                        name={formEntry.name}>
+                                        {formData.pending ? (formData[formEntry.name] ? toDate(formData[formEntry.name]) : '') : 'frozen'}
+                                    </p>
                                 }
                                 {formEntry.type === 'group' && (
                                     <select 

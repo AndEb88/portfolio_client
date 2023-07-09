@@ -440,10 +440,6 @@ export const assetsSlice = createSlice({
         groupWeightedTransfers[currentEntry.group][block] = (groupWeightedTransfers[currentEntry.group][block] ?? 0) + weightedTransfers;
         const ROI = calcROI(netProfit, weightedTransfers);
 
-        if(currentEntry.title === 'Riester I' && block === '2023'){
-          console.log(currentEntry.closingBalance - openingBalance - currentEntry.bonus + currentEntry.withheldTaxes - transfers);
-        }
-
         // set up overall entry 
         if (!overallBlockId[currentEntry.id]) {
           overallBlockId[currentEntry.id] = {
