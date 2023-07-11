@@ -24,6 +24,14 @@
 
 */
 
+.fade-in-element {
+  opacity: 0;
+  transition: opacity 1s ease-in;
+}
+
+.fade-in-element.fade-in {
+  opacity: 1;
+}
 
 /* -------------- */
 /* variables */

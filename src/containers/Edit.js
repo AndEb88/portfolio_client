@@ -4,8 +4,10 @@ import {useSelector, useDispatch} from 'react-redux';
 
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
-import {selectAssetsItem} from '../store/assetsSlice';
 import {toAmount, toPercent, toNumber, toDate} from '../utils/assetsFunctions';
+import Loading from '../components/Loading';
+import {syncAssets, updateAssetsEntry, selectAssetsItem, updateAssetsAccount} from '../store/assetsSlice';
+
 
 function Edit() {
 
@@ -18,6 +20,7 @@ function Edit() {
     const [mainIndex, itemIndex, main, item, form] = useOutletContext();
     const {block, id} = useParams();
     
+    const dispatch = useDispatch();
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const status = useSelector(state => state.assets.status);
     const [formData, setFormData] = useState({}); 
@@ -26,6 +29,7 @@ function Edit() {
         if(status === 'idle'){
             const entry = itemStore[block].entries.find(currentEntry => currentEntry.id == id);
             setFormData(entry);
+            console.log(itemStore['2023'].entries)
         }
       }, [status]);
 
@@ -55,17 +59,21 @@ function Edit() {
     const handleSubmit = (event) => {
         event.preventDefault();
         // Process form data
+        console.log(`submitting:`);
+        console.log(formData);
+        // dispatch(updateAssetsEntry(item, entry));
+        dispatch(updateAssetsAccount({item, entry: formData}));
       };
 
       let editComponent = (<h1>no edit data available</h1>);
     
       switch(status){
         case 'error':
-
+            editComponent = (<h1>error</h1>);
             break;
             
         case 'loading':
-
+            editComponent = <Loading/>;
             break;
 
         case 'idle':

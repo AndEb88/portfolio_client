@@ -3,8 +3,6 @@ import {Outlet, useLocation} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
 import {syncAssets, syncItem, selectAssetsItem} from './store/assetsSlice';
 
-
-
 import Navigator from './components/Navigator';
 import Header from './containers/Header';
 import content from './utils/content';

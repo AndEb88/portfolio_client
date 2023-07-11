@@ -10,6 +10,7 @@ import {sumIcon} from '../icons/svgIcons';
 import {selectAssetsItem} from '../store/assetsSlice';
 import {toAmountElement, toPercentElement, toShortDate} from '../utils/assetsFunctions';
 import {color} from 'd3-color';
+import Loading from '../components/Loading';
 
 
 function Display() {
@@ -24,7 +25,7 @@ function Display() {
 
     //if current year is not found, it has to be created!
     let itemComponent = (<h1>no item data available</h1>);
-    let sumComponent = (<h1>no sum data available</h1>);
+    let sumComponent = (<></>);
     let pieChartComponent = (<></>);
 
     switch(status){
@@ -33,7 +34,7 @@ function Display() {
             break;
             
         case 'loading':
-
+            itemComponent = <Loading/>;
             break;
 
         case 'idle':
