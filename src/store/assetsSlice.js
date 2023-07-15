@@ -2,6 +2,7 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {fetchAssests, fetchItem, deleteEntry, deleteEntries, updateEntry, updateEntries, createEntry, createEntries, createBlock} from './assetsAPI';
 
 import content from '../utils/content';
+import mockAssets from '../utils/mockAssets';
 
 const initialState = {}; //declare initial state mockDatabase
 
@@ -109,7 +110,7 @@ const syncItem = createAsyncThunk(
   async ({item}, thunkAPI) => {
     
     const response = await fetchItem(item);
-   
+
     // thunkAPI.dispatch(assetsSlice.actions.setItem(response.data));
     switch (item){
       case 'resources':
@@ -215,14 +216,13 @@ const updateAssetsAccount = createAsyncThunk(
     if(prevEntry.group !== entry.group || prevEntry.title !== entry.title){
       let promises = [updateEntries(item, entry)];
       if(item === 'investments') promises.push(updateEntries('transfers', entry));
-      console.log(item);
       let responses = await Promise.all(promises);
       responses.push(await updateEntry(item, entry));
 
-      thunkAPI.dispatch(syncItem({item}));   
+      await thunkAPI.dispatch(syncItem({item}));   
       if(item === 'investments') await thunkAPI.dispatch(syncItem({item: 'transfers'}));
       return responses.map(currentResponse => currentResponse.data); 
-      // returns [{item: 'resources', entries: []}]
+      // returns [{item, entries: []}]
       // ...or [{item: 'investments', entries: []}, {item: 'transfers', entries: []}]
     }
 

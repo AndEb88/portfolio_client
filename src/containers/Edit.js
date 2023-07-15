@@ -29,7 +29,6 @@ function Edit() {
         if(status === 'idle'){
             const entry = itemStore[block].entries.find(currentEntry => currentEntry.id == id);
             setFormData(entry);
-            console.log(itemStore['2023'].entries)
         }
       }, [status]);
 
@@ -128,7 +127,7 @@ function Edit() {
                                 }
                                 {(formEntry.type === 'displayPercent' ||  (formEntry.type === 'percent' && !formData.pending)) &&
                                     <p name={formEntry.name}>
-                                        {toPercentString(formData[formEntry.name])}
+                                        { String(formData[formEntry.name])}
                                     </p>
                                 }
                                 {formEntry.type === 'displayText' &&
