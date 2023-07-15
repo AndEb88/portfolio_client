@@ -4,7 +4,7 @@ import {useSelector, useDispatch} from 'react-redux';
 
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
-import {toAmount, toPercent, toNumber, toDate} from '../utils/assetsFunctions';
+import {toAmountString, toPercentString, toNumber, setColorClass, toDate} from '../utils/assetsFunctions';
 import Loading from '../components/Loading';
 import {syncAssets, updateAssetsEntry, selectAssetsItem, updateAssetsAccount} from '../store/assetsSlice';
 
@@ -81,7 +81,7 @@ function Edit() {
             <form onSubmit={handleSubmit} onChange={handleChange}>
                 <div className='form-container'>                    
                     {content[mainIndex].items[itemIndex].editForm.map((formEntry, index) => (
-                        <div key={`entry-${index}-${formEntry.name}`} className={`row form-row ${formEntry.colored && (formData[formEntry.name] < 0 ? 'negative-color' : formData[formEntry.name] > 0 ? 'positive-color' : '')} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
+                        <div key={`entry-${index}-${formEntry.name}`} className={`row form-row ${formEntry.colored && setColorClass(formData[formEntry.name])} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
                             <div className='col-5'>
                                 <p>{formEntry.title}</p>
                             </div>
@@ -123,12 +123,12 @@ function Edit() {
                                 }
                                 {(formEntry.type === 'displayNumber' ||  (formEntry.type === 'number' && !formData.pending)) &&
                                     <p name={formEntry.name}>
-                                        {toAmount(formData[formEntry.name])}
+                                        {toAmountString(formData[formEntry.name])}
                                     </p>
                                 }
                                 {(formEntry.type === 'displayPercent' ||  (formEntry.type === 'percent' && !formData.pending)) &&
                                     <p name={formEntry.name}>
-                                        {toPercent(formData[formEntry.name])}
+                                        {toPercentString(formData[formEntry.name])}
                                     </p>
                                 }
                                 {formEntry.type === 'displayText' &&

@@ -10,19 +10,19 @@ export function toPercentElement (number){
     return (<>{integer}<span className='decimals'> {decimals}</span></>)
 }
 
-export function toAmount (number){
+export function toAmountString (number){
     const integer = Math.floor(number).toLocaleString();
     const decimals = (number % 1).toFixed(2).slice(2);
     return integer + ',' + decimals;
 }
 
-export function toPercent (number){
+export function toPercentString (number){
     const integer = Math.floor(number).toLocaleString();
     const decimals = (number % 1).toFixed(2).slice(2);
     return integer + ',' + decimals;
 }
 
-export function toNumber (text){
+export function toNumberString (text){
     return parseFloat(text.replace('.', '').replace(',', '.'));
 }
 
@@ -36,4 +36,21 @@ export function toShortDate (date){
     const [year, month, day] = date.split('-');
     const formattedDate = `${day}.${month}.`;
     return formattedDate;
+}
+
+export function setColorClass (value){
+    if(value < 0) return 'negative-color';
+    if(value > 0) return 'positive-color';
+    return undefined;
+}
+
+export function setImgClass (value, pending){
+    if(pending){
+       if(value < 0) return 'negative-pending-img';
+       if(value > 0) return 'positive-pending-img';
+       return 'pending-img';
+    }  
+    if(value < 0) return 'negative-img';
+    if(value > 0) return 'positive-img';
+    return undefined;
 }

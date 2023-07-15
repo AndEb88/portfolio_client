@@ -8,7 +8,7 @@ import accountIcons from '../icons/accountIcons'
 import content, {colors} from '../utils/content';
 import {sumIcon} from '../icons/svgIcons';
 import {selectAssetsItem} from '../store/assetsSlice';
-import {toAmountElement, toPercentElement, toShortDate} from '../utils/assetsFunctions';
+import {toAmountElement, setColorClass, setImgClass, toPercentElement, toShortDate} from '../utils/assetsFunctions';
 import {color} from 'd3-color';
 import Loading from '../components/Loading';
 
@@ -198,7 +198,7 @@ function Display() {
             <NavLink to={disableLink ? null : editPath + entry.id} key={`resource-${entry.id ?? entry.title}`} className={disableLink && 'nav-link-disabled'}> 
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
-                        <img className={entry.pending ? entry.closingBalance < 0 ? 'negative-pending-img' : entry.closingBalance > 0 ? 'positive-pending-img' : 'pending-img' : entry.closingBalance < 0 ? 'negative-img' : entry.closingBalance > 0 ? 'positive-img' : ''} src={findIcon(entry)}/>
+                        <img className={setImgClass(entry.closingBalance, entry.pending)} src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
                     <div className='col-6 text-end'>
@@ -216,15 +216,15 @@ function Display() {
             <NavLink to={disableLink ? null : editPath + entry.id} key={`investment-${entry.id ?? entry.title}`} className={disableLink && 'nav-link-disabled'}> 
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
-                        <img className={entry.pending ? entry.netProfit < 0 ? 'negative-pending-img' : entry.netProfit > 0 ? 'positive-pending-img' : 'pending-img' : entry.netProfit < 0 ? 'negative-img' : entry.netProfit > 0 ? 'positive-img' : ''} src={findIcon(entry)}/>
+                        <img className={setImgClass(entry.netProfit, entry.pending)} src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
                     <div className='col-3 text-end'>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4 className={entry.ROI < 0 ? 'negative-color' : entry.ROI > 0 ? 'positive-color' : ''}>{entry.ROI} <span className='unit'>%</span></h4>
+                            <h4 className={setColorClass(entry.ROI)}>{entry.ROI} <span className='unit'>%</span></h4>
                         </div>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4 className={entry.netProfit < 0 ? 'negative-color' : entry.netProfit > 0 ? 'positive-color' : ''}>{toAmountElement(entry.netProfit)}</h4>
+                            <h4 className={setColorClass(entry.netProfit)}>{toAmountElement(entry.netProfit)}</h4>
                         </div>
                     </div>        
                     <div className='col-3 text-end'>
@@ -248,7 +248,7 @@ function Display() {
                         <p>{toShortDate(entry.date)}</p>
                     </div>        
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p className={entry.amount < 0 ? 'negative-color' : 'positive-color'}>{toAmountElement(entry.amount)}</p>
+                        <p className={setColorClass(entry.amount)}>{toAmountElement(entry.amount)}</p>
                     </div>
                 </div>
             </NavLink>
@@ -263,12 +263,12 @@ function Display() {
                         <p>{entry.title}</p>
                     </div>
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p className={entry.amountMonthly < 0 ? 'negative-color' : entry.amountMonthly > 0 ? 'positive-color' : ''}>
+                        <p className={setColorClass(entry.amountMonthly)}>
                             {toAmountElement(entry.amountMonthly)}
                         </p>
                     </div>        
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                        <p className={entry.amountYearly < 0 ? 'negative-color' : entry.amountYearly > 0 ? 'positive-color' : ''}>
+                        <p className={setColorClass(entry.amountYearly)}>
                             {toAmountElement(entry.amountYearly)}
                         </p>
                     </div>
@@ -282,15 +282,15 @@ function Display() {
             <NavLink to={editPath + entry.id} key={`pension-${entry.id}`}>      
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
-                        <img className={entry.pending ? 'positive-pending-img' : 'positive-img'} src={findIcon(entry)}/>
+                        <img className={setImgClass(1, entry.pending)} src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
                     <div className='col-3 text-end'>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4 className={entry.ROI < 0 ? 'negative-color' : entry.ROI > 0 ? 'positive-color' : ''}>{entry.ROI} <span className='unit'>%</span></h4>
+                            <h4 className={setColorClass(entry.ROI)}>{entry.ROI} <span className='unit'>%</span></h4>
                         </div>
                         <div className='row h-50 d-flex align-items-center'>
-                            <h4 className={entry.expected < 0 ? 'negative-color' : entry.expected > 0 ? 'positive-color' : ''}>{toAmountElement(entry.expected)}</h4>
+                            <h4 className={setColorClass(entry.expected)}>{toAmountElement(entry.expected)}</h4>
                         </div>
                     </div>          
                     <div className='col-3 text-end d-flex align-items-center justify-content-end'>
@@ -308,10 +308,10 @@ function Display() {
                     <h3>Sum</h3>
                 </div>
                 <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                    {left && (<h4 className={left < 0 ? 'negative-color' : left > 0 ? 'positive-color' : ''}>{toAmountElement(left)}</h4>)}
+                    {left && (<h4 className={setColorClass(left)}>{toAmountElement(left)}</h4>)}
                 </div>        
                 <div className='col-3 text-end d-flex align-items-center justify-content-end'>
-                    <h4 className={(item === 'expanses' || item === 'transfers') && (right < 0 ? 'negative-color' : right > 0 ? 'positive-color' : '')}>{toAmountElement(right)}</h4>
+                    <h4 className={(item === 'expanses' || item === 'transfers') && setColorClass(right)}>{toAmountElement(right)}</h4>
                 </div>
             </div>
         );

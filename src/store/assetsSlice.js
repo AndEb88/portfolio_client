@@ -195,8 +195,8 @@ const deleteAssetsAccount = createAsyncThunk(
     
     const responses = await Promise.all(promises);
 
-    thunkAPI.dispatch(syncItem(item));   
-    if(item === 'investments') thunkAPI.dispatch(syncItem('transfers'));
+    await thunkAPI.dispatch(syncItem(item));   
+    if(item === 'investments') await thunkAPI.dispatch(syncItem('transfers'));
     return responses.map(currentResponse => currentResponse.data); 
     //returns [{item: 'resources', entries: []}]
     // ...or [{item: 'investments', entries: []}, {item: 'transfers', entries: []}]
@@ -214,13 +214,13 @@ const updateAssetsAccount = createAsyncThunk(
 
     if(prevEntry.group !== entry.group || prevEntry.title !== entry.title){
       let promises = [updateEntries(item, entry)];
-      if(item === 'investments') promises.push(updateEntries({item: 'transfers', entry}));
-    
+      if(item === 'investments') promises.push(updateEntries('transfers', entry));
+      console.log(item);
       let responses = await Promise.all(promises);
       responses.push(await updateEntry(item, entry));
 
       thunkAPI.dispatch(syncItem({item}));   
-      if(item === 'investments') thunkAPI.dispatch(syncItem({item: 'transfers'}));
+      if(item === 'investments') await thunkAPI.dispatch(syncItem({item: 'transfers'}));
       return responses.map(currentResponse => currentResponse.data); 
       // returns [{item: 'resources', entries: []}]
       // ...or [{item: 'investments', entries: []}, {item: 'transfers', entries: []}]
