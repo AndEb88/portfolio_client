@@ -7,6 +7,7 @@ import mockStore from '../utils/mockStore';
 import {toAmountString, toPercentString, toNumber, setColorClass, toShortDate} from '../utils/assetsFunctions';
 import Loading from '../components/Loading';
 import {syncAssets, updateAssetsEntry, selectAssetsItem, updateAssetsAccount} from '../store/assetsSlice';
+import {warningIcon} from '../icons/svgIcons';
 
 
 function Delete() {
@@ -86,8 +87,8 @@ function Delete() {
                         <h4 className='text-center'>from {formData.group} {content[mainIndex].items[itemIndex].title}?</h4>                
                     </div>
                     {warning &&
-                        <div className={'row form-row'}>
-                            <p className='text-center'>{warning}</p>                
+                        <div className='row d-flex big-margin-top'>
+                            <p className='text-center'> {warningIcon}{warning}</p> 
                         </div>
                     }                                               
                 </div>

@@ -125,6 +125,10 @@ a {
   margin-bottom: 1.5rem;
 }
 
+.big-margin-top {
+  margin-top: 1.5rem;
+}
+
 .big-font {
   font-size: 1.2rem;
 }
@@ -170,6 +174,7 @@ a {
 
 #header #arrowBack-icon {
   max-height: 80%;
+  margin-bottom: 0.2rem;
 }
 
 #header #add-icon {
@@ -179,13 +184,15 @@ a {
   border-radius: 50%;
   margin-left: 0.5rem; 
   margin-right: 0.5rem;
+  margin-bottom: 0.2rem;
 }
 
 #header #delete-icon {
-  max-height: 1.7rem;
+  max-height: 1.5rem;
   fill: var(--highlightColor);
   margin-left: 0.5rem; 
   margin-right: 0.5rem;
+  margin-bottom: 0.2rem;
 }
 
 #header #back-icon, #header #forward-icon {
@@ -302,7 +309,7 @@ a {
 #display .headline-row {
   height: 2.5rem;
   margin: 0.3rem;
-  margin-top: 1.5rem;
+  margin-top: 1.0rem;
   background-color: var(--backgroundColor);
 }
 
@@ -405,6 +412,14 @@ input[type=number] {
 #delete h3 {
   margin-left: 0;
   margin-bottom: 0;
+}
+
+#delete #warning-icon {
+  max-height: 1.2rem;
+  fill: var(--highlightColor);
+  margin-left: 0.5rem; 
+  margin-right: 0.5rem;
+  margin-bottom: 0.2rem;
 }
 
 /* -------------- */

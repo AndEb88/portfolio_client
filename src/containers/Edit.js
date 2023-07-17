@@ -6,7 +6,7 @@ import content from '../utils/content';
 import mockStore from '../utils/mockStore';
 import {toAmountString, toPercentString, toNumber, setColorClass, toDate} from '../utils/assetsFunctions';
 import Loading from '../components/Loading';
-import {syncAssets, updateAssetsEntry, selectAssetsItem, updateAssetsAccount} from '../store/assetsSlice';
+import {syncAssets, updateAssetsEntry, selectAccounts, selectAssetsItem, updateAssetsAccount} from '../store/assetsSlice';
 
 
 function Edit() {
@@ -22,6 +22,7 @@ function Edit() {
     
     const dispatch = useDispatch();
     const itemStore = useSelector(state => selectAssetsItem(state, item));
+    const accounts = useSelector(state => selectAccounts(state));
     const status = useSelector(state => state.assets.status);
     const [formData, setFormData] = useState({});
     const rawDate = new Date();
@@ -98,37 +99,34 @@ function Edit() {
                                         value={formData[formEntry.name]}>
                                     </input>
                                 }
-                                {formEntry.type === 'number' && formData.pending &&
+                                {formEntry.type === 'number' && formData.pending && formData.block !== 'overall' &&
                                     <input 
                                         className='text-end' 
                                         type='number' 
                                         name={formEntry.name} 
-                                        value={formData[formEntry.name] || ''} 
-                                        onChange={handleChange}>
+                                        value={formData[formEntry.name]}>
                                     </input>
                                 }
-                                {formEntry.type === 'percent' && formData.pending &&
+                                {formEntry.type === 'percent' && formData.pending && formData.block !== 'overall' &&
                                     <input 
                                         className='text-end'
                                         type='number'
                                         name={formEntry.name} 
-                                        value={formData[formEntry.name]} 
-                                        onChange={handleChange}>
+                                        value={formData[formEntry.name]}>
                                     </input>
                                 }
                                 {formEntry.type === 'date' && 
                                     <input type='date' 
                                         name={formEntry.name} 
                                         value={formData[formEntry.name]} 
-                                        onChange={handleChange}
                                     />
                                 }
-                                {(formEntry.type === 'displayNumber' ||  (formEntry.type === 'number' && !formData.pending)) &&
+                                {(formEntry.type === 'displayNumber' ||  (formEntry.type === 'number' && (!formData.pending || formData.block === 'overall'))) &&
                                     <p name={formEntry.name}>
                                         {toAmountString(formData[formEntry.name])}
                                     </p>
                                 }
-                                {(formEntry.type === 'displayPercent' ||  (formEntry.type === 'percent' && !formData.pending)) &&
+                                {(formEntry.type === 'displayPercent' ||  (formEntry.type === 'percent' && (!formData.pending || formData.block === 'overall'))) &&
                                     <p name={formEntry.name}>
                                         {String(formData[formEntry.name])}
                                     </p>
@@ -148,8 +146,7 @@ function Edit() {
                                 {formEntry.type === 'group' && (
                                     <select 
                                         name={formEntry.name} 
-                                        value={formData[formEntry.name]} 
-                                        onChange={handleChange}>
+                                        value={formData[formEntry.name]}>
                                         {content[mainIndex].items[itemIndex].groups.map(group => 
                                             <option 
                                                 key={group} 
@@ -162,9 +159,8 @@ function Edit() {
                                 {formEntry.type === 'account' && (
                                     <select 
                                         name={formEntry.name} 
-                                        value={formData[formEntry.name]} 
-                                        onChange={handleChange}>
-                                        {mockStore.assets.investments.overall.entries.sort((a, b) => a.title.localeCompare(b.title)).map(entry => 
+                                        value={formData[formEntry.name]}>
+                                        {accounts.map(entry => 
                                             <option 
                                                 key={entry.id}
                                                 value={entry.title}>
@@ -178,7 +174,7 @@ function Edit() {
                             </div>                 
                         </div>
                     ))}
-                    {content[mainIndex].items[itemIndex].freeze && 
+                    {content[mainIndex].items[itemIndex].freeze && formData.block !== 'overall' &&
                         <div className='row form-row'>
                             <div className='col-12'>
                                 <div className='form-check form-switch d-flex align-items-center form-row-bold'>

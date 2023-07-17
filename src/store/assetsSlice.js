@@ -730,7 +730,12 @@ export const assetsSlice = createSlice({
 
 export {syncAssets, syncItem, updateAssetsAccount}; //export thunks for usage in app
 
-export const selectAssetsItem = (state, item) => state.assets[item]; //declare and export selector which returns (altered) state for usage in app
+export const selectAssetsItem = (state, item) => state.assets[item];
+
+export const selectAccounts = (state) => {
+  const entries = [...state.assets.investments?.overall?.entries || []];
+  return entries.sort((a, b) => a.title.localeCompare(b.title));
+};
 
 export default assetsSlice.reducer; //export slice for setting up store
 
