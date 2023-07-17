@@ -72,7 +72,7 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 - Pension/ Allianz: amount = 'Garantierente' (Postfach/ Bestätigung) in November of the following year
 - Pension/ Riester I: amount = 'monatliche, erreichte garantierte Rente' (Postfach/ Auskunft) in January of the following year 
 - Pension/ Riester II: amount = 'monatliche, erreichte garantierte Rente' (Postfach/ Auskunft) in June of the following year 
-- Pension/ Conti+: expected = 'Hochrechnungen -> ContiPLUS' (with 2% yearly salary increase)
+- Pension/ Conti+: expected = ... (Hochrechnungen/ ContiPLUS) with 2% yearly salary increase
 
 
 

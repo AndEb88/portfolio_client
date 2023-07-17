@@ -23,7 +23,9 @@ function Edit() {
     const dispatch = useDispatch();
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const status = useSelector(state => state.assets.status);
-    const [formData, setFormData] = useState({}); 
+    const [formData, setFormData] = useState({});
+    const rawDate = new Date();
+    const [currentDate, setCurrentDate] = useState(rawDate.toISOString().split('T')[0]);
 
     useEffect(() => {
         if(status === 'idle'){
@@ -51,6 +53,7 @@ function Edit() {
             setFormData((prevFormData) => ({
               ...prevFormData,
               [name]: value,
+              date: currentDate,
             }));
           }
       };
@@ -127,7 +130,7 @@ function Edit() {
                                 }
                                 {(formEntry.type === 'displayPercent' ||  (formEntry.type === 'percent' && !formData.pending)) &&
                                     <p name={formEntry.name}>
-                                        { String(formData[formEntry.name])}
+                                        {String(formData[formEntry.name])}
                                     </p>
                                 }
                                 {formEntry.type === 'displayText' &&
@@ -187,6 +190,7 @@ function Edit() {
                 </div>
                 <div className='row form-row d-flex justify-content-center'>
                     <button className='form-button' type='submit'>Save</button>
+                    
                 </div>   
             </form>
             ); 

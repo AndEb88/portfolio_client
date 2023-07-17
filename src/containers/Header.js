@@ -1,12 +1,13 @@
 import {NavLink} from 'react-router-dom';
 
-import {deleteIcon, arrowBackIcon, addIcon} from '../icons/svgIcons';
+import {arrowBackIcon, addIcon} from '../icons/svgIcons';
 import mainIcon from '../icons/main.png';
 import Blocks from './Blocks';
 import content from '../utils/content';
+import {deleteIcon} from '../icons/svgIcons';
 
 
-function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlockLeft, toggleBlockRight}) {
+function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlockLeft, toggleBlockRight, id}) {
 
     const contentMain = content[mainIndex];
     const contentItem = contentMain ? contentMain.items[itemIndex] : undefined;
@@ -28,6 +29,12 @@ function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlockLeft
     const createComponent = (
         <NavLink to={'/' + main + '/' + item + '/create/' + blocks.value}> 
             {addIcon}        
+        </NavLink>
+    );
+
+    const deleteComponent = (
+        <NavLink to={'/' + main + '/' + item + '/delete/' + blocks.value + '/' + id}> 
+            {deleteIcon}        
         </NavLink>
     );
     
@@ -100,13 +107,30 @@ function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlockLeft
     else if(form === 'edit'){
         headerComponent = (
             <>                    
-            <div className='col-8'>
+            <div className='col-8 d-flex align-items-center'>
                 <NavLink to={'/' + main + '/' + item} >
                     {backComponent('Edit')}      
                 </NavLink>
+                {deleteComponent}
             </div>                        
             <div className='col-4 d-flex align-items-center justify-content-center'>
-                {deleteIcon}
+                <h2>{blocks.value}</h2>
+            </div>
+        </>
+        );
+    }
+
+    //Delete
+    else if(form === 'delete'){
+        headerComponent = (
+            <>                    
+            <div className='col-8 d-flex align-items-center'>
+                <NavLink to={'/' + main + '/' + item + '/edit/' + blocks.value + '/' + id} >
+                    {backComponent('Delete')}      
+                </NavLink>
+            </div>                        
+            <div className='col-4 d-flex align-items-center justify-content-center'>
+                <h2>{blocks.value}</h2>
             </div>
         </>
         );

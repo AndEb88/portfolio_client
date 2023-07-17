@@ -20,6 +20,7 @@
     .form-row
     .form-button
     #freeze-switch
+  #delete (h3/ h4)
 #navigator (h1)
 
 */
@@ -181,8 +182,10 @@ a {
 }
 
 #header #delete-icon {
-  max-height: 70%;
+  max-height: 1.7rem;
   fill: var(--highlightColor);
+  margin-left: 0.5rem; 
+  margin-right: 0.5rem;
 }
 
 #header #back-icon, #header #forward-icon {
@@ -394,6 +397,15 @@ input[type=number] {
   background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(197, 198, 199, 1)'/></svg>");
 }
 
+
+/* -------------- */
+/* delete */
+/* -------------- */
+
+#delete h3 {
+  margin-left: 0;
+  margin-bottom: 0;
+}
 
 /* -------------- */
 /* navigator */

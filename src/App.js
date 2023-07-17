@@ -12,7 +12,7 @@ import mockStore from './utils/mockStore';
 function App() {
 
   const location = useLocation().pathname;
-  const [home, main, item, form] = location.split('/');
+  const [home, main, item, form, block, id] = location.split('/');
 
   const dispatch = useDispatch();
   const status = useSelector(state => state.assets.status);
@@ -82,7 +82,8 @@ function App() {
         main={main} 
         item={item} 
         form={form} 
-        blocks={blocks} 
+        blocks={blocks}
+        id={id}
         toggleBlockLeft={toggleBlockLeft} 
         toggleBlockRight={toggleBlockRight}
       />   

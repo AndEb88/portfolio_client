@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {fetchAssests, fetchItem, deleteEntry, deleteEntries, updateEntry, updateEntries, createEntry, createEntries, createBlock} from './assetsAPI';
+import {fetchAssests, fetchItem, deleteEntry, deleteEntries, updateEntry, updateNaming, createEntry, createEntries, createBlock} from './assetsAPI';
 
 import content from '../utils/content';
 import mockAssets from '../utils/mockAssets';
@@ -66,11 +66,12 @@ function calcROI(profit, transfers){
   return rounded.toFixed(1);
 }
 
-function getDaysPassed(date) {
+function getDaysPassed(date, year) {
   const providedDate = new Date(date);
-  const startOfYear = new Date(providedDate.getFullYear(), 0, 1);   
+  const startOfYear = new Date(year, 0, 1);   
   const timeDifference = providedDate.getTime() - startOfYear.getTime();
-  const daysPassed = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));  
+  const daysPassed = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+  if(daysPassed > 365) return 365;
   return daysPassed;
 }
 
@@ -214,8 +215,8 @@ const updateAssetsAccount = createAsyncThunk(
     const prevEntry = state[item][entry.block].entries.find(currentEntry => currentEntry.id === entry.id);
 
     if(prevEntry.group !== entry.group || prevEntry.title !== entry.title){
-      let promises = [updateEntries(item, entry)];
-      if(item === 'investments') promises.push(updateEntries('transfers', entry));
+      let promises = [updateNaming(item, entry, prevEntry)];
+      if(item === 'investments') promises.push(updateNaming('transfers', entry, prevEntry));
       let responses = await Promise.all(promises);
       responses.push(await updateEntry(item, entry));
 
@@ -419,11 +420,11 @@ export const assetsSlice = createSlice({
         const block = currentEntry.block;
         const taxRate = getTaxRate(block);
         const transfersEntries = state.transfers[block].entries.filter(currentTransfer => currentTransfer.title === currentEntry.title);
-        const closingDaysPassed = getDaysPassed(currentEntry.date);
+        const closingDaysPassed = getDaysPassed(currentEntry.date, block);
         let transfers = 0;
         let weightedTransfers = 0;
         transfersEntries.forEach(currentTransfer => {
-          const transferDaysPassed = getDaysPassed(currentTransfer.date);
+          const transferDaysPassed = getDaysPassed(currentTransfer.date, block);
           if(transferDaysPassed < closingDaysPassed){
             transfers = transfers + currentTransfer.amount;
             weightedTransfers = weightedTransfers + currentTransfer.amount * (closingDaysPassed - transferDaysPassed) / 365;

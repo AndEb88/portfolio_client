@@ -58,10 +58,10 @@ export function updateEntry(item, entry) {
     );
 }
 
-export function updateEntries(item, entry) {
+export function updateNaming(item, entry, prevEntry) {
     //update entries (group and title only!) with same id in all blocks 
     let entryIndexes = mockAssets[item]
-        .map((currentEntry, entryIndex) => {if(currentEntry.id === entry.id) return entryIndex;})
+        .map((currentEntry, entryIndex) => {if(currentEntry.title === prevEntry.title) return entryIndex;})
         .filter(currentIndex => currentIndex !== undefined);
 
         //for transfers need to compare title (not ID) - but cannot compare new title with old title :(

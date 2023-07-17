@@ -6,6 +6,7 @@ import Landing from './containers/Landing';
 import Display from './containers/Display';
 import Edit from './containers/Edit';
 import Create from './containers/Create';
+import Delete from './containers/Delete';
 import content from './utils/content';
 
 
@@ -19,6 +20,7 @@ const router = createBrowserRouter(createRoutesFromElements(
                     <>
                         <Route path={main.route + '/' + item.route} element={<Display/>}/>
                         {item.edit && <Route path={`${main.route}/${item.route}/edit/:block/:id`} element={<Edit/>}/>}
+                        {item.edit && <Route path={`${main.route}/${item.route}/delete/:block/:id`} element={<Delete/>}/>}
                         {item.create && <Route path={`${main.route}/${item.route}/create/:block`} element={<Create/>}/>}
                     </>
                 ))}
