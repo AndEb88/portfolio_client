@@ -100,7 +100,6 @@ const syncAssets = createAsyncThunk(
     thunkAPI.dispatch(assetsSlice.actions.calcInvestments(rawItems.investments));
     thunkAPI.dispatch(assetsSlice.actions.calcExpanses(rawItems.expanses));
     thunkAPI.dispatch(assetsSlice.actions.calcPension(rawItems.pension));
-    thunkAPI.dispatch(assetsSlice.actions.calcdashboard());
     return response.data; 
     //returns {assets}
   }
@@ -122,7 +121,6 @@ const syncItem = createAsyncThunk(
         break;
       case 'transfers':
         thunkAPI.dispatch(assetsSlice.actions.calcTransfers(response.data.entries));
-        thunkAPI.dispatch(assetsSlice.actions.calcResources(response.data.entries));
         break;
       case 'expanses':
         thunkAPI.dispatch(assetsSlice.actions.calcExpanses(response.data.entries));
@@ -145,7 +143,6 @@ const deleteAssetsEntry = createAsyncThunk(
     thunkAPI.dispatch(syncItem(item));
     if(item ==='transfers') {
       thunkAPI.dispatch(assetsSlice.actions.calcResources());
-      thunkAPI.dispatch(assetsSlice.actions.calcdashboard());
     }
     return response.data; 
     //returns {item, entry}
@@ -158,11 +155,8 @@ const updateAssetsEntry = createAsyncThunk(
 
     const response = await updateEntry(item, entry);
 
-    thunkAPI.dispatch(syncItem(item));
-    if(item ==='transfers') {
-      thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
-      thunkAPI.dispatch(assetsSlice.actions.calcdashboard());
-    }
+    thunkAPI.dispatch(syncItem({item}));
+
     return response.data; 
     //returns {item, entry}
   }
@@ -180,7 +174,6 @@ const createAssetsEntry = createAsyncThunk(
     thunkAPI.dispatch(syncItem(item));
     if(item ==='transfers') {
       thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
-      thunkAPI.dispatch(assetsSlice.actions.calcdashboard());
     }
     return response.data; 
     //returns {item, entry}
@@ -220,8 +213,8 @@ const updateAssetsAccount = createAsyncThunk(
       let responses = await Promise.all(promises);
       responses.push(await updateEntry(item, entry));
 
-      await thunkAPI.dispatch(syncItem({item}));   
       if(item === 'investments') await thunkAPI.dispatch(syncItem({item: 'transfers'}));
+      await thunkAPI.dispatch(syncItem({item}));   
       return responses.map(currentResponse => currentResponse.data); 
       // returns [{item, entries: []}]
       // ...or [{item: 'investments', entries: []}, {item: 'transfers', entries: []}]
@@ -314,11 +307,6 @@ export const assetsSlice = createSlice({
   name: 'assets',
   initialState,
   reducers: {
-    calcdashboard: (state, action) => {
-    // omit and populate within resources and investments!?
-
-    },
-
     calcResources: (state, action) => {
       // retrieve entries sorted by block as number in descending order
       const rawEntries = action.payload.sort((a, b) => a.block - b.block);
@@ -523,6 +511,10 @@ export const assetsSlice = createSlice({
               netProfit: 0,
               pending: entry.pending,
             };
+          }
+          if(entry.title === 'Afranga') {
+            console.log('hit');
+            console.log(currentBlock, entry.closingBalance);
           }
           const dashboardEntry = dashboardBlock[groupKey];
           dashboardBlock[groupKey] = {

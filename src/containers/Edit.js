@@ -1,4 +1,4 @@
-import {useParams, useOutletContext} from 'react-router-dom';
+import {useParams, useOutletContext, useNavigate} from 'react-router-dom';
 import {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
@@ -21,6 +21,7 @@ function Edit() {
     const {block, id} = useParams();
     
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const accounts = useSelector(state => selectAccounts(state));
     const status = useSelector(state => state.assets.status);
@@ -43,29 +44,49 @@ function Edit() {
     //       }));
     // };
 
-    const handleChange = (event) => {
+    // also update 'last Update' date but only for non-transfers!
+    // transfer amount input is disabled by default!
+
+    const handleTextChange = (event) => {
+        const {name, value, type} = event.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+            date: currentDate,
+        }));
+      };
+
+      const handleNumberChange = (event) => {
+        const {name, value, type} = event.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: parseFloat(value),
+        }));
+      };
+
+    const handleDateChange = (event) => {
+        const {name, value, type} = event.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            date: value,
+        }));    
+      };
+
+    const handlePendingChange = (event) => {
         const {name, value, type, checked} = event.target;
-        if (type === 'checkbox') {
-            setFormData((prevFormData) => ({
-              ...prevFormData,
-              [name]: !checked,
-            }));
-          } else {
-            setFormData((prevFormData) => ({
-              ...prevFormData,
-              [name]: value,
-              date: currentDate,
-            }));
-          }
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: !checked,
+        }));
       };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // Process form data
         console.log(`submitting:`);
         console.log(formData);
         // dispatch(updateAssetsEntry(item, entry));
         dispatch(updateAssetsAccount({item, entry: formData}));
+        navigate('/assets/' + item);
       };
 
       let editComponent = (<h1>no edit data available</h1>);
@@ -81,7 +102,7 @@ function Edit() {
 
         case 'idle':
             editComponent = (
-            <form onSubmit={handleSubmit} onChange={handleChange}>
+            <form onSubmit={handleSubmit}>
                 <div className='form-container'>                    
                     {content[mainIndex].items[itemIndex].editForm.map((formEntry, index) => (
                         <div key={`entry-${index}-${formEntry.name}`} className={`row form-row ${formEntry.colored && setColorClass(formData[formEntry.name])} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
@@ -92,41 +113,39 @@ function Edit() {
                                 <p>{formEntry.operator}</p>
                             </div>
                             <div className='col-5 text-end'>
-                                {formEntry.type === 'text' && 
-                                    <input 
-                                        type='text' 
-                                        name={formEntry.name} 
-                                        value={formData[formEntry.name]}>
-                                    </input>
-                                }
+                                {formEntry.type === 'text' &&
+                                    <input
+                                        type='text'
+                                        name={formEntry.name}
+                                        value={formData[formEntry.name]}
+                                        onChange={handleTextChange}>
+                                    </input>}
                                 {formEntry.type === 'number' && formData.pending && formData.block !== 'overall' &&
-                                    <input 
-                                        className='text-end' 
-                                        type='number' 
-                                        name={formEntry.name} 
-                                        value={formData[formEntry.name]}>
-                                    </input>
-                                }
-                                {formEntry.type === 'percent' && formData.pending && formData.block !== 'overall' &&
-                                    <input 
+                                    <input
                                         className='text-end'
                                         type='number'
-                                        name={formEntry.name} 
-                                        value={formData[formEntry.name]}>
-                                    </input>
-                                }
-                                {formEntry.type === 'date' && 
-                                    <input type='date' 
-                                        name={formEntry.name} 
-                                        value={formData[formEntry.name]} 
-                                    />
-                                }
-                                {(formEntry.type === 'displayNumber' ||  (formEntry.type === 'number' && (!formData.pending || formData.block === 'overall'))) &&
+                                        name={formEntry.name}
+                                        value={formData[formEntry.name]}
+                                        onChange={handleNumberChange}>
+                                    </input>}
+                                {formEntry.type === 'percent' && formData.pending && formData.block !== 'overall' &&
+                                    <input
+                                        className='text-end'
+                                        type='number'
+                                        name={formEntry.name}
+                                        value={formData[formEntry.name]}
+                                        onChange={handleNumberChange}>
+                                    </input>}
+                                {formEntry.type === 'date' &&
+                                    <input type='date'
+                                        name={formEntry.name}
+                                        value={formData[formEntry.name]}
+                                        onChange={handleDateChange} />}
+                                {(formEntry.type === 'displayNumber' || (formEntry.type === 'number' && (!formData.pending || formData.block === 'overall'))) &&
                                     <p name={formEntry.name}>
                                         {toAmountString(formData[formEntry.name])}
-                                    </p>
-                                }
-                                {(formEntry.type === 'displayPercent' ||  (formEntry.type === 'percent' && (!formData.pending || formData.block === 'overall'))) &&
+                                    </p>}
+                                {(formEntry.type === 'displayPercent' || (formEntry.type === 'percent' && (!formData.pending || formData.block === 'overall'))) &&
                                     <p name={formEntry.name}>
                                         {String(formData[formEntry.name])}
                                     </p>
@@ -136,58 +155,66 @@ function Edit() {
                                         {formData[formEntry.name]}
                                     </p>
                                 }
-                                {formEntry.type === 'displayDate' && 
-                                    <p                                         
-                                        className='text-end' 
+                                {formEntry.type === 'displayDate' &&
+                                    <p
+                                        className='text-end'
                                         name={formEntry.name}>
                                         {formData.pending ? (formData[formEntry.name] ? toDate(formData[formEntry.name]) : '') : 'frozen'}
                                     </p>
                                 }
                                 {formEntry.type === 'group' && (
-                                    <select 
-                                        name={formEntry.name} 
-                                        value={formData[formEntry.name]}>
-                                        {content[mainIndex].items[itemIndex].groups.map(group => 
-                                            <option 
-                                                key={group} 
-                                                value={group}>
-                                                {group}
-                                            </option>
+                                    <select
+                                        name={formEntry.name}
+                                        value={formData[formEntry.name]}
+                                        onChange={handleTextChange}>
+                                        {content[mainIndex].items[itemIndex].groups.map(group => <option
+                                            key={group}
+                                            value={group}>
+                                            {group}
+                                        </option>
                                         )}
                                     </select>
                                 )}
                                 {formEntry.type === 'account' && (
                                     <select 
-                                        name={formEntry.name} 
-                                        value={formData[formEntry.name]}>
+                                        name={formEntry.name}
+                                        value={formData[formEntry.name]}
+                                        onChange={handleTextChange}>
                                         {accounts.map(entry => 
-                                            <option 
+                                            <option
                                                 key={entry.id}
                                                 value={entry.title}>
                                                 {entry.title}
                                             </option>
-                                        )}
+                                            )}
                                     </select>)}
-                            </div>
-                            <div className='col-1'>
-                                <p>{formEntry.unit}</p>
-                            </div>                 
-                        </div>
-                    ))}
-                    {content[mainIndex].items[itemIndex].freeze && formData.block !== 'overall' &&
-                        <div className='row form-row'>
-                            <div className='col-12'>
-                                <div className='form-check form-switch d-flex align-items-center form-row-bold'>
-                                    <label className='form-check-label' htmlFor='freeze-switch'>Freeze</label>
-                                    <input name='pending' checked={!formData.pending} className='form-check-input' type='checkbox' role='switch' id='freeze-switch'/>
                                 </div>
-                            </div>
-                        </div>}                                              
-                </div>
-                <div className='row form-row d-flex justify-content-center'>
-                    <button className='form-button' type='submit'>Save</button>
-                    
-                </div>   
+                                    <div className='col-1'>
+                                        <p>{formEntry.unit}</p>
+                                    </div>
+                                </div>
+                        ))}
+                            {content[mainIndex].items[itemIndex].freeze && formData.block !== 'overall' &&
+                                <div className='row form-row'>
+                                    <div className='col-12'>
+                                        <div className='form-check form-switch d-flex align-items-center form-row-bold'>
+                                            <label className='form-check-label' htmlFor='freeze-switch'>Freeze</label>
+                                            <input
+                                                name='pending'
+                                                checked={!formData.pending}
+                                                onChange={handlePendingChange}
+                                                className='form-check-input'
+                                                type='checkbox'
+                                                role='switch'
+                                                id='freeze-switch'
+                                            />
+                                        </div>
+                                    </div>
+                                </div>}
+                        </div>
+                        <div className='row form-row d-flex justify-content-center'>
+                            <button className='form-button' type='submit'>Save</button>
+                        </div>  
             </form>
             ); 
 

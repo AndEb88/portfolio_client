@@ -1,4 +1,4 @@
-import {useParams, useOutletContext} from 'react-router-dom';
+import {useParams, useOutletContext, useNavigate} from 'react-router-dom';
 import {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
@@ -22,6 +22,7 @@ function Delete() {
     const {block, id} = useParams();
     
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const status = useSelector(state => state.assets.status);
     const [formData, setFormData] = useState({}); 
@@ -41,6 +42,7 @@ function Delete() {
         console.log(formData);
         // dispatch(updateAssetsEntry(item, entry));
         dispatch(updateAssetsAccount({item, entry: formData}));
+        navigate('/assets/' + item);
       };
 
       let deleteComponent = (<h1>no delete data available</h1>);
