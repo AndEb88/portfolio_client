@@ -44,15 +44,23 @@ function Edit() {
     //       }));
     // };
 
-    // also update 'last Update' date but only for non-transfers!
     // transfer amount input is disabled by default!
 
+    const handleChange = (event) => {
+        const {name, value, type} = event.target;
+        if(item !== 'transfers'){
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                date: currentDate,
+            }));
+        }
+      };
+      
     const handleTextChange = (event) => {
         const {name, value, type} = event.target;
         setFormData((prevFormData) => ({
             ...prevFormData,
             [name]: value,
-            date: currentDate,
         }));
       };
 
@@ -102,7 +110,7 @@ function Edit() {
 
         case 'idle':
             editComponent = (
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} onChange={handleChange}>
                 <div className='form-container'>                    
                     {content[mainIndex].items[itemIndex].editForm.map((formEntry, index) => (
                         <div key={`entry-${index}-${formEntry.name}`} className={`row form-row ${formEntry.colored && setColorClass(formData[formEntry.name])} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
@@ -120,7 +128,7 @@ function Edit() {
                                         value={formData[formEntry.name]}
                                         onChange={handleTextChange}>
                                     </input>}
-                                {formEntry.type === 'number' && formData.pending && formData.block !== 'overall' &&
+                                {formEntry.type === 'number' && (formData.pending || item === 'transfers') && formData.block !== 'overall' &&
                                     <input
                                         className='text-end'
                                         type='number'
@@ -141,7 +149,7 @@ function Edit() {
                                         name={formEntry.name}
                                         value={formData[formEntry.name]}
                                         onChange={handleDateChange} />}
-                                {(formEntry.type === 'displayNumber' || (formEntry.type === 'number' && (!formData.pending || formData.block === 'overall'))) &&
+                                {(formEntry.type === 'displayNumber' || (formEntry.type === 'number' && (!formData.pending || formData.block === 'overall'))) && item !== 'transfers' &&
                                     <p name={formEntry.name}>
                                         {toAmountString(formData[formEntry.name])}
                                     </p>}

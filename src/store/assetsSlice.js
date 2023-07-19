@@ -190,8 +190,8 @@ const deleteAssetsAccount = createAsyncThunk(
     
     const responses = await Promise.all(promises);
 
-    await thunkAPI.dispatch(syncItem(item));   
-    if(item === 'investments') await thunkAPI.dispatch(syncItem('transfers'));
+    await thunkAPI.dispatch(syncItem({item}));   
+    if(item === 'investments') await thunkAPI.dispatch(syncItem({item: 'transfers'}));
     return responses.map(currentResponse => currentResponse.data); 
     //returns [{item: 'resources', entries: []}]
     // ...or [{item: 'investments', entries: []}, {item: 'transfers', entries: []}]
@@ -512,10 +512,6 @@ export const assetsSlice = createSlice({
               pending: entry.pending,
             };
           }
-          if(entry.title === 'Afranga') {
-            console.log('hit');
-            console.log(currentBlock, entry.closingBalance);
-          }
           const dashboardEntry = dashboardBlock[groupKey];
           dashboardBlock[groupKey] = {
             ...dashboardEntry,
@@ -720,7 +716,7 @@ export const assetsSlice = createSlice({
 
 // export const {increment, decrement, incrementByAmount} = counterSlice.actions; //export actions defined in 'reducers' for usage in app
 
-export {syncAssets, syncItem, updateAssetsAccount}; //export thunks for usage in app
+export {syncAssets, syncItem, updateAssetsAccount, deleteAssetsAccount}; //export thunks for usage in app
 
 export const selectAssetsItem = (state, item) => state.assets[item];
 

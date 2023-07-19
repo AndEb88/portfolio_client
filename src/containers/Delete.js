@@ -6,7 +6,7 @@ import content from '../utils/content';
 import mockStore from '../utils/mockStore';
 import {toAmountString, toPercentString, toNumber, setColorClass, toShortDate} from '../utils/assetsFunctions';
 import Loading from '../components/Loading';
-import {syncAssets, updateAssetsEntry, selectAssetsItem, updateAssetsAccount} from '../store/assetsSlice';
+import {syncAssets, updateAssetsEntry, selectAssetsItem, deleteAssetsAccount} from '../store/assetsSlice';
 import {warningIcon} from '../icons/svgIcons';
 
 
@@ -41,7 +41,7 @@ function Delete() {
         console.log(`deleting:`);
         console.log(formData);
         // dispatch(updateAssetsEntry(item, entry));
-        dispatch(updateAssetsAccount({item, entry: formData}));
+        dispatch(deleteAssetsAccount({item, entry: formData}));
         navigate('/assets/' + item);
       };
 
@@ -53,7 +53,7 @@ function Delete() {
             warning = 'Account will be removed entirely!'
             break;
         case 'investments':
-            warning = 'Account will be removed entirely!'
+            warning = 'Account will be removed entirely incl. its transfers!'
             break;
         case 'transfers':
             warning = 'Only the currently selected transfer will be removed.'

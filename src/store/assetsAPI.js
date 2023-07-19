@@ -33,14 +33,13 @@ export function deleteEntry(item, entry) {
 }
 
 export function deleteEntries(item, entry) {
-    //delete entries with same id in all blocks 
-    const entryIndexes = mockAssets[item].map((currentEntry, entryIndex) => { 
-        if(currentEntry.id === entry.id) {
-            return entryIndex;
-        }
-    });
+    // delete entries with same id in all blocks
+    // BUG: when investments account is deleted, transfers will receive the investments id for deletion :( 
+    let entryIndexes = mockAssets[item]
+        .map((currentEntry, entryIndex) => {if(currentEntry.id === entry.id) return entryIndex;})
+        .filter(currentIndex => currentIndex !== undefined)
+        .reverse();
     const deletedEntries = (entryIndexes.map(currentIndex => mockAssets[item].splice(currentIndex, 1))).flat();
-
     return new Promise((resolve) =>
         setTimeout(() => resolve({data: {item, entries: deletedEntries}}), 1000)
     );
@@ -59,12 +58,10 @@ export function updateEntry(item, entry) {
 }
 
 export function updateNaming(item, entry, prevEntry) {
-    //update entries (group and title only!) with same id in all blocks 
+    //update entries (group and title only!) with same title in all blocks 
     let entryIndexes = mockAssets[item]
         .map((currentEntry, entryIndex) => {if(currentEntry.title === prevEntry.title) return entryIndex;})
         .filter(currentIndex => currentIndex !== undefined);
-
-        //for transfers need to compare title (not ID) - but cannot compare new title with old title :(
 
     const updatedEntries = entryIndexes.map(currentIndex => mockAssets[item][currentIndex] = {...mockAssets[item][currentIndex], group: entry.group, title: entry.title})
 
