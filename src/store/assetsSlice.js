@@ -180,50 +180,61 @@ const createAssetsEntry = createAsyncThunk(
   }
 );
 
-//only for 'investments', 'assets' and 'pension' item
-//delete all entries (in case of 'investments' also in 'transfers')
+// [0] deleting single or all entries => {item, entries}
+// [1] deleting all transfers entries => {item: 'transfers', entries}
 const deleteAssetsAccount = createAsyncThunk(
   'assets/deleteAccount',
-  async ({item, entry}, thunkAPI) => { 
-    let promises = [deleteEntries(item, entry)];
-    if(item === 'investments') promises.push(deleteEntries('transfers', entry));
-    
-    const responses = await Promise.all(promises);
+  async ({item, entry}, thunkAPI) => {
 
-    await thunkAPI.dispatch(syncItem({item}));   
-    if(item === 'investments') await thunkAPI.dispatch(syncItem({item: 'transfers'}));
-    return responses.map(currentResponse => currentResponse.data); 
-    //returns [{item: 'resources', entries: []}]
-    // ...or [{item: 'investments', entries: []}, {item: 'transfers', entries: []}]
+    let responseEntries = {};
+    let responseTransfersEntries = {};
+
+    if (item !== 'investments'){
+      responseEntries = await deleteEntries(item, entry);
+    } else {
+      [responseEntries, responseTransfersEntries] = await Promise.all([
+        deleteEntries(item, entry),
+        deleteEntries('transfers', entry)
+      ]);
+      await thunkAPI.dispatch(syncItem({item: 'transfers'}));
+    }  
+    await thunkAPI.dispatch(syncItem({item}));
+    if (item === 'transfers') {
+      await thunkAPI.dispatch(syncItem({item: 'investments'}));
+    }
+    return [responseEntries.data, responseTransfersEntries.data]; 
   }
 );
 
-//only for 'investments', 'assets' and 'pension' item
-//if 'group' or 'title' changed, update all entries (in case of 'investments' also in 'transfers')
-//then update the actual entry
+// [0] updating a single entry => {item, entry}
+// [1] renaming all entries => {item, entries}
+// [2] renaming all transfers entries => {item: 'transfers', entries}
 const updateAssetsAccount = createAsyncThunk(
   'assets/updateAccount',
   async ({item, entry}, thunkAPI) => {
-    const state = thunkAPI.getState().assets;
+    const state = thunkAPI.getState().assets;    
     const prevEntry = state[item][entry.block].entries.find(currentEntry => currentEntry.id === entry.id);
 
-    if(prevEntry.group !== entry.group || prevEntry.title !== entry.title){
-      let promises = [updateNaming(item, entry, prevEntry)];
-      if(item === 'investments') promises.push(updateNaming('transfers', entry, prevEntry));
-      let responses = await Promise.all(promises);
-      responses.push(await updateEntry(item, entry));
+    const responseEntry = await updateEntry(item, entry);
+    let responseNaming = {};
+    let responseTransfersNaming = {};
 
-      if(item === 'investments') await thunkAPI.dispatch(syncItem({item: 'transfers'}));
-      await thunkAPI.dispatch(syncItem({item}));   
-      return responses.map(currentResponse => currentResponse.data); 
-      // returns [{item, entries: []}]
-      // ...or [{item: 'investments', entries: []}, {item: 'transfers', entries: []}]
+    if (prevEntry.group !== entry.group || prevEntry.title !== entry.title){
+      if (item !== 'investments'){
+        responseNaming = await updateNaming(item, entry, prevEntry);       
+      } else { 
+        [responseNaming, responseTransfersNaming] = await Promise.all([
+          updateNaming(item, entry, prevEntry),
+          updateNaming('transfers', entry, prevEntry)
+        ]);       
+        await thunkAPI.dispatch(syncItem({item: 'transfers'}));  
+      }
     }
-
-  const response = await updateEntry(item, entry);
-  await thunkAPI.dispatch(syncItem({item})); 
-  return [response.data]; 
-    // returns [{item, entry}]
+    await thunkAPI.dispatch(syncItem({item}));
+    if (item === 'transfers') {
+      await thunkAPI.dispatch(syncItem({item: 'investments'}));
+    }
+    return [responseEntry.data, responseNaming.data, responseTransfersNaming.data]; 
   }
 );
 
