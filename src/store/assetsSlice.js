@@ -377,7 +377,7 @@ export const assetsSlice = createSlice({
         } 
       });
 
-      // overall blocks
+      // populate overall blocks
       itemState.overall = itemState[lastBlock];
       dashboardState.overall = dashboardState[lastBlock];
 
@@ -451,11 +451,11 @@ export const assetsSlice = createSlice({
           itemState[block].netProfit += entry.netProfit;
           itemState[block].entries.push(entry);
         }
-
         // overall
         const overallEntry = {
           ...entry,
           block: 'overall',
+          openingBalance: 0,
         };
         if (!overallBlock.entries){
           overallBlock.netProfit = overallEntry.netProfit;
@@ -475,7 +475,6 @@ export const assetsSlice = createSlice({
               withheldTaxes: currentOverallEntry.withheldTaxes + overallEntry.withheldTaxes,
               bonus: currentOverallEntry.bonus + overallEntry.bonus,
               transfers: currentOverallEntry.transfers + overallEntry.transfers,
-              openingBalance: 0,
               grossProfit: currentOverallEntry.grossProfit + overallEntry.grossProfit,
               dueTaxes: currentOverallEntry.dueTaxes + overallEntry.dueTaxes,
               netProfit: overallNetProfit,
@@ -483,9 +482,6 @@ export const assetsSlice = createSlice({
               ROI: overallROI,
               pending: currentOverallEntry.pending || overallEntry.pending,
             }
-            console.log(currentEntry);
-            console.log(entry);
-            console.log(currentOverallEntry);
             overallBlock.entries[overallIndex] = currentOverallEntry;
           }
         } 
@@ -536,6 +532,8 @@ export const assetsSlice = createSlice({
       dashboardState.overall.closingBalance = dashboardState[lastBlock].closingBalance;
 
       // merge dashboardState with existing dashboard state for investments
+      for (const block in dashboardState) {
+      }
 
       // populate state
       state.investments = JSON.parse(JSON.stringify(itemState));
@@ -547,6 +545,7 @@ export const assetsSlice = createSlice({
       const rawEntries = action.payload.sort((a, b) => a.block - b.block);
       const itemState = {};
 
+      // set up all entries
       rawEntries.forEach(currentEntry => {
         // transfers
         const entry = currentEntry;
