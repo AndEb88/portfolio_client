@@ -248,7 +248,7 @@ const createAssetsAccount = createAsyncThunk(
     const newEntry = {...entry, id: newId};
     const emptyEntry = {id: entry.id, group: entry.group, title: entry.title};
     const newEntries = Object.keys(state[item]).map(currentBlock => {
-      if (currentBlock === newEntry.block) {
+      if (currentBlock === newEntry.block){
         return newEntry;
       } else {
         return {...emptyEntry, block: currentBlock};
@@ -321,266 +321,247 @@ export const assetsSlice = createSlice({
     calcResources: (state, action) => {
       // retrieve entries sorted by block as number in descending order
       const rawEntries = action.payload.sort((a, b) => a.block - b.block);
-      
-      // set up opening balances
+      const lastBlock = rawEntries[rawEntries.length -1].block;
       const closingBalances = {};
+      const itemState = {};
+      const dashboardState = {};
 
       // set up and complement all entries
-      const entries = rawEntries.map(currentEntry => {
+      rawEntries.forEach(currentEntry => {
+        const block = currentEntry.block; 
         const openingBalance = closingBalances[currentEntry.id] ?? 0;
         closingBalances[currentEntry.id] = currentEntry.closingBalance;
         const transfers = currentEntry.closingBalance - openingBalance;
-        return {
+
+        // resources
+        const entry = {
           ...currentEntry,
           openingBalance,
           transfers,
-        }
-      });
-
-      // populate item
-      state.resources = populateBlocks(entries);
-
-      let dashboardEntries = [];
-      const blocks = Object.keys(state.resources).sort();
-      blocks.forEach((currentBlock, currentBlockIndex) => {
-        // add closingBalance for each block
-        state.resources[currentBlock].closingBalance = state.resources[currentBlock].entries.reduce((blockClosingBalance, entry) => {
-          return blockClosingBalance + entry.closingBalance;
-        }, 0);
-         // set up and calculate entries for dashboard item
-        const newEntries = Object.values(state.resources[currentBlock].entries.reduce((dashboardBlock, entry) => {
-          const groupKey = entry.group;
-          if (!dashboardBlock[groupKey]) {
-            dashboardBlock[groupKey] = {
-              block: currentBlock,
-              group: 'Resources',
-              title: groupKey,
-              closingBalance: 0,
-              pending: entry.pending,
-            };
-          }
-          const dashboardEntry = dashboardBlock[groupKey];
-          dashboardBlock[groupKey] = {
-            ...dashboardEntry,
-            closingBalance: dashboardEntry.closingBalance + entry.closingBalance,
-            pending: dashboardEntry && entry.pending,
-          }
-          return dashboardBlock;
-        }, {}
-        )); 
-      dashboardEntries.push(...newEntries);
-      if (currentBlockIndex === blocks.length - 1){
-         const overallEntries = newEntries.map(currentEntry => {
-          return {
-            ...currentEntry,
-            block: 'overall'
+        };
+        if (!itemState[block]){
+          itemState[block] = {
+            closingBalance: entry.closingBalance,
+            entries: [entry],
           };
-        });
-        dashboardEntries.push(...overallEntries);
-      }});
-
-      // retrieve existing investments entries
-      if (state.dashboard) {
-        Object.keys(state.dashboard).forEach(currentBlock => {
-          const investmentsEntries = state.dashboard[currentBlock].entries.filter(currentEntry => currentEntry.group === 'Investments');
-          dashboardEntries.push(...investmentsEntries);
-        });
-      }
-      // populate item
-      state.dashboard = populateBlocks(dashboardEntries);
-
-      Object.keys(state.dashboard).forEach(currentBlock => {
-       // add closingBalance and netProfit for each dashboard block
-       state.dashboard[currentBlock].closingBalance = state.dashboard[currentBlock].entries.reduce((blockClosingBalance, entry) => {
-          return blockClosingBalance + entry.closingBalance;
-        }, 0);
-        state.dashboard[currentBlock].netProfit = state.dashboard[currentBlock].entries.reduce((blockNetProfit, entry) => {
-          return blockNetProfit + (entry.netProfit ?? 0);
-        }, 0);
+        } else {
+          itemState[block].closingBalance += entry.closingBalance;
+          itemState[block].entries.push(entry);
+        }
+        // dashboard
+        const dashboardEntry = {
+          block: entry.block,
+          group: 'Resources',
+          title: entry.group,
+          closingBalance: entry.closingBalance,
+          pending: entry.pending,
+        }
+        if (!dashboardState[block]){
+          dashboardState[block] = {
+            closingBalance: dashboardEntry.closingBalance,
+            entries: [dashboardEntry],
+          };
+        } else {
+          const index = dashboardState[block].entries.findIndex(currentDashboardEntry => currentDashboardEntry.title === dashboardEntry.title);
+          dashboardState[block].closingBalance += dashboardEntry.closingBalance;
+          if (index === -1){
+            dashboardState[block].entries.push(dashboardEntry);
+          } else {
+            let currentDashboardEntry = dashboardState[block].entries[index];
+            currentDashboardEntry = {
+              ...currentDashboardEntry,
+              closingBalance: currentDashboardEntry.closingBalance + dashboardEntry.closingBalance,
+              pending: currentDashboardEntry.pending || dashboardEntry.pending,
+            }
+          }
+        } 
       });
+
+      // overall blocks
+      itemState.overall = itemState[lastBlock];
+      dashboardState.overall = dashboardState[lastBlock];
+
+      // merge dashboardState with existing dashboard state for investments
+      // pending...
+
+      // populate state
+      state.resources = JSON.parse(JSON.stringify(itemState));
+      state.dashboardState = JSON.parse(JSON.stringify(dashboardState));
     },
 
     calcInvestments: (state, action) => {
       // retrieve entries sorted by block as number in descending order
       const rawEntries = action.payload.sort((a, b) => a.block - b.block);
-      
-      // set up opening balances
+      const lastBlock = rawEntries[rawEntries.length -1].block;
       const closingBalances = {};
-      let overallBlockId = {};
-
-      // set up weightedTransfers for dashboard item
-      let groupWeightedTransfers = {};
-      content[2].items[2].groups.map(currentGroup =>{
-        groupWeightedTransfers[currentGroup] = {}
-      })
+      const itemState = {overall: {entries: []}};
+      const dashboardState = {overall: {entries: []}};
+      const overallBlock = {};
 
       // set up and complement all entries
-      const entries = rawEntries.map(currentEntry => {
-        const block = currentEntry.block;
+      rawEntries.forEach(currentEntry => {
+        const block = currentEntry.block; 
         const taxRate = getTaxRate(block);
-        const transfersEntries = state.transfers[block].entries.filter(currentTransfer => currentTransfer.title === currentEntry.title);
-        const closingDaysPassed = getDaysPassed(currentEntry.date, block);
         let transfers = 0;
         let weightedTransfers = 0;
+        
+        let entryDaysPassed = 365;        
+        if (currentEntry.pending){
+          entryDaysPassed = getDaysPassed(currentEntry.date, block);
+          if (entryDaysPassed > 365){
+            entryDaysPassed = 365;
+          }
+        }        
+        const transfersEntries = state.transfers[block].entries.filter(currentTransfer => currentTransfer.title === currentEntry.title);
         transfersEntries.forEach(currentTransfer => {
           const transferDaysPassed = getDaysPassed(currentTransfer.date, block);
-          if(transferDaysPassed < closingDaysPassed){
-            transfers = transfers + currentTransfer.amount;
-            weightedTransfers = weightedTransfers + currentTransfer.amount * (closingDaysPassed - transferDaysPassed) / 365;
+          if(entryDaysPassed >= transferDaysPassed){
+            transfers += currentTransfer.amount;
+            weightedTransfers += currentTransfer.amount * (entryDaysPassed - transferDaysPassed) / 365;
           }
         });
+
         const openingBalance = closingBalances[currentEntry.id] ?? 0;
+        weightedTransfers += openingBalance * entryDaysPassed / 365;
         closingBalances[currentEntry.id] = currentEntry.closingBalance;
         const grossProfit = roundAmount(currentEntry.closingBalance - openingBalance - currentEntry.bonus + currentEntry.withheldTaxes - transfers);
         const dueTaxes = roundAmount(grossProfit * taxRate);
         const netProfit = grossProfit + currentEntry.bonus - dueTaxes;
-        weightedTransfers = weightedTransfers + openingBalance * closingDaysPassed / 365;
-        groupWeightedTransfers[currentEntry.group][block] = (groupWeightedTransfers[currentEntry.group][block] ?? 0) + weightedTransfers;
         const ROI = calcROI(netProfit, weightedTransfers);
+        
+        // investments
+        const entry = {
+          ...currentEntry,
+          openingBalance,
+          transfers,
+          grossProfit,
+          dueTaxes,
+          netProfit,
+          weightedTransfers,
+          ROI,
+        };
+        if (!itemState[block]){
+          itemState[block] = {
+            closingBalance: entry.closingBalance,
+            netProfit: entry.netProfit,
+            entries: [entry],
+          };
+        } else {
+          itemState[block].closingBalance += entry.closingBalance;
+          itemState[block].netProfit += entry.netProfit;
+          itemState[block].entries.push(entry);
+        }
 
-        // set up overall entry 
-        if (!overallBlockId[currentEntry.id]) {
-          overallBlockId[currentEntry.id] = {
-            ...currentEntry,
-            transfers,
-            grossProfit,
-            dueTaxes,
-            netProfit,
-            block: 'overall',
-            openingBalance: 0,
-            closingBalance: currentEntry.closingBalance,
-            ROI: '-',
-            weightedTransfers,
-            pending: currentEntry.pending,
+        // overall
+        const overallEntry = {
+          ...entry,
+          block: 'overall',
+        };
+        if (!overallBlock.entries){
+          overallBlock.netProfit = overallEntry.netProfit;
+          overallBlock.entries = [overallEntry]; 
+        } else {
+          const overallIndex = overallBlock.entries.findIndex(currentOverallEntry => currentOverallEntry.id === overallEntry.id);
+          overallBlock.netProfit += entry.netProfit;
+          if (overallIndex === -1){
+            overallBlock.entries.push(overallEntry);
+          } else {
+            let currentOverallEntry = overallBlock.entries[overallIndex];
+            const overallNetProfit = currentOverallEntry.netProfit + overallEntry.netProfit;
+            const overallWeightedTransfers = currentOverallEntry.weightedTransfers + overallEntry.weightedTransfers;
+            const overallROI = calcROI(overallNetProfit, overallWeightedTransfers);
+            currentOverallEntry = {
+              ...overallEntry,
+              withheldTaxes: currentOverallEntry.withheldTaxes + overallEntry.withheldTaxes,
+              bonus: currentOverallEntry.bonus + overallEntry.bonus,
+              transfers: currentOverallEntry.transfers + overallEntry.transfers,
+              openingBalance: 0,
+              grossProfit: currentOverallEntry.grossProfit + overallEntry.grossProfit,
+              dueTaxes: currentOverallEntry.dueTaxes + overallEntry.dueTaxes,
+              netProfit: overallNetProfit,
+              weightedTransfers: overallWeightedTransfers,
+              ROI: overallROI,
+              pending: currentOverallEntry.pending || overallEntry.pending,
+            }
+            console.log(currentEntry);
+            console.log(entry);
+            console.log(currentOverallEntry);
+            overallBlock.entries[overallIndex] = currentOverallEntry;
           }
         } 
-        // ..or add to existing entry
-        else {
-          const entry = overallBlockId[currentEntry.id];
-          overallBlockId[currentEntry.id] = {
-            ...entry,
-            transfers: entry.transfers + transfers,
-            grossProfit: entry.grossProfit + grossProfit,
-            dueTaxes: entry.dueTaxes + dueTaxes,
-            netProfit: entry.netProfit + netProfit,
-            date: entry.date > currentEntry.date ? entry.date : currentEntry.date,
-            closingBalance: currentEntry.closingBalance,
-            weightedTransfers: entry.weightedTransfers + weightedTransfers,
-            pending: entry.pending || currentEntry.pending,
+        // dashboard
+        const dashboardEntry = {
+          block: block,
+          group: 'Investments',
+          title: entry.group,
+          closingBalance: entry.closingBalance,
+          netProfit: entry.netProfit,
+          weightedTransfers: entry.weightedTransfers,
+          ROI: entry.ROI,
+          pending: entry.pending,
+        }
+        if (!dashboardState[block]){
+          dashboardState[block] = {
+            closingBalance: dashboardEntry.closingBalance,
+            netProfit: dashboardEntry.netProfit,
+            entries: [dashboardEntry],
+          };
+        } else {
+          const dashboardIndex = dashboardState[block].entries.findIndex(currentDashboardEntry => currentDashboardEntry.title === dashboardEntry.title);
+          dashboardState[block].closingBalance += dashboardEntry.closingBalance;
+          dashboardState[block].netProfit += dashboardEntry.netProfit;
+          if (dashboardIndex === -1){
+            dashboardState[block].entries.push(dashboardEntry);
+          } else {
+            let currentDashboardEntry = dashboardState[block].entries[dashboardIndex];
+            const dashboardNetProfit = currentDashboardEntry.netProfit + dashboardEntry.netProfit;
+            const dashboardWeightedTransfers = currentDashboardEntry.weightedTransfers + dashboardEntry.weightedTransfers;
+            const dashboardROI = calcROI(dashboardNetProfit, dashboardWeightedTransfers);
+            currentDashboardEntry = {
+              ...currentDashboardEntry,
+              closingBalance: currentDashboardEntry.closingBalance + dashboardEntry.closingBalance,
+              netProfit: dashboardNetProfit,
+              weightedTransfers: dashboardWeightedTransfers,
+              ROI: dashboardROI,
+              pending: currentDashboardEntry.pending || dashboardEntry.pending,
+            }
+            dashboardState[block].entries[dashboardIndex] = currentDashboardEntry;
           }
-        }
-
-        //return entry
-        return {
-          ...currentEntry,
-          closingBalance: currentEntry.closingBalance,
-          openingBalance: openingBalance,
-          transfers: transfers,
-          grossProfit: grossProfit,
-          dueTaxes: dueTaxes,
-          netProfit: netProfit,
-          ROI: ROI,
-        }
+        } 
       });
 
-      // remove ID keys from overallBlockId
-      const overallBlock = Object.values(overallBlockId);
+      // populate overall blocks
+      itemState.overall = overallBlock;
+      itemState.overall.closingBalance = itemState[lastBlock].closingBalance;
+      dashboardState.overall.closingBalance = dashboardState[lastBlock].closingBalance;
 
-      // calculate ROI for entries of overall block
-      const overallEntries = overallBlock.map(currentEntry => {
-        groupWeightedTransfers[currentEntry.group][currentEntry.block] = (groupWeightedTransfers[currentEntry.group][currentEntry.block] ?? 0) + currentEntry.weightedTransfers;
-        const ROI = calcROI(currentEntry.netProfit, currentEntry.weightedTransfers);
-        return {
-          ...currentEntry,
-          ROI: ROI,
-        }
-      });   
+      // merge dashboardState with existing dashboard state for investments
 
-      // populate item
-      state.investments = populateBlocks(entries.concat(overallEntries));
-      
-      let dashboardEntries = [];
-      const blocks = Object.keys(state.investments).sort();
-      blocks.map(currentBlock => {
-        // add closingBalance and netProfit for each block
-        state.investments[currentBlock].closingBalance = state.investments[currentBlock].entries.reduce((blockClosingBalance, entry) => {
-          return blockClosingBalance + entry.closingBalance;
-        }, 0);
-        state.investments[currentBlock].netProfit = state.investments[currentBlock].entries.reduce((blockNetProfit, entry) => {
-          return blockNetProfit + entry.netProfit;
-        }, 0);
-        
-        // set up and calculate entries for dashboard item
-        dashboardEntries.push(...Object.values(state.investments[currentBlock].entries.reduce((dashboardBlock, entry) => {
-          const groupKey = entry.group;
-          if (!dashboardBlock[groupKey]) {
-            dashboardBlock[groupKey] = {
-              block: currentBlock,
-              group: 'Investments',
-              title: groupKey,
-              closingBalance: 0,
-              netProfit: 0,
-              pending: entry.pending,
-            };
-          }
-          const dashboardEntry = dashboardBlock[groupKey];
-          dashboardBlock[groupKey] = {
-            ...dashboardEntry,
-            closingBalance: dashboardEntry.closingBalance + entry.closingBalance,
-            netProfit: dashboardEntry.netProfit + entry.netProfit,
-            pending: dashboardEntry.pending || entry.pending,
-          }
-          return dashboardBlock;
-        }, {})));        
-      });
-
-      // calculate ROI for entries of dashboard item
-      dashboardEntries = dashboardEntries.map(currentEntry => {
-        const ROI = calcROI(currentEntry.netProfit, groupWeightedTransfers[currentEntry.title][currentEntry.block]);
-        return {
-          ...currentEntry,
-          ROI,
-        }
-      })
-
-      // retrieve existing resources entries
-      if (state.dashboard) {
-        Object.keys(state.dashboard).map(currentBlock => {
-          const resourcesEntries = state.dashboard[currentBlock].entries.filter(currentEntry => currentEntry.group === 'Resources');
-          dashboardEntries.push(...resourcesEntries);
-        });
-      }
-      // populate item
-      state.dashboard = populateBlocks(dashboardEntries);
-
-      blocks.map(currentBlock => {
-        // add closingBalance and netProfit for each dashboard block
-        state.dashboard[currentBlock].closingBalance = state.dashboard[currentBlock].entries.reduce((blockClosingBalance, entry) => {
-          return blockClosingBalance + entry.closingBalance;
-        }, 0);
-        state.dashboard[currentBlock].netProfit = state.dashboard[currentBlock].entries.reduce((blockNetProfit, entry) => {
-          return blockNetProfit + (entry.netProfit ?? 0);
-        }, 0);
-      });
+      // populate state
+      state.investments = JSON.parse(JSON.stringify(itemState));
+      state.dashboardState = JSON.parse(JSON.stringify(dashboardState));
     },
 
     calcTransfers: (state, action) => {
       // retrieve entries sorted by block as number in descending order
       const rawEntries = action.payload.sort((a, b) => a.block - b.block);
+      const itemState = {};
 
-      // set up and complement all entries
-      const entries = rawEntries;
-
-      // populate item
-      state.transfers = populateBlocks(entries);
-      
-      // add amount for each block
-      const blocks = Object.keys(state.transfers).sort();
-      blocks.map(currentBlock => {
-        state.transfers[currentBlock].amount = state.transfers[currentBlock].entries.reduce((blockAmount, entry) => {
-          return blockAmount + entry.amount;
-        }, 0);
+      rawEntries.forEach(currentEntry => {
+        // transfers
+        const entry = currentEntry;
+        if (!itemState[entry.block]){
+          itemState[entry.block] = {
+            amount: entry.amount,
+            entries: [entry],
+          };
+        } else {
+          itemState[entry.block].amount += entry.amount;
+          itemState[entry.block].entries.push(entry);
+        }
       });
+      // populate state
+      state.transfers = JSON.parse(JSON.stringify(itemState));
     },
 
     calcExpanses: (state, action) => {

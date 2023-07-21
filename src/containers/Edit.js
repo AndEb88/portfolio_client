@@ -48,7 +48,7 @@ function Edit() {
 
     const handleChange = (event) => {
         const {name, value, type} = event.target;
-        if(item !== 'transfers'){
+        if(item !== 'transfers' && name !== 'pending'){
             setFormData((prevFormData) => ({
                 ...prevFormData,
                 date: currentDate,

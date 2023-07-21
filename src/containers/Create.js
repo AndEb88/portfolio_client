@@ -19,6 +19,8 @@ function Create() {
 
     const dispatch = useDispatch();
     const itemStore = useSelector(state => selectAssetsItem(state, item));
+    const investmentsStore = useSelector(state => selectAssetsItem(state, 'investments'));
+    const accounts = investmentsStore.overall.entries.sort((a, b) => a.title.localeCompare(b.title));
     const status = useSelector(state => state.assets.status);
 
     const [formData, setFormData] = useState({});
@@ -69,7 +71,7 @@ function Create() {
                                         <option disabled selected value=''>
                                             Select...
                                         </option>
-                                        {mockStore.assets.investments.overall.entries.sort((a, b) => a.title.localeCompare(b.title)).map(entry => (
+                                        {accounts.map(entry => (
                                         <option key={entry.id} value={entry.title}>
                                             {entry.title}
                                         </option>
