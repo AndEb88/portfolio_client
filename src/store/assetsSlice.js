@@ -326,14 +326,13 @@ export const assetsSlice = createSlice({
       const itemState = {};
       const dashboardState = {};
 
-      // set up and complement all entries
+      // resources
       rawEntries.forEach(currentEntry => {
         const block = currentEntry.block; 
         const openingBalance = closingBalances[currentEntry.id] ?? 0;
         closingBalances[currentEntry.id] = currentEntry.closingBalance;
         const transfers = currentEntry.closingBalance - openingBalance;
 
-        // resources
         const entry = {
           ...currentEntry,
           openingBalance,
@@ -347,46 +346,52 @@ export const assetsSlice = createSlice({
         } else {
           itemState[block].closingBalance += entry.closingBalance;
           itemState[block].entries.push(entry);
-        }
-        // dashboard
-        const dashboardEntry = {
-          block: entry.block,
-          group: 'Resources',
-          title: entry.group,
-          closingBalance: entry.closingBalance,
-          pending: entry.pending,
-        }
-        if (!dashboardState[block]){
-          dashboardState[block] = {
-            closingBalance: dashboardEntry.closingBalance,
-            entries: [dashboardEntry],
-          };
-        } else {
-          const index = dashboardState[block].entries.findIndex(currentDashboardEntry => currentDashboardEntry.title === dashboardEntry.title);
-          dashboardState[block].closingBalance += dashboardEntry.closingBalance;
-          if (index === -1){
-            dashboardState[block].entries.push(dashboardEntry);
-          } else {
-            let currentDashboardEntry = dashboardState[block].entries[index];
-            currentDashboardEntry = {
-              ...currentDashboardEntry,
-              closingBalance: currentDashboardEntry.closingBalance + dashboardEntry.closingBalance,
-              pending: currentDashboardEntry.pending || dashboardEntry.pending,
-            }
-          }
-        } 
+        }        
       });
 
-      // populate overall blocks
-      itemState.overall = itemState[lastBlock];
+      // dashboard
+      for (const block in itemState) {
+        itemState[block].entries.forEach(currentEntry => {
+          const dashboardEntry = {
+            ...currentEntry,
+            group: 'Resources',
+            title: currentEntry.group,
+          }
+          if (!dashboardState[block]){
+            dashboardState[block] = {
+              closingBalance: dashboardEntry.closingBalance,
+              entries: [dashboardEntry],
+            };
+          } else {
+            const dashboardIndex = dashboardState[block].entries.findIndex(currentDashboardEntry => currentDashboardEntry.title === dashboardEntry.title);
+            dashboardState[block].closingBalance += dashboardEntry.closingBalance;
+            if (dashboardIndex === -1){
+              dashboardState[block].entries.push(dashboardEntry);
+            } else {
+              let currentDashboardEntry = dashboardState[block].entries[dashboardIndex];
+              currentDashboardEntry = {
+                ...currentDashboardEntry,
+                closingBalance: currentDashboardEntry.closingBalance + dashboardEntry.closingBalance,
+                pending: currentDashboardEntry.pending || dashboardEntry.pending,
+              }
+              dashboardState[block].entries[dashboardIndex] = currentDashboardEntry;
+            }
+          }
+        });
+        // retrieve investments
+        state.dashboard?.[block].entries.forEach(currentEntry => {
+          if (currentEntry.group !== 'Resources'){
+            dashboardState[block].closingBalance += currentEntry.closingBalance;
+            dashboardState[block].entries.push(currentEntry);
+          }
+        });
+      }
       dashboardState.overall = dashboardState[lastBlock];
-
-      // merge dashboardState with existing dashboard state for investments
-      // pending...
 
       // populate state
       state.resources = JSON.parse(JSON.stringify(itemState));
-      state.dashboardState = JSON.parse(JSON.stringify(dashboardState));
+      state.dashboard = JSON.parse(JSON.stringify(dashboardState));
+      console.log(state.dashboard );
     },
 
     calcInvestments: (state, action) => {
@@ -394,11 +399,11 @@ export const assetsSlice = createSlice({
       const rawEntries = action.payload.sort((a, b) => a.block - b.block);
       const lastBlock = rawEntries[rawEntries.length -1].block;
       const closingBalances = {};
-      const itemState = {overall: {entries: []}};
-      const dashboardState = {overall: {entries: []}};
+      const itemState = {};
       const overallBlock = {};
+      const dashboardState = {};
 
-      // set up and complement all entries
+      // investments
       rawEntries.forEach(currentEntry => {
         const block = currentEntry.block; 
         const taxRate = getTaxRate(block);
@@ -428,8 +433,7 @@ export const assetsSlice = createSlice({
         const dueTaxes = roundAmount(grossProfit * taxRate);
         const netProfit = grossProfit + currentEntry.bonus - dueTaxes;
         const ROI = calcROI(netProfit, weightedTransfers);
-        
-        // investments
+
         const entry = {
           ...currentEntry,
           openingBalance,
@@ -458,8 +462,8 @@ export const assetsSlice = createSlice({
           openingBalance: 0,
         };
         if (!overallBlock.entries){
-          overallBlock.netProfit = overallEntry.netProfit;
-          overallBlock.entries = [overallEntry]; 
+           overallBlock.netProfit = overallEntry.netProfit;
+          overallBlock.entries = [overallEntry];
         } else {
           const overallIndex = overallBlock.entries.findIndex(currentOverallEntry => currentOverallEntry.id === overallEntry.id);
           overallBlock.netProfit += entry.netProfit;
@@ -485,59 +489,59 @@ export const assetsSlice = createSlice({
             overallBlock.entries[overallIndex] = currentOverallEntry;
           }
         } 
-        // dashboard
-        const dashboardEntry = {
-          block: block,
-          group: 'Investments',
-          title: entry.group,
-          closingBalance: entry.closingBalance,
-          netProfit: entry.netProfit,
-          weightedTransfers: entry.weightedTransfers,
-          ROI: entry.ROI,
-          pending: entry.pending,
-        }
-        if (!dashboardState[block]){
-          dashboardState[block] = {
-            closingBalance: dashboardEntry.closingBalance,
-            netProfit: dashboardEntry.netProfit,
-            entries: [dashboardEntry],
-          };
-        } else {
-          const dashboardIndex = dashboardState[block].entries.findIndex(currentDashboardEntry => currentDashboardEntry.title === dashboardEntry.title);
-          dashboardState[block].closingBalance += dashboardEntry.closingBalance;
-          dashboardState[block].netProfit += dashboardEntry.netProfit;
-          if (dashboardIndex === -1){
-            dashboardState[block].entries.push(dashboardEntry);
-          } else {
-            let currentDashboardEntry = dashboardState[block].entries[dashboardIndex];
-            const dashboardNetProfit = currentDashboardEntry.netProfit + dashboardEntry.netProfit;
-            const dashboardWeightedTransfers = currentDashboardEntry.weightedTransfers + dashboardEntry.weightedTransfers;
-            const dashboardROI = calcROI(dashboardNetProfit, dashboardWeightedTransfers);
-            currentDashboardEntry = {
-              ...currentDashboardEntry,
-              closingBalance: currentDashboardEntry.closingBalance + dashboardEntry.closingBalance,
-              netProfit: dashboardNetProfit,
-              weightedTransfers: dashboardWeightedTransfers,
-              ROI: dashboardROI,
-              pending: currentDashboardEntry.pending || dashboardEntry.pending,
-            }
-            dashboardState[block].entries[dashboardIndex] = currentDashboardEntry;
-          }
-        } 
       });
-
-      // populate overall blocks
       itemState.overall = overallBlock;
       itemState.overall.closingBalance = itemState[lastBlock].closingBalance;
-      dashboardState.overall.closingBalance = dashboardState[lastBlock].closingBalance;
 
-      // merge dashboardState with existing dashboard state for investments
-      for (const block in dashboardState) {
+      // dashboard
+      for (const block in itemState) {
+        itemState[block].entries.forEach(currentEntry => {
+          const dashboardEntry = {
+            ...currentEntry,
+            group: 'Investments',
+            title: currentEntry.group,
+          }
+          if (!dashboardState[block]){
+            dashboardState[block] = {
+              closingBalance: dashboardEntry.closingBalance,
+              netProfit: dashboardEntry.netProfit,
+              entries: [dashboardEntry],
+            };
+          } else {
+            const dashboardIndex = dashboardState[block].entries.findIndex(currentDashboardEntry => currentDashboardEntry.title === dashboardEntry.title);
+            dashboardState[block].closingBalance += dashboardEntry.closingBalance;
+            dashboardState[block].netProfit += dashboardEntry.netProfit;
+            if (dashboardIndex === -1){
+              dashboardState[block].entries.push(dashboardEntry);
+            } else {
+              let currentDashboardEntry = dashboardState[block].entries[dashboardIndex];
+              const dashboardNetProfit = currentDashboardEntry.netProfit + dashboardEntry.netProfit;
+              const dashboardWeightedTransfers = currentDashboardEntry.weightedTransfers + dashboardEntry.weightedTransfers;
+              const dashboardROI = calcROI(dashboardNetProfit, dashboardWeightedTransfers);
+              currentDashboardEntry = {
+                ...currentDashboardEntry,
+                closingBalance: currentDashboardEntry.closingBalance + dashboardEntry.closingBalance,
+                netProfit: dashboardNetProfit,
+                weightedTransfers: dashboardWeightedTransfers,
+                ROI: dashboardROI,
+                pending: currentDashboardEntry.pending || dashboardEntry.pending,
+              }
+              dashboardState[block].entries[dashboardIndex] = currentDashboardEntry;
+            }
+          } 
+        });
+        // retrieve resources
+        state.dashboard?.[block].entries.forEach(currentEntry => {
+          if (currentEntry.group !== 'Investments'){
+            dashboardState[block].closingBalance += currentEntry.closingBalance;
+            dashboardState[block].entries.push(currentEntry);
+          }
+        });
       }
 
       // populate state
       state.investments = JSON.parse(JSON.stringify(itemState));
-      state.dashboardState = JSON.parse(JSON.stringify(dashboardState));
+      state.dashboard = JSON.parse(JSON.stringify(dashboardState));
     },
 
     calcTransfers: (state, action) => {

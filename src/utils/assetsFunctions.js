@@ -1,6 +1,6 @@
 export function toAmountElement (number){
     const integer = Math.floor(number).toLocaleString();
-    const decimals = (number % 1).toFixed(2).slice(2);
+    const decimals = number.toFixed(2).slice(-2);
     return (<>{integer}<span className='decimals'> {decimals}</span></>)
 }
 

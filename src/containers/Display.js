@@ -39,9 +39,9 @@ function Display() {
 
         case 'idle':
             const itemBlock = itemStore[block];
-            let entries = [...itemBlock.entries];
+            const entries = itemBlock.entries;
             switch (itemIndex){
-                case 0: //Dashboard 
+                case 0: // Dashboard 
                     let pieData = [];
                     itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                         const groupTitleComponent = createHeadlineComponent(group); 
@@ -49,8 +49,8 @@ function Display() {
                             .filter(account => account.group === group)
                             .sort((a, b) => a.title.localeCompare(b.title))
                             .map(account => {
-                                if(group === content[2].items[1].title) return createResourceComponent(account);
-                                if(group === content[2].items[2].title) return createInvestmentComponent(account);
+                                if(group === 'Resources') return createResourceComponent(account);
+                                if(group === 'Investments') return createInvestmentComponent(account);
                             });                              
                         return (<>{groupTitleComponent}{groupItemsComponent}</>);          
                     });
@@ -58,7 +58,7 @@ function Display() {
                     pieChartComponent = createPieChartComponent(entries);    
                     break;
         
-                case 1: //Resources
+                case 1: // Resources
                     itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                         const groupTitleComponent = createHeadlineComponent(group); 
                         const groupItemsComponent = entries
@@ -70,7 +70,7 @@ function Display() {
                     sumComponent = createSumComponent(null, itemBlock.closingBalance);
                     break;
         
-                case 2: //Investments
+                case 2: // Investments
                     itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                         const groupTitleComponent = createHeadlineComponent(group); 
                         const groupItemsComponent = entries
@@ -91,7 +91,7 @@ function Display() {
                     sumComponent = createSumComponent(null, itemBlock.amount);
                     break;
         
-                case 4: //Expanses
+                case 4: // Expanses
                     itemComponent = content[mainIndex].items[itemIndex].groups.map(group => {
                         const groupTitleComponent = createHeadlineComponent(group); 
                         const groupItemsComponent = entries
@@ -103,7 +103,7 @@ function Display() {
                     sumComponent = createSumComponent(itemBlock.amountMonthly, itemBlock.amountYearly);
                     break;
         
-                case 5: //Pension        
+                case 5: // Pension        
                     itemComponent = entries
                         .sort((a, b) => a.title.localeCompare(b.title))
                         .map(account => createPensionComponent (account));
