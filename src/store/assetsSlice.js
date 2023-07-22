@@ -313,13 +313,41 @@ const addNewYear = createAsyncThunk(
   }
 );
 
-//sort accordingly in the calc functions?
+// retrieve raw values and sort by block
+// set up required local variables
+// iterate over all raw entries
+    // perform calculations on raw entry    
+    
+    // set up entry for store
+    // if block doesn't exist yet, create it with the entry
+    // else push the entry and add accumulated values    
+    
+    // set up overall entry
+    // if block doesn't exist yet, create it with the entry
+    // else check if title already exists
+        // add accumulated values 
+        // if id doesn't exist yet, push the entry
+        // else merge the new entry with the existing one
+
+// iterate over all blocks
+    // iterate over all entries
+        // set up entry for dashboard
+        // if block doesn't exist yet, create it with the entry
+        // else check if group already exists
+            // add accumulated values 
+            // if title doesn't exist yet, push the entry
+            // else merge the new entry with the existing one
+    // retrieve existing entries from dashboard
+    // and add them to the new dashboard state
+
+// populate state
+
 export const assetsSlice = createSlice({
   name: 'assets',
   initialState,
   reducers: {
     calcResources: (state, action) => {
-      // retrieve entries sorted by block as number in descending order
+      // sort entries by block as number in descending order
       const rawEntries = action.payload.sort((a, b) => a.block - b.block);
       const lastBlock = rawEntries[rawEntries.length -1].block;
       const closingBalances = {};
@@ -391,11 +419,10 @@ export const assetsSlice = createSlice({
       // populate state
       state.resources = JSON.parse(JSON.stringify(itemState));
       state.dashboard = JSON.parse(JSON.stringify(dashboardState));
-      console.log(state.dashboard );
     },
 
     calcInvestments: (state, action) => {
-      // retrieve entries sorted by block as number in descending order
+      // sort entries by block as number in descending order
       const rawEntries = action.payload.sort((a, b) => a.block - b.block);
       const lastBlock = rawEntries[rawEntries.length -1].block;
       const closingBalances = {};
@@ -545,22 +572,25 @@ export const assetsSlice = createSlice({
     },
 
     calcTransfers: (state, action) => {
-      // retrieve entries sorted by block as number in descending order
+      // sort entries by block as number in descending order
       const rawEntries = action.payload.sort((a, b) => a.block - b.block);
       const itemState = {};
 
-      // set up all entries
+      // transfers
       rawEntries.forEach(currentEntry => {
-        // transfers
-        const entry = currentEntry;
-        if (!itemState[entry.block]){
-          itemState[entry.block] = {
+        const block = currentEntry.block; 
+        
+        const entry = {
+          ...currentEntry,
+        }
+        if (!itemState[block]){
+          itemState[block] = {
             amount: entry.amount,
             entries: [entry],
           };
         } else {
-          itemState[entry.block].amount += entry.amount;
-          itemState[entry.block].entries.push(entry);
+          itemState[block].amount += entry.amount;
+          itemState[block].entries.push(entry);
         }
       });
       // populate state
@@ -568,57 +598,67 @@ export const assetsSlice = createSlice({
     },
 
     calcExpanses: (state, action) => {
-      // retrieve entries sorted by block as string in ascending order
+      // sort entries by block as string in ascending order
       const rawEntries = action.payload.sort((a, b) => b.block.localeCompare(a.block));
-      
-      // set up and complement all entries
-      const entries = rawEntries.map(currentEntry => {
-        const amountMonthly = currentEntry.amountYearly / 12;
+      const itemState = {};
 
-        return {
+      // expanses
+      rawEntries.forEach(currentEntry => {
+        const block = currentEntry.block; 
+        const amountMonthly = currentEntry.amountYearly / 12;
+        
+        const entry = {
           ...currentEntry,
-          amountMonthly,
+          amountMonthly: amountMonthly,
+        }
+        if (!itemState[block]){
+          itemState[block] = {
+            amountYearly: entry.amountYearly,
+            amountMonthly: entry.amountMonthly,
+            entries: [entry],
+          };
+        } else {
+          itemState[entry.block].amountYearly += entry.amountYearly;
+          itemState[entry.block].amountMonthly += entry.amountMonthly;
+          itemState[entry.block].entries.push(entry);
         }
       });
-      
-      // populate item
-      state.expanses = populateBlocks(entries);
-
-      // add amount for each block
-      const blocks = Object.keys(state.expanses).sort().reverse();
-      blocks.map(currentBlock => {
-        state.expanses[currentBlock].amountYearly = state.expanses[currentBlock].entries.reduce((blockAmount, entry) => {
-          return blockAmount + entry.amountYearly;
-        }, 0);
-        state.expanses[currentBlock].amountMonthly = state.expanses[currentBlock].amountYearly / 12;
-      });
+      // populate state
+      state.expanses = JSON.parse(JSON.stringify(itemState));
     },
 
     calcPension: (state, action) => {
-      // retrieve entries sorted by block as number in descending order
+      // sort entries by block as number in descending order
       const rawEntries = action.payload.sort((a, b) => a.block - b.block);
-
-       // set up and complement all entries
-       const entries = rawEntries;
-
-       // populate item
-       state.pension = populateBlocks(entries);
+      const itemState = {};
        
-      // add amount and expected for each block
-      const blocks = Object.keys(state.pension).sort().reverse();
-      blocks.map(currentBlock => {
-        state.pension[currentBlock].amount = state.pension[currentBlock].entries.reduce((blockAmount, entry) => {
-          return blockAmount + entry.amount;
-        }, 0);
-        state.pension[currentBlock].expected = state.pension[currentBlock].entries.reduce((blockExpected, entry) => {
-          return blockExpected + entry.expected;
-        }, 0);
+      // pension
+      rawEntries.forEach(currentEntry => {
+        const block = currentEntry.block; 
+        
+        const entry = {
+          ...currentEntry,
+          ROI: currentEntry.ROI ?? '-',
+          amount: currentEntry.amount ?? 0,
+          expected:  currentEntry.expected ?? 0,
+        }
+        if (!itemState[block]){
+          itemState[block] = {
+            amount: entry.amount,
+            expected: entry.expected,
+            entries: [entry],
+          };
+        } else {
+          itemState[entry.block].amount += entry.amount;
+          itemState[entry.block].expected += entry.expected;
+          itemState[entry.block].entries.push(entry);
+        }
       });
+      // populate state
+      state.pension = JSON.parse(JSON.stringify(itemState));
     },
   },
 
-  //on fullfilled, fetch according item again
-  //and then calculate again
   extraReducers: (builder) => {
     builder
       .addCase(syncAssets.pending, (state) => {

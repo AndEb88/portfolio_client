@@ -39,7 +39,7 @@ function Display() {
 
         case 'idle':
             const itemBlock = itemStore[block];
-            const entries = itemBlock.entries;
+            const entries = [...itemBlock.entries];
             switch (itemIndex){
                 case 0: // Dashboard 
                     let pieData = [];
