@@ -119,6 +119,13 @@ function Edit() {
                                 {formEntry.type === 'displayDate' && formData.block !== 'overall' &&            
                                     <div className='form-check form-switch d-flex align-items-center form-row-bold'>
                                         <label className='form-check-label' htmlFor='freeze-switch'>Last Update</label>
+                                    </div>
+                                }
+                            </div>
+                            <div className='col-1 text-center p-0'>
+                                <p>{formEntry.operator}</p>
+                                {formEntry.type === 'displayDate' && formData.block !== 'overall' &&            
+                                    <div className='form-check form-switch d-flex align-items-center justify-content-center'>
                                         <input
                                             name='frozen'
                                             checked={formData.frozen}
@@ -130,9 +137,6 @@ function Edit() {
                                         />
                                     </div>
                                 }
-                            </div>
-                            <div className='col-1 text-center'>
-                                <p>{formEntry.operator}</p>
                             </div>
                             <div className='col-5 text-end'>
                                 {formEntry.type === 'text' &&
@@ -212,7 +216,7 @@ function Edit() {
                                     </select>)}
                                 </div>
                                     <div className='col-1'>
-                                        <p>{formEntry.unit}</p>
+                                        <p>{formEntry.unit}</p>                                        
                                     </div>
                                 </div>
                         ))}                           
