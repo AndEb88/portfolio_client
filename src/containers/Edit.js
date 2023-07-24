@@ -48,7 +48,7 @@ function Edit() {
 
     const handleChange = (event) => {
         const {name, value, type} = event.target;
-        if(item !== 'transfers' && name !== 'pending'){
+        if(item !== 'transfers' && type === 'number'){
             setFormData((prevFormData) => ({
                 ...prevFormData,
                 date: currentDate,
@@ -80,11 +80,11 @@ function Edit() {
         }));    
       };
 
-    const handlePendingChange = (event) => {
+    const handleFrozenChange = (event) => {
         const {name, value, type, checked} = event.target;
         setFormData((prevFormData) => ({
             ...prevFormData,
-            [name]: !checked,
+            [name]: checked,
         }));
       };
 
@@ -112,10 +112,24 @@ function Edit() {
             editComponent = (
             <form onSubmit={handleSubmit} onChange={handleChange}>
                 <div className='form-container'>                    
-                    {content[mainIndex].items[itemIndex].editForm.map((formEntry, index) => (
-                        <div key={`entry-${index}-${formEntry.name}`} className={`row form-row ${formEntry.colored && setColorClass(formData[formEntry.name])} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
+                    {content[mainIndex].items[itemIndex].editForm.map((formEntry, formEntryIndex) => (
+                        <div key={`entry-${formEntryIndex}-${formEntry.name}`} className={`row form-row ${formEntry.colored && setColorClass(formData[formEntry.name])} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
                             <div className='col-5'>
                                 <p>{formEntry.title}</p>
+                                {formEntry.type === 'displayDate' && formData.block !== 'overall' &&            
+                                    <div className='form-check form-switch d-flex align-items-center form-row-bold'>
+                                        <label className='form-check-label' htmlFor='freeze-switch'>Last Update</label>
+                                        <input
+                                            name='frozen'
+                                            checked={formData.frozen}
+                                            onChange={handleFrozenChange}
+                                            className='form-check-input'
+                                            type='checkbox'
+                                            role='switch'
+                                            id='freeze-switch'
+                                        />
+                                    </div>
+                                }
                             </div>
                             <div className='col-1 text-center'>
                                 <p>{formEntry.operator}</p>
@@ -128,7 +142,7 @@ function Edit() {
                                         value={formData[formEntry.name]}
                                         onChange={handleTextChange}>
                                     </input>}
-                                {formEntry.type === 'number' && (formData.pending || item === 'transfers') && formData.block !== 'overall' &&
+                                {formEntry.type === 'number' && !formData.frozen && formData.block !== 'overall' &&
                                     <input
                                         className='text-end'
                                         type='number'
@@ -136,7 +150,7 @@ function Edit() {
                                         value={formData[formEntry.name]}
                                         onChange={handleNumberChange}>
                                     </input>}
-                                {formEntry.type === 'percent' && formData.pending && formData.block !== 'overall' &&
+                                {formEntry.type === 'percent' && !formData.frozen && formData.block !== 'overall' &&
                                     <input
                                         className='text-end'
                                         type='number'
@@ -149,11 +163,11 @@ function Edit() {
                                         name={formEntry.name}
                                         value={formData[formEntry.name]}
                                         onChange={handleDateChange} />}
-                                {(formEntry.type === 'displayNumber' || (formEntry.type === 'number' && (!formData.pending || formData.block === 'overall'))) && item !== 'transfers' &&
+                                {(formEntry.type === 'displayNumber' || (formEntry.type === 'number' && (formData.frozen || formData.block === 'overall'))) &&
                                     <p name={formEntry.name}>
                                         {toAmountString(formData[formEntry.name])}
                                     </p>}
-                                {(formEntry.type === 'displayPercent' || (formEntry.type === 'percent' && (!formData.pending || formData.block === 'overall'))) &&
+                                {(formEntry.type === 'displayPercent' || (formEntry.type === 'percent' && (formData.frozen || formData.block === 'overall'))) &&
                                     <p name={formEntry.name}>
                                         {String(formData[formEntry.name])}
                                     </p>
@@ -167,8 +181,8 @@ function Edit() {
                                     <p
                                         className='text-end'
                                         name={formEntry.name}>
-                                        {formData.pending ? (formData[formEntry.name] ? toDate(formData[formEntry.name]) : '') : 'frozen'}
-                                    </p>
+                                        {!formData.frozen ? (formData[formEntry.name] ? toDate(formData[formEntry.name]) : '') : 'frozen'}
+                                    </p>                                    
                                 }
                                 {formEntry.type === 'group' && (
                                     <select
@@ -188,11 +202,11 @@ function Edit() {
                                         name={formEntry.name}
                                         value={formData[formEntry.name]}
                                         onChange={handleTextChange}>
-                                        {accounts.map(entry => 
+                                        {accounts.map((currentAccount, currentAccountIndex) => 
                                             <option
-                                                key={entry.id}
-                                                value={entry.title}>
-                                                {entry.title}
+                                                key={currentAccountIndex}
+                                                value={currentAccount}>
+                                                {currentAccount}
                                             </option>
                                             )}
                                     </select>)}
@@ -201,24 +215,7 @@ function Edit() {
                                         <p>{formEntry.unit}</p>
                                     </div>
                                 </div>
-                        ))}
-                            {content[mainIndex].items[itemIndex].freeze && formData.block !== 'overall' &&
-                                <div className='row form-row'>
-                                    <div className='col-12'>
-                                        <div className='form-check form-switch d-flex align-items-center form-row-bold'>
-                                            <label className='form-check-label' htmlFor='freeze-switch'>Freeze</label>
-                                            <input
-                                                name='pending'
-                                                checked={!formData.pending}
-                                                onChange={handlePendingChange}
-                                                className='form-check-input'
-                                                type='checkbox'
-                                                role='switch'
-                                                id='freeze-switch'
-                                            />
-                                        </div>
-                                    </div>
-                                </div>}
+                        ))}                           
                         </div>
                         <div className='row form-row d-flex justify-content-center'>
                             <button className='form-button' type='submit'>Save</button>

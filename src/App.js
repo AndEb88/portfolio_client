@@ -11,8 +11,8 @@ import mockStore from './utils/mockStore';
 
 function App() {
 
-  const location = useLocation().pathname;
-  const [home, main, item, form, block, id] = location.split('/');
+  const {pathname} = useLocation();
+  const [home, main, item, form, block, id] = pathname.split('/');
 
   const dispatch = useDispatch();
   const status = useSelector(state => state.assets.status);
@@ -21,6 +21,7 @@ function App() {
   const mainIndex = main ? content.findIndex(currentMain => currentMain.route === main) : -1;
   const itemIndex = item ? content[mainIndex].items.findIndex(currentItem => currentItem.route === item) : -1;
   const blockList = store[item] ? Object.keys(store[item]) : [];
+  console.log(status);
 
   useEffect(() => {
     dispatch(syncAssets());

@@ -5,7 +5,7 @@ import {useSelector, useDispatch} from 'react-redux';
 
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
-import {selectAssetsItem} from '../store/assetsSlice';
+import {selectAssetsItem, selectAccounts} from '../store/assetsSlice';
 
 
 
@@ -20,7 +20,7 @@ function Create() {
     const dispatch = useDispatch();
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const investmentsStore = useSelector(state => selectAssetsItem(state, 'investments'));
-    const accounts = investmentsStore.overall.entries.sort((a, b) => a.title.localeCompare(b.title));
+    const accounts = useSelector(state => selectAccounts(state));
     const status = useSelector(state => state.assets.status);
 
     const [formData, setFormData] = useState({});
@@ -71,9 +71,9 @@ function Create() {
                                         <option disabled selected value=''>
                                             Select...
                                         </option>
-                                        {accounts.map(entry => (
-                                        <option key={entry.id} value={entry.title}>
-                                            {entry.title}
+                                        {accounts.map((currentAccount, currentAccountIndex) => (
+                                        <option key={currentAccountIndex} value={currentAccount}>
+                                            {currentAccount}
                                         </option>
                                         ))}
                                     </select>

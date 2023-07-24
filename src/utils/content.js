@@ -68,7 +68,7 @@ const content = [
                     {name: 'closingBalance', title: 'Closing Balance', operator: '', type: 'number', unit: '€'},
                     {name: 'openingBalance', title: 'Opening Balance', operator: '-', type: 'displayNumber', unit: '€'},
                     {name: 'transfers', title: 'Transfers', operator: '=', type: 'displayNumber', unit: '€', margin: true, colored: true},
-                    {name: 'date', title: 'Last Update', operator: '', type: 'displayDate', unit: '', margin: true},
+                    {name: 'date', title: '', operator: '', type: 'displayDate', unit: '', margin: true},
                 ],
                 createForm: [
                     {name: 'group', title: 'Group', operator: '', type: 'group', unit: '', bold: true},
@@ -96,7 +96,7 @@ const content = [
                     {name: 'dueTaxes', title: 'Due Taxes', operator: '-', type: 'displayNumber', unit: '€'},
                     {name: 'bonus', title: 'Bonus & Payback', operator: '+', type: 'displayNumber', unit: '€'},
                     {name: 'netProfit', title: 'Net Profit', operator: '=', type: 'displayNumber', unit: '€', margin: true, colored: true},
-                    {name: 'date', title: 'Last Update', operator: '', type: 'displayDate', unit: '', margin: true},
+                    {name: 'date', title: '', operator: '', type: 'displayDate', unit: '', margin: true},
                 ],
                 createForm: [
                     {name: 'group', title: 'Group', operator: '', type: 'group', unit: '', bold: true},
@@ -156,7 +156,7 @@ const content = [
                     {name: 'amount', title: 'Guaranteed Amount', operator: '', type: 'number', unit: '€'},                    
                     {name: 'expected', title: 'Expected Amount', operator: '', type: 'number', unit: '€'},
                     {name: 'ROI', title: 'Expected Growth', operator: '', type: 'percent', unit: '%', margin: true},
-                    {name: 'date', title: 'Last Update', operator: '', type: 'displayDate', unit: '', margin: true},
+                    {name: 'date', title: '', operator: '', type: 'displayDate', unit: '', margin: true},
                 ],
                 createForm: [
                     {name: 'group', title: 'Group', operator: '', type: 'group', unit: '', bold: true},

@@ -44,8 +44,8 @@ export function setColorClass (value){
     return undefined;
 }
 
-export function setImgClass (value, pending){
-    if(pending){
+export function setImgClass (value, frozen){
+    if(!frozen){
        if(value < 0) return 'negative-pending-img';
        if(value > 0) return 'positive-pending-img';
        return 'pending-img';

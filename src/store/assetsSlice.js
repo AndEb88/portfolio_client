@@ -315,6 +315,7 @@ const addNewYear = createAsyncThunk(
 
 // retrieve raw values and sort by block
 // set up required local variables
+
 // iterate over all raw entries
     // perform calculations on raw entry    
     
@@ -335,7 +336,7 @@ const addNewYear = createAsyncThunk(
         // if block doesn't exist yet, create it with the entry
         // else check if group already exists
             // add accumulated values 
-            // if title doesn't exist yet, push the entry
+            // if goupp doesn't exist yet, push the entry
             // else merge the new entry with the existing one
     // retrieve existing entries from dashboard
     // and add them to the new dashboard state
@@ -400,7 +401,7 @@ export const assetsSlice = createSlice({
               currentDashboardEntry = {
                 ...currentDashboardEntry,
                 closingBalance: currentDashboardEntry.closingBalance + dashboardEntry.closingBalance,
-                pending: currentDashboardEntry.pending || dashboardEntry.pending,
+                frozen: currentDashboardEntry.frozen && dashboardEntry.frozen,
               }
               dashboardState[block].entries[dashboardIndex] = currentDashboardEntry;
             }
@@ -428,6 +429,7 @@ export const assetsSlice = createSlice({
       const closingBalances = {};
       const itemState = {};
       const overallBlock = {};
+      const accountsState = [];
       const dashboardState = {};
 
       // investments
@@ -436,9 +438,8 @@ export const assetsSlice = createSlice({
         const taxRate = getTaxRate(block);
         let transfers = 0;
         let weightedTransfers = 0;
-        
         let entryDaysPassed = 365;        
-        if (currentEntry.pending){
+        if (!currentEntry.frozen){
           entryDaysPassed = getDaysPassed(currentEntry.date, block);
           if (entryDaysPassed > 365){
             entryDaysPassed = 365;
@@ -511,7 +512,7 @@ export const assetsSlice = createSlice({
               netProfit: overallNetProfit,
               weightedTransfers: overallWeightedTransfers,
               ROI: overallROI,
-              pending: currentOverallEntry.pending || overallEntry.pending,
+              frozen: currentOverallEntry.frozen && overallEntry.frozen,
             }
             overallBlock.entries[overallIndex] = currentOverallEntry;
           }
@@ -519,6 +520,10 @@ export const assetsSlice = createSlice({
       });
       itemState.overall = overallBlock;
       itemState.overall.closingBalance = itemState[lastBlock].closingBalance;
+
+      // accounts 
+      overallBlock.entries.forEach(currentEntry => accountsState.push(currentEntry.title));
+      accountsState.sort();
 
       // dashboard
       for (const block in itemState) {
@@ -551,7 +556,7 @@ export const assetsSlice = createSlice({
                 netProfit: dashboardNetProfit,
                 weightedTransfers: dashboardWeightedTransfers,
                 ROI: dashboardROI,
-                pending: currentDashboardEntry.pending || dashboardEntry.pending,
+                frozen: currentDashboardEntry.frozen && dashboardEntry.frozen,
               }
               dashboardState[block].entries[dashboardIndex] = currentDashboardEntry;
             }
@@ -565,10 +570,10 @@ export const assetsSlice = createSlice({
           }
         });
       }
-
       // populate state
       state.investments = JSON.parse(JSON.stringify(itemState));
       state.dashboard = JSON.parse(JSON.stringify(dashboardState));
+      state.accounts = JSON.parse(JSON.stringify(accountsState));
     },
 
     calcTransfers: (state, action) => {
@@ -755,10 +760,7 @@ export {syncAssets, syncItem, updateAssetsAccount, deleteAssetsAccount}; //expor
 
 export const selectAssetsItem = (state, item) => state.assets[item];
 
-export const selectAccounts = (state) => {
-  const entries = [...state.assets.investments?.overall?.entries || []];
-  return entries.sort((a, b) => a.title.localeCompare(b.title));
-};
+export const selectAccounts = (state) => state.assets.accounts;
 
 export default assetsSlice.reducer; //export slice for setting up store
 

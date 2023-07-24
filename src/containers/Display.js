@@ -198,7 +198,7 @@ function Display() {
             <NavLink to={disableLink ? null : editPath + entry.id} key={`resource-${entry.id ?? entry.title}`} className={disableLink && 'nav-link-disabled'}> 
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
-                        <img className={setImgClass(entry.closingBalance, entry.pending)} src={findIcon(entry)}/>
+                        <img className={setImgClass(entry.closingBalance, entry.frozen)} src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
                     <div className='col-6 text-end'>
@@ -216,7 +216,7 @@ function Display() {
             <NavLink to={disableLink ? null : editPath + entry.id} key={`investment-${entry.id ?? entry.title}`} className={disableLink && 'nav-link-disabled'}> 
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
-                        <img className={setImgClass(entry.netProfit, entry.pending)} src={findIcon(entry)}/>
+                        <img className={setImgClass(entry.netProfit, entry.frozen)} src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
                     <div className='col-3 text-end'>
@@ -282,7 +282,7 @@ function Display() {
             <NavLink to={editPath + entry.id} key={`pension-${entry.id}`}>      
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
-                        <img className={setImgClass(1, entry.pending)} src={findIcon(entry)}/>
+                        <img className={setImgClass(1, entry.frozen)} src={findIcon(entry)}/>
                         <h3>{entry.title}</h3>
                     </div>
                     <div className='col-3 text-end'>
