@@ -48,7 +48,7 @@ function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlockLeft
                 <h2>{title}</h2> 
             </NavLink>
             {!form && contentItem.create && blocks.value !== 'overall' && createComponent}
-            {title === 'Edit' && deleteComponent}
+            {form === 'edit' && deleteComponent}
         </>
     ));
 
@@ -62,6 +62,14 @@ function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlockLeft
         <NavLink to={generateDeleteLink()}> 
             {deleteIcon}        
         </NavLink>
+    );
+
+    const toggleBlocksComponent = (
+        <Blocks 
+            blocks={blocks} 
+            toggleBlockLeft={toggleBlockLeft} 
+            toggleBlockRight={toggleBlockRight}
+        />
     );
     
     let headerComponent = (<h2>Path did not match!</h2>);
@@ -79,35 +87,19 @@ function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlockLeft
         blocksComponent = (<p>{contentMain.description}</p>);
     }
 
-    //Display
+    // Display
     else if(!form){
         headerComponent = backComponent(contentItem.title);
-        blocksComponent = (
-            <Blocks 
-                blocks={blocks} 
-                toggleBlockLeft={toggleBlockLeft} 
-                toggleBlockRight={toggleBlockRight}
-            />
-        );
+        blocksComponent = toggleBlocksComponent;
     }
 
-    // Create
-    else if(form === 'create'){
-        headerComponent = backComponent('Create');
+    // Create, Edit, Delete
+    else if(form){
+        const formTitle = form.charAt(0).toUpperCase() + form.slice(1);
+        headerComponent = backComponent(formTitle);
         blocksComponent = (<h2>{blocks.value}</h2>);
     }    
     
-    // Edit
-    else if(form === 'edit'){
-        headerComponent = backComponent('Edit'); 
-        blocksComponent = (<h2>{blocks.value}</h2>);  
-    }
-
-    // Delete
-    else if(form === 'delete'){
-        headerComponent = backComponent('Delete');
-        blocksComponent = (<h2>{blocks.value}</h2>);
-    }
 
     return(
         <div className='container-fluid fixed-top' id='header'>

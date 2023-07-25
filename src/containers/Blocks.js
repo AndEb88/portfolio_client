@@ -5,9 +5,9 @@ function Blocks({blocks, toggleBlockLeft, toggleBlockRight}) {
         <>
             <div className='col-3  d-flex align-items-center justify-content-center'>
                 {(blocks.index !== 0) && (
-                <button onClick={toggleBlockLeft}>          
-                    {backIcon}
-                </button> 
+                    <button onClick={toggleBlockLeft}>          
+                        {backIcon}
+                    </button> 
                 )}  
             </div>
             <div className='col-6 d-flex align-items-center justify-content-center'>
@@ -15,9 +15,9 @@ function Blocks({blocks, toggleBlockLeft, toggleBlockRight}) {
             </div>
             <div className='col-3 d-flex align-items-center justify-content-center'>
                 {(blocks.index !== blocks.max) && (
-                <button onClick={toggleBlockRight}>          
-                    {forwardIcon}
-                </button> 
+                    <button onClick={toggleBlockRight}>          
+                        {forwardIcon}
+                    </button> 
                 )} 
             </div>
         </>
