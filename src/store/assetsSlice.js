@@ -180,6 +180,13 @@ const createAssetsEntry = createAsyncThunk(
   }
 );
 
+// set up required payload
+// set up expected responses
+// call API and assign responses
+// dispatch thunks for sync
+// return array of item/ entry pairs
+
+
 // [0] deleting single or all entries => {item, entries}
 // [1] deleting all transfers entries => {item: 'transfers', entries}
 const deleteAssetsAccount = createAsyncThunk(
@@ -238,28 +245,34 @@ const updateAssetsAccount = createAsyncThunk(
   }
 );
 
-//only for 'investments', 'assets' and 'pension' item
-//create empty entry plus the passed entry for all blocks 
+// [0] create a single entry or all entries => {item, entries}
 const createAssetsAccount = createAsyncThunk( 
   'assets/createAccount',
   async ({item, entry}, thunkAPI) => {
     const state = thunkAPI.getState();
     const newId = getAvailableId(item, entry.block, state);
     const newEntry = {...entry, id: newId};
-    const emptyEntry = {id: entry.id, group: entry.group, title: entry.title};
-    const newEntries = Object.keys(state[item]).map(currentBlock => {
-      if (currentBlock === newEntry.block){
-        return newEntry;
-      } else {
-        return {...emptyEntry, block: currentBlock};
+    let newEntries = [newEntry];
+
+    if (item === 'transfers' && item === 'expanses'){
+      const emptyEntry = {id: entry.id, group: entry.group, title: entry.title};
+      for (const block in state[item]){
+        if (block !== newEntry.block){
+          newEntries.push({
+            ...emptyEntry,
+            block
+          });
+        }
       }
-    })
+    }
 
-    let responses = [await createEntries(item, newEntries)];
+    let response = await createEntries(item, newEntries);
 
-    thunkAPI.dispatch(syncItem(item));   
-    return responses.map(currentResponse => currentResponse.data); 
-    // returns [{item, entries: []}]
+    await thunkAPI.dispatch(syncItem(item));   
+    if (item === 'transfers') {
+      await thunkAPI.dispatch(syncItem({item: 'investments'}));
+    }
+    return [response.data]; 
   }
 );
 
