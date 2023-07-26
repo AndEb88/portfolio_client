@@ -1,11 +1,28 @@
 import {backIcon, forwardIcon} from "../icons/svgIcons";
 
-function Blocks({blocks, toggleBlockLeft, toggleBlockRight}) {
+function Block({blocks, toggleBlock}) {
+    // ***hooks ***
+
+    // ***store***
+
+    // ***states***
+
+    // ***variables***
+
+    // ***lifecycle***
+
+    // ***handlers***
+
+    // ***functions***
+
+    // ***components***
+    
+    // ***render***
     return(
         <>
             <div className='col-3  d-flex align-items-center justify-content-center'>
                 {(blocks.index !== 0) && (
-                    <button onClick={toggleBlockLeft}>          
+                    <button onClick={() => toggleBlock(-1)}>          
                         {backIcon}
                     </button> 
                 )}  
@@ -15,7 +32,7 @@ function Blocks({blocks, toggleBlockLeft, toggleBlockRight}) {
             </div>
             <div className='col-3 d-flex align-items-center justify-content-center'>
                 {(blocks.index !== blocks.max) && (
-                    <button onClick={toggleBlockRight}>          
+                    <button onClick={() => toggleBlock(1)}>          
                         {forwardIcon}
                     </button> 
                 )} 
@@ -25,4 +42,4 @@ function Blocks({blocks, toggleBlockLeft, toggleBlockRight}) {
     );
 }
 
-export default Blocks;
+export default Block;

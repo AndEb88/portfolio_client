@@ -5,9 +5,24 @@ import content from '../utils/content';
 
 
 function Menu() {
-
+    // ***hooks ***
     const [mainIndex] = useOutletContext();
 
+    // ***store***
+
+    // ***states***
+
+    // ***variables***
+
+    // ***lifecycle***
+
+    // ***handlers***
+
+    // ***functions***
+
+    // ***components***
+    
+    // ***render***
     return(               
         <div className='container-fluid content' id='menu'>
             {content[mainIndex].items.map(item => (

@@ -1,46 +1,80 @@
 
-import {NavLink, useParams, useOutletContext} from 'react-router-dom';
+import {NavLink, useParams, useOutletContext, useNavigate} from 'react-router-dom';
 import {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
-import {selectAssetsItem, selectAccounts} from '../store/assetsSlice';
+import {selectAssetsItem, selectAccounts, createAssetsEntry} from '../store/assetsSlice';
 
 
 
 function Create() {
 
-    // add onChange for each specific input type and update accordingly
-    // do I need to declare keys that are not set here? e.g. 'netProfit' would be undefined and could cause issues in Display(?)
-    // on submit, pass entries as required in database (incl. block!)
-
+    // ***hooks***
     const [mainIndex, itemIndex, main, item, form, block] = useOutletContext();
-
+    const navigate = useNavigate();
     const dispatch = useDispatch();
+    
+    // ***store***
     const itemStore = useSelector(state => selectAssetsItem(state, item));
-    const investmentsStore = useSelector(state => selectAssetsItem(state, 'investments'));
     const accounts = useSelector(state => selectAccounts(state));
     const status = useSelector(state => state.assets.status);
-
+    
+    // ***states***
     const [formData, setFormData] = useState({});
+    const rawDate = new Date();
+    const [currentDate, setCurrentDate] = useState(rawDate.toISOString().split('T')[0]);
 
+    // ***lifecycle***
+
+    // ***handlers***
     const handleChange = (event) => {
-        const {name, value} = event.target;
-        // setFormData((prevFormData) => ({
-        //   ...prevFormData,
-        //   [name]: value,
-        // }));
+        const {name, value, type} = event.target;
+        if(item !== 'transfers' && type === 'number'){
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                date: currentDate,
+            }));
+        }
+      };
+      
+    const handleTextChange = (event) => {
+        const {name, value, type} = event.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+      };
+
+      const handleNumberChange = (event) => {
+        const {name, value, type} = event.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: parseFloat(value),
+        }));
+      };
+
+    const handleDateChange = (event) => {
+        const {name, value, type} = event.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            date: value,
+        }));    
       };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // Process form data
-      };
+        console.log(`creating:`);
+        console.log(formData);
+        dispatch(createAssetsEntry({item, entry: formData}));
+        navigate('/assets/' + item);      
+    };
 
+    // ***render*** generate in function (SOC)?
     return(
         <div className='container-fluid content' id='create'>                
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} onChange={handleChange}>
                 <div className='form-container'>
                     {content[mainIndex].items[itemIndex].createForm.map((formEntry, index) => (
                         <div key={formEntry.name} className={`row form-row ${formEntry.accent && 'accent-color'} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
@@ -51,12 +85,35 @@ function Create() {
                                 <p>{formEntry.operator}</p>
                             </div>
                             <div className='col-5 text-end'>
-                                {formEntry.type === 'text' && <input type='text' name={formEntry.name}  onChange={handleChange}></input>}
-                                {formEntry.type === 'number' && <input className='text-end' type='number' name={formEntry.name} onChange={handleChange}></input>}
-                                {formEntry.type === 'date' && <input type='date' name={formEntry.name} onChange={handleChange}/>}
+                                {formEntry.type === 'text' && 
+                                    <input 
+                                        type='text' 
+                                        name={formEntry.name}  
+                                        onChange={handleTextChange}>
+                                    </input>
+                                }
+                                {formEntry.type === 'number' && 
+                                    <input 
+                                        className='text-end' 
+                                        type='number' 
+                                        name={formEntry.name} 
+                                        onChange={handleNumberChange}>
+                                    </input>}
+                                {formEntry.type === 'date' && 
+                                    <input 
+                                        type='date' 
+                                        name={formEntry.name} 
+                                        onChange={handleDateChange}/>
+                                    }
                                 {formEntry.type === 'group' && (
-                                    <select name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}>
-                                        <option disabled selected value=''>
+                                    <select 
+                                        name={formEntry.name} 
+                                        value={formData[formEntry.name]} 
+                                        onChange={handleTextChange}>
+                                        <option 
+                                            disabled 
+                                            selected 
+                                            value=''>
                                             Select...
                                         </option>                                      
                                         {content[mainIndex].items[itemIndex].groups.map(group => (
@@ -67,12 +124,20 @@ function Create() {
                                     </select>
                                 )}
                                 {formEntry.type === 'account' && (
-                                    <select name={formEntry.name} value={formData[formEntry.name]} onChange={handleChange}>
-                                        <option disabled selected value=''>
+                                    <select 
+                                        name={formEntry.name} 
+                                        value={formData[formEntry.name]} 
+                                        onChange={handleTextChange}>
+                                        <option 
+                                            disabled 
+                                            selected 
+                                            value=''>
                                             Select...
                                         </option>
                                         {accounts.map((currentAccount, currentAccountIndex) => (
-                                        <option key={currentAccountIndex} value={currentAccount}>
+                                        <option 
+                                            key={currentAccountIndex} 
+                                            value={currentAccount}>
                                             {currentAccount}
                                         </option>
                                         ))}

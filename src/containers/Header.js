@@ -2,16 +2,28 @@ import {NavLink} from 'react-router-dom';
 
 import {arrowBackIcon, addIcon} from '../icons/svgIcons';
 import mainIcon from '../icons/main.png';
-import Blocks from './Blocks';
+import Block from './Block';
 import content from '../utils/content';
 import {deleteIcon} from '../icons/svgIcons';
 
 
-function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlockLeft, toggleBlockRight, id}) {
+function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlock, id}) {
 
+    // ***hooks ***
+
+    // ***store***
+
+    // ***states***
+
+    // ***variables***
     const contentMain = content[mainIndex];
     const contentItem = contentMain ? contentMain.items[itemIndex] : undefined;
 
+    // ***lifecycle***
+
+    // ***handlers***
+
+    // ***functions***
     function generateCreateLink (){
         return '/' + main + '/' + item + '/create/' + blocks.value;
     }
@@ -34,6 +46,7 @@ function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlockLeft
         }
     }
 
+    // ***components***
     const bannerComponent = ((disableLink) => (
         <NavLink to={'/'} className={disableLink && 'nav-link-disabled'}>
             <img className='' src={mainIcon}/>
@@ -65,10 +78,9 @@ function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlockLeft
     );
 
     const toggleBlocksComponent = (
-        <Blocks 
+        <Block
             blocks={blocks} 
-            toggleBlockLeft={toggleBlockLeft} 
-            toggleBlockRight={toggleBlockRight}
+            toggleBlock={toggleBlock} 
         />
     );
     
@@ -100,7 +112,7 @@ function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlockLeft
         blocksComponent = (<h2>{blocks.value}</h2>);
     }    
     
-
+    // ***render***
     return(
         <div className='container-fluid fixed-top' id='header'>
             <div className='row d-flex'>

@@ -1,5 +1,21 @@
 function Loading() {
+    // ***hooks ***
 
+    // ***store***
+
+    // ***states***
+
+    // ***variables***
+
+    // ***lifecycle***
+
+    // ***handlers***
+
+    // ***functions***
+
+    // ***components***
+    
+    // ***render***
     return(
         <>
         <div className='row' style={{ height: '10vh' }}></div>

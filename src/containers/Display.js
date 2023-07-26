@@ -5,8 +5,7 @@ import {PieChart, Pie, Sector, Cell, LabelList, ResponsiveContainer} from 'recha
 
 import mockStore from '../utils/mockStore';
 import accountIcons from '../icons/accountIcons'
-import content, {colors} from '../utils/content';
-import {sumIcon} from '../icons/svgIcons';
+import content from '../utils/content';
 import {selectAssetsItem} from '../store/assetsSlice';
 import {toAmountElement, setColorClass, setImgClass, toPercentElement, toShortDate} from '../utils/assetsFunctions';
 import {color} from 'd3-color';
@@ -15,15 +14,25 @@ import Loading from '../components/Loading';
 
 function Display() {
 
+    // ***hooks***
     const [mainIndex, itemIndex, main, item, form, block] = useOutletContext();
-    const editPath = 'edit/' + block + '/';
-    const disableLink = (item === 'dashboard');
-
     const dispatch = useDispatch();
+    
+    // ***store***
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const status = useSelector(state => state.assets.status);
 
-    //if current year is not found, it has to be created!
+    // ***variables***
+    const editPath = 'edit/' + block + '/';
+    const disableLink = (item === 'dashboard');
+
+    // ***lifecycle***
+
+    // ***handlers***
+
+    // ***functions***
+
+    // ***components***
     let itemComponent = (<h1>no item data available</h1>);
     let sumComponent = (<></>);
     let pieChartComponent = (<></>);
@@ -113,7 +122,6 @@ function Display() {
             break;
     }
 
-
     const assetsComponent = (
         <>
             {itemComponent}
@@ -121,6 +129,8 @@ function Display() {
             {pieChartComponent}
         </>
     );
+
+    // ***functions***
  
     function createHeadlineComponent (headline){ 
         return (
@@ -325,6 +335,7 @@ function Display() {
         return accountIcons[index].source;        
     }
    
+    // ***render***
     return(
         <div className='container-fluid content' id='display'>
             {assetsComponent}

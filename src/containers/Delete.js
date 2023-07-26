@@ -12,21 +12,20 @@ import {warningIcon} from '../icons/svgIcons';
 
 function Delete() {
 
-    // add onChange for each specific input type and update accordingly
-    // add delete flag that enables delete after first press
-    // add validated flag that recalculates and enables save for Investments (and Pensions?)
-    // freeze sets lastUpdate to 31.12.
-    // on submit, pass entries as required in database (incl. block but without dynamic data, like netProfit!)
-
+    // ***hooks***
     const [mainIndex, itemIndex, main, item, form] = useOutletContext();
-    const {block, id} = useParams();
-    
+    const {block, id} = useParams();    
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    // ***store***
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const status = useSelector(state => state.assets.status);
+
+    // ***states***
     const [formData, setFormData] = useState({}); 
 
+    // ***lifecycle***
     useEffect(() => {
         if(status === 'idle'){
             const entry = itemStore[block].entries.find(currentEntry => currentEntry.id == id);
@@ -34,75 +33,75 @@ function Delete() {
         }
       }, [status]);
 
-
+    // ***handlers***
     const handleSubmit = (event) => {
         event.preventDefault();
-        // Process form data
         console.log(`deleting:`);
         console.log(formData);
-        // dispatch(updateAssetsEntry(item, entry));
         dispatch(deleteAssetsEntry({item, entry: formData}));
         navigate('/assets/' + item);
-      };
-
-      let deleteComponent = (<h1>no delete data available</h1>);
-      let warning = '';
-      
-      switch(item){
-        case 'resources':
-            warning = 'Account will be removed entirely!'
-            break;
-        case 'investments':
-            warning = 'Account will be removed entirely incl. its transfers!'
-            break;
-        case 'transfers':
-            warning = 'Only the currently selected transfer will be removed.'
-            break;
-        case 'pension':
-            warning = 'Account will be removed entirely!'
-            break;
-        case 'expanses':
-            warning = 'Only the currently selected expanse will be removed.'
-            break;
-      }
+    };
     
-      switch(status){
-        case 'error':
-            deleteComponent = (<h1>error</h1>);
-            break;
-            
-        case 'loading':
-            deleteComponent = <Loading/>;
-            break;
+    // ***components***    
+    let deleteComponent = (<h1>no delete data available</h1>);
+    let warning = '';
+    
+    switch(item){
+    case 'resources':
+        warning = 'Account will be removed entirely!'
+        break;
+    case 'investments':
+        warning = 'Account will be removed entirely incl. its transfers!'
+        break;
+    case 'transfers':
+        warning = 'Only the currently selected transfer will be removed.'
+        break;
+    case 'pension':
+        warning = 'Account will be removed entirely!'
+        break;
+    case 'expanses':
+        warning = 'Only the currently selected expanse will be removed.'
+        break;
+    }
 
-        case 'idle':
-            deleteComponent = (
-            <form onSubmit={handleSubmit}>
-                <div className='form-container'>                  
-                    <div className={'row form-row'}>
-                        <h4 className='text-center'>Are you sure you want to delete</h4>                
-                    </div>
-                    <div className={'row form-row'}>
-                        <h3 className='highlight-color text-center'>{formData.title} {item === 'transfers' && formData.date ? toShortDate(formData.date) : ''}</h3>                
-                    </div>  
-                    <div className={'row form-row'}>
-                        <h4 className='text-center'>from {formData.group} {content[mainIndex].items[itemIndex].title}?</h4>                
-                    </div>
-                    {warning &&
-                        <div className='row d-flex big-margin-top'>
-                            <p className='text-center'> {warningIcon}{warning}</p> 
-                        </div>
-                    }                                               
+    switch(status){
+    case 'error':
+        deleteComponent = (<h1>error</h1>);
+        break;
+        
+    case 'loading':
+        deleteComponent = <Loading/>;
+        break;
+
+    case 'idle':
+        deleteComponent = (
+        <form onSubmit={handleSubmit}>
+            <div className='form-container'>                  
+                <div className={'row form-row'}>
+                    <h4 className='text-center'>Are you sure you want to delete</h4>                
                 </div>
-                <div className='row form-row d-flex justify-content-center'>
-                    <button className='form-button' type='submit'>Delete</button>                    
-                </div>   
-            </form>
-            ); 
+                <div className={'row form-row'}>
+                    <h3 className='highlight-color text-center'>{formData.title} {item === 'transfers' && formData.date ? toShortDate(formData.date) : ''}</h3>                
+                </div>  
+                <div className={'row form-row'}>
+                    <h4 className='text-center'>from {formData.group} {content[mainIndex].items[itemIndex].title}?</h4>                
+                </div>
+                {warning &&
+                    <div className='row d-flex big-margin-top'>
+                        <p className='text-center'> {warningIcon}{warning}</p> 
+                    </div>
+                }                                               
+            </div>
+            <div className='row form-row d-flex justify-content-center'>
+                <button className='form-button' type='submit'>Delete</button>                    
+            </div>   
+        </form>
+        ); 
 
-            break;
-        }
+        break;
+    }
     
+    // ***render***
     return(         
         <div className='container-fluid content' id='delete'>
             {deleteComponent}           
