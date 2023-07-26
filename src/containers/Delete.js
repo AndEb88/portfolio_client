@@ -6,7 +6,7 @@ import content from '../utils/content';
 import mockStore from '../utils/mockStore';
 import {toAmountString, toPercentString, toNumber, setColorClass, toShortDate} from '../utils/assetsFunctions';
 import Loading from '../components/Loading';
-import {syncAssets, updateAssetsEntry, selectAssetsItem, deleteAssetsAccount} from '../store/assetsSlice';
+import {syncAssets, updateAssetsEntry, selectAssetsItem, deleteAssetsEntry} from '../store/assetsSlice';
 import {warningIcon} from '../icons/svgIcons';
 
 
@@ -41,7 +41,7 @@ function Delete() {
         console.log(`deleting:`);
         console.log(formData);
         // dispatch(updateAssetsEntry(item, entry));
-        dispatch(deleteAssetsAccount({item, entry: formData}));
+        dispatch(deleteAssetsEntry({item, entry: formData}));
         navigate('/assets/' + item);
       };
 

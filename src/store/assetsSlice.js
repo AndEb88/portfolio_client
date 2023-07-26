@@ -1,8 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {fetchAssests, fetchItem, deleteEntry, deleteEntries, updateEntry, updateNaming, createEntry, createEntries, createBlock} from './assetsAPI';
+import {fetchAssests, fetchItem, deleteEntries, updateEntry, updateNaming, createEntries, createBlock} from './assetsAPI';
 
 import content from '../utils/content';
-import mockAssets from '../utils/mockAssets';
 
 const initialState = {}; //declare initial state mockDatabase
 
@@ -75,122 +74,63 @@ function getDaysPassed(date, year) {
   return daysPassed;
 }
 
-function populateBlocks(entries) {
-  const item = entries.reduce((block, entry) => { 
-    const blockKey = entry.block;
-    if (!block[blockKey]) {
-      block[blockKey] = {entries: []};
-    }
-    block[blockKey].entries.push(entry);
-    return block;
-  }, {});
-  return item;
-}
-
-const syncAssets = createAsyncThunk(
-  'assets/syncAssets',
-  async (_, thunkAPI) => {
-
-    const response = await fetchAssests();
-    const rawItems = response.data.assets; 
-    //const json = await response.json(); returns response.data directly
-    //required for JSON responses from database (?!?)
-    thunkAPI.dispatch(assetsSlice.actions.calcTransfers(rawItems.transfers));
-    thunkAPI.dispatch(assetsSlice.actions.calcResources(rawItems.resources));
-    thunkAPI.dispatch(assetsSlice.actions.calcInvestments(rawItems.investments));
-    thunkAPI.dispatch(assetsSlice.actions.calcExpanses(rawItems.expanses));
-    thunkAPI.dispatch(assetsSlice.actions.calcPension(rawItems.pension));
-    return response.data; 
-    //returns {assets}
-  }
-);
-
-const syncItem = createAsyncThunk(
-  'assets/syncItem',
-  async ({item}, thunkAPI) => {
-    
-    const response = await fetchItem(item);
-
-    // thunkAPI.dispatch(assetsSlice.actions.setItem(response.data));
-    switch (item){
-      case 'resources':
-        thunkAPI.dispatch(assetsSlice.actions.calcResources(response.data.entries));
-        break;
-      case 'investments':
-        thunkAPI.dispatch(assetsSlice.actions.calcInvestments(response.data.entries));
-        break;
-      case 'transfers':
-        thunkAPI.dispatch(assetsSlice.actions.calcTransfers(response.data.entries));
-        break;
-      case 'expanses':
-        thunkAPI.dispatch(assetsSlice.actions.calcExpanses(response.data.entries));
-        break;
-      case 'pension':
-        thunkAPI.dispatch(assetsSlice.actions.calcPension(response.data.entries));
-        break;      
-    }
-    return response.data; 
-    //returns {item, entries}
-  }
-);
-
-const deleteAssetsEntry = createAsyncThunk(
-  'assets/deleteEntry',
-  async ({item, entry}, thunkAPI) => {
-
-    const response = await deleteEntry(item, entry);
-
-    thunkAPI.dispatch(syncItem(item));
-    if(item ==='transfers') {
-      thunkAPI.dispatch(assetsSlice.actions.calcResources());
-    }
-    return response.data; 
-    //returns {item, entry}
-  }
-);
-
-const updateAssetsEntry = createAsyncThunk(
-  'assets/updateEntry',
-  async ({item, entry}, thunkAPI) => {
-
-    const response = await updateEntry(item, entry);
-
-    thunkAPI.dispatch(syncItem({item}));
-
-    return response.data; 
-    //returns {item, entry}
-  }
-);
-
-const createAssetsEntry = createAsyncThunk(
-  'assets/createEntry',
-  async ({item, entry}, thunkAPI) => {
-    const state = thunkAPI.getState();
-    const newId = getAvailableId(item, entry.block, state);
-    const newEntry = {...entry, id: newId};
-
-    const response = await createEntry(item, newEntry);
-
-    thunkAPI.dispatch(syncItem(item));
-    if(item ==='transfers') {
-      thunkAPI.dispatch(assetsSlice.actions.calcInvestments());
-    }
-    return response.data; 
-    //returns {item, entry}
-  }
-);
-
 // set up required payload
 // set up expected responses
 // call API and assign responses
 // dispatch thunks for sync
 // return array of item/ entry pairs
 
+// [0] sync all items => {items}
+const syncItems = createAsyncThunk(
+  'assets/syncItems',
+  async (_, thunkAPI) => {
 
-// [0] deleting single or all entries => {item, entries}
-// [1] deleting all transfers entries => {item: 'transfers', entries}
-const deleteAssetsAccount = createAsyncThunk(
-  'assets/deleteAccount',
+    const response = await fetchAssests();
+    const items = response.data.assets; 
+    //const json = await response.json(); returns response.data directly
+    //required for JSON responses from database (?!?)
+    thunkAPI.dispatch(assetsSlice.actions.calcTransfers(items.transfers));
+    thunkAPI.dispatch(assetsSlice.actions.calcResources(items.resources));
+    thunkAPI.dispatch(assetsSlice.actions.calcInvestments(items.investments));
+    thunkAPI.dispatch(assetsSlice.actions.calcExpanses(items.expanses));
+    thunkAPI.dispatch(assetsSlice.actions.calcPension(items.pension));
+    return [response.data.assets]; 
+  }
+);
+
+// [0] sync all entries => {item, entries}
+const syncItem = createAsyncThunk(
+  'assets/syncItem',
+  async ({item}, thunkAPI) => {
+    
+    const response = await fetchItem(item);
+    const entries = response.data.entries;
+
+    switch (item){
+      case 'resources':
+        thunkAPI.dispatch(assetsSlice.actions.calcResources(entries));
+        break;
+      case 'investments':
+        thunkAPI.dispatch(assetsSlice.actions.calcInvestments(entries));
+        break;
+      case 'transfers':
+        thunkAPI.dispatch(assetsSlice.actions.calcTransfers(entries));
+        break;
+      case 'expanses':
+        thunkAPI.dispatch(assetsSlice.actions.calcExpanses(entries));
+        break;
+      case 'pension':
+        thunkAPI.dispatch(assetsSlice.actions.calcPension(entries));
+        break;      
+    }
+    return [response.data]; 
+  }
+);
+
+// [0] delete single or all entries => {item, entries}
+// [1] delete all transfers entries => {item: 'transfers', entries}
+const deleteAssetsEntry = createAsyncThunk(
+  'assets/deleteEntry',
   async ({item, entry}, thunkAPI) => {
 
     let responseEntries = {};
@@ -213,11 +153,11 @@ const deleteAssetsAccount = createAsyncThunk(
   }
 );
 
-// [0] updating a single entry => {item, entry}
-// [1] renaming all entries => {item, entries}
-// [2] renaming all transfers entries => {item: 'transfers', entries}
-const updateAssetsAccount = createAsyncThunk(
-  'assets/updateAccount',
+// [0] update a single entry => {item, entry}
+// [1] rename all entries => {item, entries}
+// [2] rename all transfers entries => {item: 'transfers', entries}
+const updateAssetsEntry = createAsyncThunk(
+  'assets/updateEntry',
   async ({item, entry}, thunkAPI) => {
     const state = thunkAPI.getState().assets;    
     const prevEntry = state[item][entry.block].entries.find(currentEntry => currentEntry.id === entry.id);
@@ -246,8 +186,8 @@ const updateAssetsAccount = createAsyncThunk(
 );
 
 // [0] create a single entry or all entries => {item, entries}
-const createAssetsAccount = createAsyncThunk( 
-  'assets/createAccount',
+const createAssetsEntry = createAsyncThunk( 
+  'assets/createEntry',
   async ({item, entry}, thunkAPI) => {
     const state = thunkAPI.getState();
     const newId = getAvailableId(item, entry.block, state);
@@ -276,15 +216,15 @@ const createAssetsAccount = createAsyncThunk(
   }
 );
 
-//only for 'investments', 'assets' and 'pension' item
-//create empty entries for new block
+// [0] create all reosurces entries => {item, entries}
+// [1] create all investments entries => {item, entries}
+// [2] create all pensions entries => {item, entries}
 const addNewYear = createAsyncThunk(
   'assets/addNewyear',
   async ({newYear}, thunkAPI) => {
     const state = thunkAPI.getState();
     const lastYear = toString(Number(newYear) - 1);
-    // take over id, group, title
-    // closingBalance = new openingBalance / amount & ROI = new amount & ROI
+ 
     const resourcesEntries = state.resources[lastYear].entries.map(currentEntry => {
       return {
         block: newYear, 
@@ -314,15 +254,21 @@ const addNewYear = createAsyncThunk(
         ROI: currentEntry.ROI,
       };
     });
-    const promises = [createBlock('resources', resourcesEntries),createBlock('investments', investmentsEntries), createBlock('pension', pensionEntries)];
-    
-    const responses = await Promise.all(promises);
+
+    let responseResource = {};
+    let responseInvestments = {};
+    let responsePension = {};
+
+    [responseResource, responseInvestments, responsePension] = await Promise.all([
+      createBlock('resources', resourcesEntries),
+      createBlock('investments', investmentsEntries),
+      createBlock('pension', pensionEntries)
+    ]);
 
     thunkAPI.dispatch(syncItem('resources'));
     thunkAPI.dispatch(syncItem('investments'));
     thunkAPI.dispatch(syncItem('pensions'));
-    return responses.map(currentResponse => currentResponse.data); 
-    //returns [{item: 'resources', entries: []}, {item: 'investments', entries: []}, {item: 'pension', entries: []}]
+    return [responseResource.data, responseInvestments.data, responsePension.data]; 
   }
 );
 
@@ -679,13 +625,13 @@ export const assetsSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(syncAssets.pending, (state) => {
+      .addCase(syncItems.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(syncAssets.fulfilled, (state, action) => {
+      .addCase(syncItems.fulfilled, (state, action) => {
         state.status = 'idle';
       })
-      .addCase(syncAssets.rejected, (state) => {
+      .addCase(syncItems.rejected, (state) => {
         state.status = 'error';
       })
 
@@ -731,45 +677,12 @@ export const assetsSlice = createSlice({
       .addCase(createAssetsEntry.rejected, (state) => {
         state.status = 'error';
       })
-
-      .addCase(deleteAssetsAccount.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(deleteAssetsAccount.fulfilled, (state, action) => {
-        state.status = 'idle';
-        state.value += action.payload;
-      })
-      .addCase(deleteAssetsAccount.rejected, (state) => {
-        state.status = 'error';
-      })
-
-      .addCase(updateAssetsAccount.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(updateAssetsAccount.fulfilled, (state, action) => {
-        state.status = 'idle';
-        state.value += action.payload;
-      })
-      .addCase(updateAssetsAccount.rejected, (state) => {
-        state.status = 'error';
-      })
-
-      .addCase(createAssetsAccount.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(createAssetsAccount.fulfilled, (state, action) => {
-        state.status = 'idle';
-        state.value += action.payload;
-      })
-      .addCase(createAssetsAccount.rejected, (state) => {
-        state.status = 'error';
-      })
   },
 });
 
 // export const {increment, decrement, incrementByAmount} = counterSlice.actions; //export actions defined in 'reducers' for usage in app
 
-export {syncAssets, syncItem, updateAssetsAccount, deleteAssetsAccount}; //export thunks for usage in app
+export {syncItems, syncItem, updateAssetsEntry, deleteAssetsEntry}; //export thunks for usage in app
 
 export const selectAssetsItem = (state, item) => state.assets[item];
 

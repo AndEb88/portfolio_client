@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useLayoutEffect} from 'react';
 import {Outlet, useLocation} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
-import {syncAssets, syncItem, selectAssetsItem} from './store/assetsSlice';
+import {syncItems, syncItem, selectAssetsItem} from './store/assetsSlice';
 
 import Navigator from './components/Navigator';
 import Header from './containers/Header';
@@ -24,7 +24,7 @@ function App() {
   console.log(status);
 
   useEffect(() => {
-    dispatch(syncAssets());
+    dispatch(syncItems());
   }, [])
 
   const [blocks, setBlocks] = useState({

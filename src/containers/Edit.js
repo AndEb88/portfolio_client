@@ -6,7 +6,7 @@ import content from '../utils/content';
 import mockStore from '../utils/mockStore';
 import {toAmountString, toPercentString, toNumber, setColorClass, toDate} from '../utils/assetsFunctions';
 import Loading from '../components/Loading';
-import {syncAssets, updateAssetsEntry, selectAccounts, selectAssetsItem, updateAssetsAccount} from '../store/assetsSlice';
+import {syncAssets, selectAccounts, selectAssetsItem, updateAssetsEntry} from '../store/assetsSlice';
 
 
 function Edit() {
@@ -93,7 +93,7 @@ function Edit() {
         console.log(`submitting:`);
         console.log(formData);
         // dispatch(updateAssetsEntry(item, entry));
-        dispatch(updateAssetsAccount({item, entry: formData}));
+        dispatch(updateAssetsEntry({item, entry: formData}));
         navigate('/assets/' + item);
       };
 

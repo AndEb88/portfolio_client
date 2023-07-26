@@ -20,18 +20,6 @@ export function fetchItem(item) {
     );
 }
 
-export function deleteEntry(item, entry) {
-    //delete entry
-    const entryIndex = mockAssets[item].findIndex(currentEntry => {
-        return currentEntry.id === entry.id && currentEntry.block === entry.block;
-    });
-    const [deletedEntry] = mockAssets[item].splice(entryIndex, 1);
-
-    return new Promise((resolve) =>
-        setTimeout(() => resolve({data: {item, entry: deletedEntry}}), 1000)
-    );
-}
-
 export function deleteEntries(item, entry) {
     // delete entries with same id in all blocks
     // BUG: when investments account is deleted, transfers will receive the investments id for deletion :( 
@@ -67,15 +55,6 @@ export function updateNaming(item, entry, prevEntry) {
 
     return new Promise((resolve) =>
         setTimeout(() => resolve({data: {item, entries: updatedEntries}}), 1000)
-    );
-}
-
-export function createEntry(item, entry) {
-    //create entry
-    mockAssets[item].push(entry);
-
-    return new Promise((resolve) =>
-        setTimeout(() => resolve({data: {item, entry}}), 1000)
     );
 }
 
