@@ -27,18 +27,16 @@ function Create() {
     const [currentDate, setCurrentDate] = useState(rawDate.toISOString().split('T')[0]);
 
     // ***lifecycle***
-
-    // ***handlers***
     const handleChange = (event) => {
         const {name, value, type} = event.target;
-        if(item !== 'transfers' && type === 'number'){
-            setFormData((prevFormData) => ({
-                ...prevFormData,
-                date: currentDate,
-            }));
-        }
-      };
-      
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            date: currentDate,
+            block,
+        }));
+    }; 
+
+    // ***handlers***   
     const handleTextChange = (event) => {
         const {name, value, type} = event.target;
         setFormData((prevFormData) => ({
@@ -64,7 +62,7 @@ function Create() {
       };
 
     const handleSubmit = (event) => {
-        event.preventDefault();
+        event.preventDefault();  
         console.log(`creating:`);
         console.log(formData);
         dispatch(createAssetsEntry({item, entry: formData}));

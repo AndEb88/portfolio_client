@@ -2,14 +2,17 @@ import content from '../utils/content';
 
 
 export function getAvailableId(item, block, state) { 
-    const ids = state.assets[item][block].entries
-      .map(currentEntry => currentEntry.id).sort();
-    let expected = 0;
-    for (let i = 0; i < ids.length; i++) {
+    const ids = state[item][block].entries
+      .map(currentEntry => currentEntry.id)
+      .sort((a, b) => a - b);
+    let expected = 1;
+    for (let i = 0; i < ids.length; i++) {        
+        if (ids[i] !== expected) {
+          return expected;
+        }
         expected++;
-        if (ids[i] !== expected) {return expected;}
     }
-    return ids.length;
+    return ids.length + 1;
   }
   
    export function getTaxRate(year) {

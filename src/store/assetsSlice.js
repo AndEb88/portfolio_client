@@ -2,6 +2,7 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 
 import {fetchAssets, fetchItem, deleteEntries, updateEntry, updateNaming, createEntries} from './assetsAPI';
 import {getAvailableId, getTaxRate, roundAmount, calcROI, getDaysPassed} from './assetsFunctions';
+import mockAssets from '../utils/mockAssets';
 
 const initialState = {}; //declare initial state mockDatabase
 
@@ -62,13 +63,22 @@ const syncItem = createAsyncThunk(
 const createAssetsEntry = createAsyncThunk( 
   'assets/createEntry',
   async ({item, entry}, thunkAPI) => {
-    const state = thunkAPI.getState();
+    const state = thunkAPI.getState().assets;
     const newId = getAvailableId(item, entry.block, state);
-    const newEntry = {...entry, id: newId};
+
+    const newEntry = {
+      ...entry,
+      id: newId
+    };
     let newEntries = [newEntry];
 
     if (item !== 'transfers' && item !== 'expanses'){
-      const emptyEntry = {id: entry.id, group: entry.group, title: entry.title};
+      const emptyEntry = {
+        id: newEntry.id,
+        group: newEntry.group,
+        title: newEntry.title,
+        date: newEntry.date,
+      };
       for (const block in state[item]){
         if (block !== newEntry.block){
           newEntries.push({
@@ -81,7 +91,7 @@ const createAssetsEntry = createAsyncThunk(
 
     let response = await createEntries(item, newEntries);
 
-    await thunkAPI.dispatch(syncItem(item));   
+    await thunkAPI.dispatch(syncItem({item}));   
     if (item === 'transfers') {
       await thunkAPI.dispatch(syncItem({item: 'investments'}));
     }
@@ -321,6 +331,8 @@ export const assetsSlice = createSlice({
       const overallBlock = {};
       const accountsState = [];
       const dashboardState = {};
+      console.log(rawEntries);
+
 
       // investments
       rawEntries.forEach(currentEntry => {
