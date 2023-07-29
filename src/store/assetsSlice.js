@@ -80,7 +80,7 @@ const createAssetsEntry = createAsyncThunk(
         date: newEntry.date,
       };
       for (const block in state[item]){
-        if (block !== newEntry.block){
+        if (block !== newEntry.block && block !== 'overall'){
           newEntries.push({
             ...emptyEntry,
             block
@@ -259,11 +259,13 @@ export const assetsSlice = createSlice({
       rawEntries.forEach(currentEntry => {
         const block = currentEntry.block; 
         const openingBalance = closingBalances[currentEntry.id] ?? 0;
-        closingBalances[currentEntry.id] = currentEntry.closingBalance;
-        const transfers = currentEntry.closingBalance - openingBalance;
+        const closingBalance = currentEntry.closingBalance ?? 0;
+        closingBalances[currentEntry.id] = closingBalance;
+        const transfers = closingBalance - openingBalance;
 
         const entry = {
           ...currentEntry,
+          closingBalance,
           openingBalance,
           transfers,
         };
@@ -331,13 +333,14 @@ export const assetsSlice = createSlice({
       const overallBlock = {};
       const accountsState = [];
       const dashboardState = {};
-      console.log(rawEntries);
-
 
       // investments
       rawEntries.forEach(currentEntry => {
         const block = currentEntry.block; 
         const taxRate = getTaxRate(block);
+        const closingBalance = currentEntry.closingBalance ?? 0;
+        const bonus = currentEntry.bonus ?? 0;
+        const withheldTaxes = currentEntry.withheldTaxes ?? 0;
         let transfers = 0;
         let weightedTransfers = 0;
         let entryDaysPassed = 365;        
@@ -355,25 +358,28 @@ export const assetsSlice = createSlice({
             weightedTransfers += currentTransfer.amount * (entryDaysPassed - transferDaysPassed) / 365;
           }
         });
-
         const openingBalance = closingBalances[currentEntry.id] ?? 0;
         weightedTransfers += openingBalance * entryDaysPassed / 365;
-        closingBalances[currentEntry.id] = currentEntry.closingBalance;
-        const grossProfit = roundAmount(currentEntry.closingBalance - openingBalance - currentEntry.bonus + currentEntry.withheldTaxes - transfers);
+        closingBalances[currentEntry.id] = closingBalance;
+        const grossProfit = roundAmount(closingBalance - openingBalance - bonus + withheldTaxes - transfers);
         const dueTaxes = roundAmount(grossProfit * taxRate);
-        const netProfit = grossProfit + currentEntry.bonus - dueTaxes;
+        const netProfit = grossProfit + bonus - dueTaxes;
         const ROI = calcROI(netProfit, weightedTransfers);
 
         const entry = {
           ...currentEntry,
+          closingBalance,
           openingBalance,
+          withheldTaxes,
           transfers,
           grossProfit,
           dueTaxes,
+          bonus,
           netProfit,
           weightedTransfers,
           ROI,
         };
+
         if (!itemState[block]){
           itemState[block] = {
             closingBalance: entry.closingBalance,
@@ -418,8 +424,9 @@ export const assetsSlice = createSlice({
             }
             overallBlock.entries[overallIndex] = currentOverallEntry;
           }
-        } 
+        }
       });
+
       itemState.overall = overallBlock;
       itemState.overall.closingBalance = itemState[lastBlock].closingBalance;
 
@@ -485,10 +492,12 @@ export const assetsSlice = createSlice({
 
       // transfers
       rawEntries.forEach(currentEntry => {
-        const block = currentEntry.block; 
+        const block = currentEntry.block;
+        const amount = currentEntry.amount ?? 0; 
         
         const entry = {
           ...currentEntry,
+          amount,
         }
         if (!itemState[block]){
           itemState[block] = {
@@ -512,11 +521,13 @@ export const assetsSlice = createSlice({
       // expanses
       rawEntries.forEach(currentEntry => {
         const block = currentEntry.block; 
+        const amountYearly = currentEntry.amountYearly ?? 0;
         const amountMonthly = currentEntry.amountYearly / 12;
         
         const entry = {
           ...currentEntry,
-          amountMonthly: amountMonthly,
+          amountYearly,
+          amountMonthly,
         }
         if (!itemState[block]){
           itemState[block] = {
@@ -541,13 +552,16 @@ export const assetsSlice = createSlice({
        
       // pension
       rawEntries.forEach(currentEntry => {
-        const block = currentEntry.block; 
+        const block = currentEntry.block;
+        const ROI = currentEntry.ROI ?? '-';
+        const amount = currentEntry.amount ?? 0; 
+        const expected = currentEntry.expected ?? 0;
         
         const entry = {
           ...currentEntry,
-          ROI: currentEntry.ROI ?? '-',
-          amount: currentEntry.amount ?? 0,
-          expected:  currentEntry.expected ?? 0,
+          ROI, 
+          amount,
+          expected,
         }
         if (!itemState[block]){
           itemState[block] = {

@@ -20,13 +20,17 @@ function Create() {
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const accounts = useSelector(state => selectAccounts(state));
     const status = useSelector(state => state.assets.status);
-    
+
+    // ***variables***
+    const rawDate = new Date();
+    const currentDate = rawDate.toISOString().split('T')[0];
+
     // ***states***
     const [formData, setFormData] = useState({});
-    const rawDate = new Date();
-    const [currentDate, setCurrentDate] = useState(rawDate.toISOString().split('T')[0]);
 
     // ***lifecycle***
+
+    // ***handlers***  
     const handleChange = (event) => {
         const {name, value, type} = event.target;
         setFormData((prevFormData) => ({
@@ -36,7 +40,6 @@ function Create() {
         }));
     }; 
 
-    // ***handlers***   
     const handleTextChange = (event) => {
         const {name, value, type} = event.target;
         setFormData((prevFormData) => ({
@@ -99,7 +102,7 @@ function Create() {
                                     </input>}
                                 {formEntry.type === 'date' && 
                                     <input 
-                                        type='date' 
+                                        type='date'
                                         name={formEntry.name} 
                                         onChange={handleDateChange}/>
                                     }

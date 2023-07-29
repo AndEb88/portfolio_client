@@ -49,6 +49,7 @@ function Display() {
         case 'idle':
             const itemBlock = itemStore[block];
             const entries = [...itemBlock.entries];
+            console.log(entries);
             switch (itemIndex){
                 case 0: // Dashboard 
                     let pieData = [];
@@ -86,7 +87,9 @@ function Display() {
                             .filter(account => account.group === group)
                             .sort((a, b) => a.title.localeCompare(b.title))
                             .map(account => {
-                                if(account.openingBalance !== 0 || account.transfers !==  0) return createInvestmentComponent(account);
+                                if(account.openingBalance !== 0 || account.transfers !== 0 || account.closingBalance !== 0) { 
+                                    return createInvestmentComponent(account);
+                                }
                             });                               
                         return (<>{groupTitleComponent}{groupItemsComponent}</>);          
                     });

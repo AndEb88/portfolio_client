@@ -22,10 +22,12 @@ function Edit() {
     const accounts = useSelector(state => selectAccounts(state));
     const status = useSelector(state => state.assets.status);
     
+    // ***variables***
+    const rawDate = new Date();
+    const currentDate = rawDate.toISOString().split('T')[0];
+
     // ***states***
     const [formData, setFormData] = useState({});
-    const rawDate = new Date();
-    const [currentDate, setCurrentDate] = useState(rawDate.toISOString().split('T')[0]);
 
     // ***lifecycle***
     useEffect(() => {

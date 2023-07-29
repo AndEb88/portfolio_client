@@ -32,7 +32,7 @@ export function getAvailableId(item, block, state) {
   }
   
    export function calcROI(profit, transfers){
-    if(!profit){
+    if(!profit || !transfers){
       return '-';
     }
     const number = profit / transfers;
