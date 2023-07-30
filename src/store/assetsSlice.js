@@ -506,12 +506,10 @@ export const assetsSlice = createSlice({
         if (!itemState[block]){
           itemState[block] = {
             amount: entry.amount,
-            titles: [entry.title],
             entries: [entry],
           };
         } else {
           itemState[block].amount += entry.amount;
-          itemState[block].titles.push(entry.title);
           itemState[block].entries.push(entry);
         }
       });
@@ -653,9 +651,15 @@ export {syncItems, syncItem, updateAssetsEntry, deleteAssetsEntry, createAssetsE
 
 export const selectAssetsItem = (state, item) => state.assets[item];
 
-export const selectAccounts = (state) => state.assets.accounts;
-
-export const selectItemTitles = (state, item, block) => state.assets[item][block].titles;
+export const selectItemTitles = (state, item, block) => {
+  let titlesItem = item;
+  if (item === 'transfers'){
+    titlesItem = 'investments';
+  }
+  const titles = [...state.assets[titlesItem][block].titles];
+  titles.sort();
+  return titles;
+}
 
 export default assetsSlice.reducer; //export slice for setting up store
 

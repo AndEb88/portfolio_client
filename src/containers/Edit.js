@@ -6,7 +6,7 @@ import content from '../utils/content';
 import mockStore from '../utils/mockStore';
 import {toAmountString, toPercentString, toNumber, setColorClass, toDate} from '../utils/assetsFunctions';
 import Loading from '../components/Loading';
-import {syncAssets, selectItemTitles, selectAccounts, selectAssetsItem, updateAssetsEntry} from '../store/assetsSlice';
+import {syncAssets, selectItemTitles, selectAssetsItem, updateAssetsEntry} from '../store/assetsSlice';
 
 
 function Edit() {
@@ -19,7 +19,6 @@ function Edit() {
     
     // ***store***
     const itemStore = useSelector(state => selectAssetsItem(state, item));
-    const accounts = useSelector(state => selectAccounts(state));
     const titles = useSelector(state => selectItemTitles(state, item, block));
     const status = useSelector(state => state.assets.status);
     
@@ -63,6 +62,7 @@ function Edit() {
             ...prevFormData,
             [name]: value,
         }));
+        // set flag for change
       };
 
       const handleNumberChange = (event) => {
@@ -208,7 +208,7 @@ function Edit() {
                                     name={formEntry.name}
                                     value={formData[formEntry.name]}
                                     onChange={handleTextChange}>
-                                    {accounts.map((currentAccount, currentAccountIndex) => 
+                                    {titles.map((currentAccount, currentAccountIndex) => 
                                         <option
                                             key={currentAccountIndex}
                                             value={currentAccount}>

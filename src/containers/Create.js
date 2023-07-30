@@ -5,7 +5,7 @@ import {useSelector, useDispatch} from 'react-redux';
 
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
-import {selectAssetsItem, selectItemTitles, selectAccounts, createAssetsEntry} from '../store/assetsSlice';
+import {selectAssetsItem, selectItemTitles, createAssetsEntry} from '../store/assetsSlice';
 
 
 
@@ -18,7 +18,6 @@ function Create() {
     
     // ***store***
     const itemStore = useSelector(state => selectAssetsItem(state, item));
-    const accounts = useSelector(state => selectAccounts(state));
     const titles = useSelector(state => selectItemTitles(state, item, block));
     const status = useSelector(state => state.assets.status);
 
@@ -50,6 +49,7 @@ function Create() {
             ...prevFormData,
             [name]: value,
         }));
+        //set flag for change
       };
 
       const handleNumberChange = (event) => {
@@ -144,7 +144,7 @@ function Create() {
                                             value=''>
                                             Select...
                                         </option>
-                                        {accounts.map((currentAccount, currentAccountIndex) => (
+                                        {titles.map((currentAccount, currentAccountIndex) => (
                                         <option 
                                             key={currentAccountIndex} 
                                             value={currentAccount}>

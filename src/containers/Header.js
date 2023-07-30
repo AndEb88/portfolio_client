@@ -1,7 +1,6 @@
 import {NavLink} from 'react-router-dom';
 
-import {arrowBackIcon, addIcon} from '../icons/svgIcons';
-import mainIcon from '../icons/main.png';
+import {arrowBackIcon, addIcon, appIcon} from '../icons/svgIcons';
 import Block from './Block';
 import content from '../utils/content';
 import {deleteIcon} from '../icons/svgIcons';
@@ -49,8 +48,8 @@ function Header({mainIndex, itemIndex, main, item, form, blocks, toggleBlock, id
     // ***components***
     const bannerComponent = ((disableLink) => (
         <NavLink to={'/'} className={disableLink && 'nav-link-disabled'}>
-            <img className='' src={mainIcon}/>
-            <h1 className=''>AndEb</h1> 
+            {appIcon}
+            <h1 className=''>DIBS</h1> 
         </NavLink>    
     ));
 

@@ -173,6 +173,13 @@ a {
   height: var(--headerHeight);
 }
 
+#header #app-icon {
+  max-height: 80%;
+  margin-bottom: 0.2rem;
+  fill: var(--backgroundColor);
+  background-color: var(--highlightColor);
+}
+
 #header #arrowBack-icon {
   max-height: 80%;
   margin-bottom: 0.2rem;
