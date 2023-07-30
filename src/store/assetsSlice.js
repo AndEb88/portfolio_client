@@ -272,10 +272,12 @@ export const assetsSlice = createSlice({
         if (!itemState[block]){
           itemState[block] = {
             closingBalance: entry.closingBalance,
+            titles: [entry.title],
             entries: [entry],
           };
         } else {
           itemState[block].closingBalance += entry.closingBalance;
+          itemState[block].titles.push(entry.title);
           itemState[block].entries.push(entry);
         }        
       });
@@ -384,11 +386,13 @@ export const assetsSlice = createSlice({
           itemState[block] = {
             closingBalance: entry.closingBalance,
             netProfit: entry.netProfit,
+            titles: [entry.title],
             entries: [entry],
           };
         } else {
           itemState[block].closingBalance += entry.closingBalance;
           itemState[block].netProfit += entry.netProfit;
+          itemState[block].titles.push(entry.title);
           itemState[block].entries.push(entry);
         }
         // overall
@@ -502,10 +506,12 @@ export const assetsSlice = createSlice({
         if (!itemState[block]){
           itemState[block] = {
             amount: entry.amount,
+            titles: [entry.title],
             entries: [entry],
           };
         } else {
           itemState[block].amount += entry.amount;
+          itemState[block].titles.push(entry.title);
           itemState[block].entries.push(entry);
         }
       });
@@ -533,11 +539,13 @@ export const assetsSlice = createSlice({
           itemState[block] = {
             amountYearly: entry.amountYearly,
             amountMonthly: entry.amountMonthly,
+            titles: [entry.title],
             entries: [entry],
           };
         } else {
           itemState[entry.block].amountYearly += entry.amountYearly;
           itemState[entry.block].amountMonthly += entry.amountMonthly;
+          itemState[block].titles.push(entry.title);
           itemState[entry.block].entries.push(entry);
         }
       });
@@ -567,11 +575,13 @@ export const assetsSlice = createSlice({
           itemState[block] = {
             amount: entry.amount,
             expected: entry.expected,
+            titles: [entry.title],
             entries: [entry],
           };
         } else {
           itemState[entry.block].amount += entry.amount;
           itemState[entry.block].expected += entry.expected;
+          itemState[block].titles.push(entry.title);
           itemState[entry.block].entries.push(entry);
         }
       });
@@ -644,6 +654,8 @@ export {syncItems, syncItem, updateAssetsEntry, deleteAssetsEntry, createAssetsE
 export const selectAssetsItem = (state, item) => state.assets[item];
 
 export const selectAccounts = (state) => state.assets.accounts;
+
+export const selectItemTitles = (state, item, block) => state.assets[item][block].titles;
 
 export default assetsSlice.reducer; //export slice for setting up store
 

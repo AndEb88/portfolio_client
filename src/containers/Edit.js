@@ -6,7 +6,7 @@ import content from '../utils/content';
 import mockStore from '../utils/mockStore';
 import {toAmountString, toPercentString, toNumber, setColorClass, toDate} from '../utils/assetsFunctions';
 import Loading from '../components/Loading';
-import {syncAssets, selectAccounts, selectAssetsItem, updateAssetsEntry} from '../store/assetsSlice';
+import {syncAssets, selectItemTitles, selectAccounts, selectAssetsItem, updateAssetsEntry} from '../store/assetsSlice';
 
 
 function Edit() {
@@ -20,6 +20,7 @@ function Edit() {
     // ***store***
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const accounts = useSelector(state => selectAccounts(state));
+    const titles = useSelector(state => selectItemTitles(state, item, block));
     const status = useSelector(state => state.assets.status);
     
     // ***variables***
@@ -92,6 +93,7 @@ function Edit() {
         event.preventDefault();
         console.log(`submitting:`);
         console.log(formData);
+        // check if new title already exisitng in title array!
         dispatch(updateAssetsEntry({item, entry: formData}));
         navigate('/assets/' + item);
       };

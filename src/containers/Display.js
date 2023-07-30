@@ -49,7 +49,6 @@ function Display() {
         case 'idle':
             const itemBlock = itemStore[block];
             const entries = [...itemBlock.entries];
-            console.log(entries);
             switch (itemIndex){
                 case 0: // Dashboard 
                     let pieData = [];
@@ -208,7 +207,7 @@ function Display() {
 
     function createResourceComponent (entry){ 
         return (
-            <NavLink to={disableLink ? null : editPath + entry.id} key={`resource-${entry.id ?? entry.title}`} className={disableLink && 'nav-link-disabled'}> 
+            <NavLink to={disableLink ? null : editPath + entry.id} key={entry.id ?? entry.title} className={disableLink ? 'nav-link-disabled' : undefined}> 
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
                         <img className={setImgClass(entry.closingBalance, entry.frozen)} src={findIcon(entry)}/>
@@ -226,7 +225,7 @@ function Display() {
 
     function createInvestmentComponent (entry){ 
         return (
-            <NavLink to={disableLink ? null : editPath + entry.id} key={`investment-${entry.id ?? entry.title}`} className={disableLink && 'nav-link-disabled'}> 
+            <NavLink to={disableLink ? null : editPath + entry.id} key={entry.id ?? entry.title} className={disableLink ? 'nav-link-disabled' : undefined}> 
                 <div className='row content-row'>
                     <div className='col-6 d-flex align-items-center'>
                         <img className={setImgClass(entry.netProfit, entry.frozen)} src={findIcon(entry)}/>
@@ -252,7 +251,7 @@ function Display() {
 
     function createTransferComponent (entry){
         return (
-            <NavLink to={editPath + entry.id} key={`transfer-${entry.id}`}>      
+            <NavLink to={editPath + entry.id} key={entry.id}>      
                 <div className='row content-row small-row'>
                     <div className='col-5 d-flex align-items-center'>
                         <p>{entry.title}</p>
@@ -270,7 +269,7 @@ function Display() {
 
     function createExpanseComponent (entry){
         return (
-            <NavLink to={editPath + entry.id} key={`expanse-${entry.id}`}>      
+            <NavLink to={editPath + entry.id} key={entry.id}>      
                 <div className='row content-row small-row'>
                     <div className='col-6 d-flex align-items-center'>
                         <p>{entry.title}</p>

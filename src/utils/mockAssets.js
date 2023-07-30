@@ -1,4 +1,5 @@
 let mockAssets = {
+    
     resources: [
         {block: '2020', id: 1, group: 'Cash', title: 'DKB Checking', date: '2020-12-31', closingBalance: 5109.16, frozen: true},
         {block: '2021', id: 1, group: 'Cash', title: 'DKB Checking', date: '2021-12-31', closingBalance: 7044.45, frozen: true},

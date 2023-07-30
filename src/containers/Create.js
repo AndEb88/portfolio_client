@@ -5,7 +5,7 @@ import {useSelector, useDispatch} from 'react-redux';
 
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
-import {selectAssetsItem, selectAccounts, createAssetsEntry} from '../store/assetsSlice';
+import {selectAssetsItem, selectItemTitles, selectAccounts, createAssetsEntry} from '../store/assetsSlice';
 
 
 
@@ -19,6 +19,7 @@ function Create() {
     // ***store***
     const itemStore = useSelector(state => selectAssetsItem(state, item));
     const accounts = useSelector(state => selectAccounts(state));
+    const titles = useSelector(state => selectItemTitles(state, item, block));
     const status = useSelector(state => state.assets.status);
 
     // ***variables***
@@ -26,7 +27,10 @@ function Create() {
     const currentDate = rawDate.toISOString().split('T')[0];
 
     // ***states***
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState({
+        date: currentDate,
+        block: block,
+    });
 
     // ***lifecycle***
 
@@ -35,8 +39,8 @@ function Create() {
         const {name, value, type} = event.target;
         setFormData((prevFormData) => ({
             ...prevFormData,
-            date: currentDate,
-            block,
+            // date: currentDate,
+            // block,
         }));
     }; 
 
@@ -61,6 +65,7 @@ function Create() {
         setFormData((prevFormData) => ({
             ...prevFormData,
             date: value,
+            block: value.slice(0, 4),
         }));    
       };
 
@@ -68,6 +73,7 @@ function Create() {
         event.preventDefault();  
         console.log(`creating:`);
         console.log(formData);
+        // check if new title already exisitng in title array!
         dispatch(createAssetsEntry({item, entry: formData}));
         navigate('/assets/' + item);      
     };
@@ -87,7 +93,8 @@ function Create() {
                             </div>
                             <div className='col-5 text-end'>
                                 {formEntry.type === 'text' && 
-                                    <input 
+                                    <input
+                                        value={formData[formEntry.name]}  
                                         type='text' 
                                         name={formEntry.name}  
                                         onChange={handleTextChange}>
@@ -95,13 +102,15 @@ function Create() {
                                 }
                                 {formEntry.type === 'number' && 
                                     <input 
-                                        className='text-end' 
+                                        className='text-end'
+                                        value={formData[formEntry.name]}  
                                         type='number' 
                                         name={formEntry.name} 
                                         onChange={handleNumberChange}>
                                     </input>}
                                 {formEntry.type === 'date' && 
                                     <input 
+                                        value={formData[formEntry.name]} 
                                         type='date'
                                         name={formEntry.name} 
                                         onChange={handleDateChange}/>
