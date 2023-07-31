@@ -1,5 +1,5 @@
 let mockAssets = {
-    
+
     resources: [
         {block: '2020', id: 1, group: 'Cash', title: 'DKB Checking', date: '2020-12-31', closingBalance: 5109.16, frozen: true},
         {block: '2021', id: 1, group: 'Cash', title: 'DKB Checking', date: '2021-12-31', closingBalance: 7044.45, frozen: true},
@@ -92,22 +92,22 @@ let mockAssets = {
         {block: '2023', id: 2, group: 'Other', title: 'Riester I', date: '2023-07-09', closingBalance: 9588, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2023', id: 3, group: 'Other', title: 'Riester II', date: '2023-07-09', closingBalance: 2818.68, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2023', id: 4, group: 'Other', title: 'Bausparer', date: '2023-01-09', closingBalance: 35075.58, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 5, group: 'Stock Market', title: 'Scalable Capital', date: '2023-07-09', closingBalance: 122313, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 6, group: 'P2P', title: 'Mintos', date: '2023-07-09', closingBalance: 535.27, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 7, group: 'P2P', title: 'RoboCash', date: '2023-07-09', closingBalance: 27532.75, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 8, group: 'P2P', title: 'ViaInvest', date: '2023-07-09', closingBalance: 9956.84, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 9, group: 'P2P', title: 'Peerberry', date: '2023-07-09', closingBalance: 11007.91, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 10, group: 'P2P', title: 'Swaper', date: '2023-07-09', closingBalance: 9135.29, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 11, group: 'P2P', title: 'Afranga', date: '2023-07-09', closingBalance: 9107.41, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 12, group: 'P2P', title: 'EstateGuru', date: '2023-07-09', closingBalance: 6045.35, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 13, group: 'P2P', title: 'Debitum Network', date: '2023-07-09', closingBalance: 7560.83, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 14, group: 'P2P', title: 'Reinvest24', date: '2023-07-09', closingBalance: 2537.11, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 15, group: 'P2P', title: 'Bondster', date: '2023-07-09', closingBalance: 8909.99, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 16, group: 'P2P', title: 'Esketit', date: '2023-07-09', closingBalance: 8173.78, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 17, group: 'P2P', title: 'InRento', date: '2023-07-09', closingBalance: 5108.69, withheldTaxes: 0, bonus: 20, frozen: false},
-        {block: '2023', id: 18, group: 'P2P', title: 'Heavy Finance', date: '2023-07-09', closingBalance: 10410.44, withheldTaxes: 0, bonus: 250, frozen: false},
-        {block: '2023', id: 19, group: 'P2P', title: 'Lendermarket', date: '2023-07-09', closingBalance: 8085.66, withheldTaxes: 0, bonus: 75, frozen: false},
-        {block: '2023', id: 20, group: 'P2P', title: 'Crowdestor', date: '2023-07-09', closingBalance: 84117.50, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 5, group: 'Stock Market', title: 'Scalable Capital', date: '2023-07-31', closingBalance: 123707.56, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 6, group: 'P2P', title: 'Mintos', date: '2023-07-31', closingBalance: 536.45, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 7, group: 'P2P', title: 'RoboCash', date: '2023-07-31', closingBalance: 27746.29, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 8, group: 'P2P', title: 'ViaInvest', date: '2023-07-31', closingBalance: 10033.35, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 9, group: 'P2P', title: 'Peerberry', date: '2023-07-31', closingBalance: 10605.36, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 10, group: 'P2P', title: 'Swaper', date: '2023-07-31', closingBalance: 9217.38, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 11, group: 'P2P', title: 'Afranga', date: '2023-07-31', closingBalance: 9192.47, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 12, group: 'P2P', title: 'EstateGuru', date: '2023-07-31', closingBalance: 5937.87, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 13, group: 'P2P', title: 'Debitum Network', date: '2023-07-31', closingBalance: 9576.14, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 14, group: 'P2P', title: 'Reinvest24', date: '2023-07-31', closingBalance: 2537.11, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 15, group: 'P2P', title: 'Bondster', date: '2023-07-31', closingBalance: 8224.63, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 16, group: 'P2P', title: 'Esketit', date: '2023-07-31', closingBalance: 8235.39, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 17, group: 'P2P', title: 'InRento', date: '2023-07-31', closingBalance: 5032.24, withheldTaxes: 0, bonus: 20, frozen: false},
+        {block: '2023', id: 18, group: 'P2P', title: 'Heavy Finance', date: '2023-07-31', closingBalance: 10401.02, withheldTaxes: 0, bonus: 250, frozen: false},
+        {block: '2023', id: 19, group: 'P2P', title: 'Lendermarket', date: '2023-07-31', closingBalance: 8165.02, withheldTaxes: 0, bonus: 75, frozen: false},
+        {block: '2023', id: 20, group: 'P2P', title: 'Crowdestor', date: '2023-07-31', closingBalance: 85265.50, withheldTaxes: 0, bonus: 0, frozen: false},
     ],
 
     transfers: [
@@ -219,6 +219,12 @@ let mockAssets = {
         {block: '2023', id: 106, group: 'P2P', title: 'Heavy Finance', amount: -300, date: '2023-07-08'},
         {block: '2023', id: 107, group: 'P2P', title: 'Bondster', amount: -200, date: '2023-07-08'},
         {block: '2023', id: 108, group: 'P2P', title: 'Debitum Network', amount: 2100, date: '2023-07-08'},
+        {block: '2023', id: 109, group: 'P2P', title: 'EstateGuru', amount: -100, date: '2023-07-25'},
+        {block: '2023', id: 110, group: 'P2P', title: 'Heavy Finance', amount: -100, date: '2023-07-25'},
+        {block: '2023', id: 111, group: 'P2P', title: 'InRento', amount: -100, date: '2023-07-25'},
+        {block: '2023', id: 112, group: 'P2P', title: 'Bondster', amount: -800, date: '2023-07-25'},
+        {block: '2023', id: 113, group: 'P2P', title: 'Debitum Network', amount: 2000, date: '2023-07-08'},
+        {block: '2023', id: 114, group: 'P2P', title: 'Peerberry', amount: -500, date: '2023-07-28'},
     ],
 
     expanses: [
