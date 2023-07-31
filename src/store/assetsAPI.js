@@ -18,9 +18,10 @@ export function fetchItem(item) {
 export function createEntries(item, entries) {
     // create entries for all blocks
     mockAssets[item].push(...entries);
-      
+    
+    const message = `Created ${entries.length} ${entries[0].group} ${entries[0].title} entries in ${item}`;
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: {item, entries}}), 1000)
+        setTimeout(() => resolve({data: {message}}), 1000)
     );
 }
 
@@ -31,8 +32,9 @@ export function updateEntry(item, entry) {
     });
     mockAssets[item][entryIndex] = entry;
 
+    const message = `Updated ${entry.group} ${entry.title} entry in ${item} ${entry.block}`;
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: {item, entry}}), 1000)
+        setTimeout(() => resolve({data: {message}}), 1000)
     );
 }
 
@@ -44,19 +46,14 @@ export function updateNaming(item, entry, prevEntry) {
 
     const updatedEntries = entryIndexes.map(currentIndex => mockAssets[item][currentIndex] = {...mockAssets[item][currentIndex], group: entry.group, title: entry.title})
 
+    const message = `Renamed ${updatedEntries.length} ${prevEntry.group} ${prevEntry.title} entries to ${entry.group} ${entry.title} in ${item}`;
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: {item, entries: updatedEntries}}), 1000)
+        setTimeout(() => resolve({data: {message}}), 1000)
     );
 }
 
 export function deleteEntries(item, entry, byTitle) {
-    // delete entries with same id in all blocks
-    // BUG: when investments account is deleted, transfers will receive the investments id for deletion :( 
-    console.log('deleting');
-    console.log(item);
-    console.log(entry);
     let key = 'id';
-
     if (byTitle){
         key = 'title';
     }
@@ -64,11 +61,11 @@ export function deleteEntries(item, entry, byTitle) {
         .map((currentEntry, entryIndex) => {if(currentEntry[key] === entry[key]) return entryIndex;})
         .filter(currentIndex => currentIndex !== undefined)
         .reverse();
-  
-    console.log(entryIndexes);
     const deletedEntries = (entryIndexes.map(currentIndex => mockAssets[item].splice(currentIndex, 1))).flat();
+
+    const message = `Deleted ${deletedEntries.length} ${entry.group} ${entry.title} entries in ${item}`;
     return new Promise((resolve) =>
-        setTimeout(() => resolve({data: {item, entries: deletedEntries}}), 1000)
+        setTimeout(() => resolve({data: {message}}), 1000)
     );
 }
 

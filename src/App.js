@@ -5,6 +5,7 @@ import {syncItems, syncItem, selectAssetsItem} from './store/assetsSlice';
 
 import Navigator from './components/Navigator';
 import Header from './containers/Header';
+import Popover from './containers/Popover';
 import content from './utils/content';
 import mockStore from './utils/mockStore';
 
@@ -81,7 +82,8 @@ function App() {
         blocks={blocks}
         id={id}
         toggleBlock={toggleBlock}   
-      />   
+      />
+      <Popover/>   
       <Outlet
         context={[mainIndex, itemIndex, main, item, form, blocks.value]}
       />

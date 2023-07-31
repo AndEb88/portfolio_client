@@ -3,9 +3,10 @@
 /* -------------- 
 
 #header (h1/ h2)
-.content
-  #landing (tbd)
-  #menu (h2)
+#popover (tbd)
+.content  
+  #landing (tbd)  
+  #menu (h2)  
   #display
     .headline-row (h3)
     .content-row (h3/ h4)
@@ -211,6 +212,24 @@ a {
   border: 4px solid var(--highlightColor);
 }
 
+
+/* -------------- */
+/* popover */
+/* -------------- */
+
+#popover {
+  position: absolute;
+  top: var(--headerHeight);
+  bottom: var(--navigatorHeight);
+  z-index: 2;
+}
+
+#popover .row {
+  background-color: var(--textColor);
+  border: 1px solid var(--highlightColor);
+  margin: 0.5rem;
+  border-radius: 3px;
+}
 
 /* -------------- */
 /* content */

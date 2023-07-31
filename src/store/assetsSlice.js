@@ -4,7 +4,10 @@ import {fetchAssets, fetchItem, deleteEntries, updateEntry, updateNaming, create
 import {getAvailableId, getTaxRate, roundAmount, calcROI, getDaysPassed} from './assetsFunctions';
 import mockAssets from '../utils/mockAssets';
 
-const initialState = {}; //declare initial state mockDatabase
+//declare initial state mockDatabase
+const initialState = {
+  messages: [],
+}; 
 
 // set up required payload
 // set up expected responses
@@ -12,7 +15,6 @@ const initialState = {}; //declare initial state mockDatabase
 // dispatch thunks for sync
 // return array of item/ entry pairs
 
-// [0] sync all items => {items}
 const syncItems = createAsyncThunk(
   'assets/syncItems',
   async (_, thunkAPI) => {
@@ -30,7 +32,6 @@ const syncItems = createAsyncThunk(
   }
 );
 
-// [0] sync all entries => {item, entries}
 const syncItem = createAsyncThunk(
   'assets/syncItem',
   async ({item}, thunkAPI) => {
@@ -59,7 +60,6 @@ const syncItem = createAsyncThunk(
   }
 );
 
-// [0] create a single entry or all entries => {item, entries}
 const createAssetsEntry = createAsyncThunk( 
   'assets/createEntry',
   async ({item, entry}, thunkAPI) => {
@@ -99,9 +99,6 @@ const createAssetsEntry = createAsyncThunk(
   }
 );
 
-// [0] update a single entry => {item, entry}
-// [1] rename all entries => {item, entries}
-// [2] rename all transfers entries => {item: 'transfers', entries}
 const updateAssetsEntry = createAsyncThunk(
   'assets/updateEntry',
   async ({item, entry}, thunkAPI) => {
@@ -131,8 +128,6 @@ const updateAssetsEntry = createAsyncThunk(
   }
 );
 
-// [0] delete single or all entries => {item, entries}
-// [1] delete all transfers entries => {item: 'transfers', entries}
 const deleteAssetsEntry = createAsyncThunk(
   'assets/deleteEntry',
   async ({item, entry}, thunkAPI) => {
@@ -157,9 +152,6 @@ const deleteAssetsEntry = createAsyncThunk(
   }
 );
 
-// [0] create all reosurces entries => {item, entries}
-// [1] create all investments entries => {item, entries}
-// [2] create all pensions entries => {item, entries}
 const addNewYear = createAsyncThunk(
   'assets/addNewyear',
   async ({newYear}, thunkAPI) => {
@@ -595,9 +587,13 @@ export const assetsSlice = createSlice({
       })
       .addCase(syncItems.fulfilled, (state, action) => {
         state.status = 'idle';
+        const message = 'Synchronized all items';
+        state.messages.push(message);
       })
-      .addCase(syncItems.rejected, (state) => {
+      .addCase(syncItems.rejected, (state, action) => {
         state.status = 'error';
+        const message = 'Synchronizing all items failed';
+        state.messages.push(message);
       })
 
       .addCase(syncItem.pending, (state) => {
@@ -605,20 +601,29 @@ export const assetsSlice = createSlice({
       })
       .addCase(syncItem.fulfilled, (state, action) => {
         // state.status = 'idle';
+        const item = action.payload.item;
+        const message = `Synchronized ${item}`;
+        state.messages.push(message);
       })
-      .addCase(syncItem.rejected, (state) => {
+      .addCase(syncItem.rejected, (state, action) => {
         // state.status = 'error';
+        const message = `Synchronizing item failed`;
+        state.messages.push(message);
       })
 
-      .addCase(deleteAssetsEntry.pending, (state) => {
+      // [0] create a single entry or all entries => {item, entries}
+      .addCase(createAssetsEntry.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(deleteAssetsEntry.fulfilled, (state, action) => {
+      .addCase(createAssetsEntry.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.value += action.payload;
+        const message = action.payload.message;
+        state.messages.push(message);
       })
-      .addCase(deleteAssetsEntry.rejected, (state) => {
+      .addCase(createAssetsEntry.rejected, (state) => {
         state.status = 'error';
+        const message = `Creating entry failed`;
+        state.messages.push(message);
       })
 
       .addCase(updateAssetsEntry.pending, (state) => {
@@ -626,21 +631,27 @@ export const assetsSlice = createSlice({
       })
       .addCase(updateAssetsEntry.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.value += action.payload;
+        const message = action.payload.message;
+        state.messages.push(message);
       })
       .addCase(updateAssetsEntry.rejected, (state) => {
         state.status = 'error';
+        const message = `Updating entry failed`;
+        state.messages.push(message);
       })
 
-      .addCase(createAssetsEntry.pending, (state) => {
+      .addCase(deleteAssetsEntry.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(createAssetsEntry.fulfilled, (state, action) => {
+      .addCase(deleteAssetsEntry.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.value += action.payload;
+        const message = action.payload.message;
+        state.messages.push(message);
       })
-      .addCase(createAssetsEntry.rejected, (state) => {
+      .addCase(deleteAssetsEntry.rejected, (state) => {
         state.status = 'error';
+        const message = `Deleting entry failed`;
+        state.messages.push(message);
       })
   },
 });
