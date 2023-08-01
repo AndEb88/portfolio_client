@@ -6,16 +6,17 @@ import content from '../utils/content';
 import mockStore from '../utils/mockStore';
 import {toAmountString, toPercentString, toNumber, setColorClass, toDate} from '../utils/assetsFunctions';
 import Loading from '../components/Loading';
-import {syncAssets, selectItemTitles, selectAssetsItem, updateAssetsEntry} from '../store/assetsSlice';
+import {syncAssets, selectItemTitles, selectAssetsItem, updateAssetsEntry, popMessage} from '../store/assetsSlice';
 
 
-function Popover() {
+function Popover() { 
+    // make createPopoverCOmponent a separate component and move timer useEffect inside -> each message has its own timer
+    // but after pop message, message will cahnge and trigger timer again(?) -> not with empty dependency array for timer!
     
     // ***hooks***    
     const dispatch = useDispatch(); // for popping first message after timeout
     
     // ***store***
-    const status = useSelector(state => state.assets.status);
     const messages = useSelector(state => state.assets.messages);
     console.log(messages);
     
@@ -24,39 +25,34 @@ function Popover() {
     // ***states***
 
     // ***components***
-    let popoverComponent = (<h1>no popover data available</h1>);
-    if (messages.length > 0){
-        console.log('hit');
-        popoverComponent = messages.map(currentMessage => {
-            createPopoverComponent(currentMessage);
-        });
-    }
 
     // ***lifecycle***
-    useEffect(() => {        
-        if (messages.length > 0){
-            popoverComponent = messages.map(currentMessage => {
-                createPopoverComponent(currentMessage);
-            });
-        }
-      }, [messages]);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+          dispatch(popMessage()); 
+        }, 3000); 
+    
+        return () => clearTimeout(timer);
+      }, [timer]);
 
     // ***handlers***
-    // const handleFocus = (event) => {
-    //     const {name} = event.target;
-    //     setFormData((prevFormData) => ({
-    //         ...prevFormData,
-    //         [name]: null,
-    //       }));
-    // };
-
 
     // ***functions*** 
-    function createPopoverComponent (message){ 
+    function createPopoverComponent (message){
+
+        // const timer = setTimeout(() => {
+        //     dispatch(popMessage(message.id)); // Assuming the message has an id
+        //   }, 3000);
+      
+        //   // Clear the timer when the component is unmounted or the message is removed
+        //   useEffect(() => {
+        //     return () => clearTimeout(timer);
+        //   }, [timer]);
+
         return (
-            <div className='row'>
-                <div className='col-12 d-flex align-items-center'>
-                    <h3>{message}</h3>
+            <div className='row d-flex justify-content-center'>
+                <div className='field col-auto d-flex align-items-center justify-content-center'>
+                    <p>{message}</p>
                 </div>
             </div>
         );
@@ -64,8 +60,10 @@ function Popover() {
     
     // ***render***
     return(         
-        <div className='container-fluid content' id='popover'>
-            {popoverComponent}           
+        <div className='container-fluid justify-content-center' id='popover'>
+            {messages.map(currentMessage => (
+                createPopoverComponent(currentMessage)
+            ))}          
         </div> 
     );
 }

@@ -28,7 +28,7 @@ const syncItems = createAsyncThunk(
     thunkAPI.dispatch(assetsSlice.actions.calcInvestments(items.investments));
     thunkAPI.dispatch(assetsSlice.actions.calcExpanses(items.expanses));
     thunkAPI.dispatch(assetsSlice.actions.calcPension(items.pension));
-    return [response.data.assets]; 
+    return response.data; 
   }
 );
 
@@ -56,7 +56,7 @@ const syncItem = createAsyncThunk(
         thunkAPI.dispatch(assetsSlice.actions.calcPension(entries));
         break;      
     }
-    return [response.data]; 
+    return response.data; 
   }
 );
 
@@ -239,6 +239,11 @@ export const assetsSlice = createSlice({
   name: 'assets',
   initialState,
   reducers: {
+    popMessage: (state) => {
+      console.log('popping');
+      console.log(state.messages.shift());
+    },
+
     calcResources: (state, action) => {
       // sort entries by block as number in descending order
       const rawEntries = action.payload.sort((a, b) => a.block - b.block);
@@ -587,7 +592,7 @@ export const assetsSlice = createSlice({
       })
       .addCase(syncItems.fulfilled, (state, action) => {
         state.status = 'idle';
-        const message = 'Synchronized all items';
+        const message = action.payload.message;
         state.messages.push(message);
       })
       .addCase(syncItems.rejected, (state, action) => {
@@ -601,8 +606,7 @@ export const assetsSlice = createSlice({
       })
       .addCase(syncItem.fulfilled, (state, action) => {
         // state.status = 'idle';
-        const item = action.payload.item;
-        const message = `Synchronized ${item}`;
+        const message = action.payload.message;
         state.messages.push(message);
       })
       .addCase(syncItem.rejected, (state, action) => {
@@ -611,14 +615,17 @@ export const assetsSlice = createSlice({
         state.messages.push(message);
       })
 
-      // [0] create a single entry or all entries => {item, entries}
       .addCase(createAssetsEntry.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(createAssetsEntry.fulfilled, (state, action) => {
         state.status = 'idle';
-        const message = action.payload.message;
-        state.messages.push(message);
+        action.payload.forEach(currentPayload => {
+          if(currentPayload){
+            const message = currentPayload.message;
+            state.messages.push(message);
+          }
+        });        
       })
       .addCase(createAssetsEntry.rejected, (state) => {
         state.status = 'error';
@@ -631,8 +638,12 @@ export const assetsSlice = createSlice({
       })
       .addCase(updateAssetsEntry.fulfilled, (state, action) => {
         state.status = 'idle';
-        const message = action.payload.message;
-        state.messages.push(message);
+        action.payload.forEach(currentPayload => {
+          if(currentPayload){
+            const message = currentPayload.message;
+            state.messages.push(message);
+          }
+        });        
       })
       .addCase(updateAssetsEntry.rejected, (state) => {
         state.status = 'error';
@@ -645,8 +656,12 @@ export const assetsSlice = createSlice({
       })
       .addCase(deleteAssetsEntry.fulfilled, (state, action) => {
         state.status = 'idle';
-        const message = action.payload.message;
-        state.messages.push(message);
+        action.payload.forEach(currentPayload => {
+          if(currentPayload){
+            const message = currentPayload.message;
+            state.messages.push(message);
+          }
+        });        
       })
       .addCase(deleteAssetsEntry.rejected, (state) => {
         state.status = 'error';
@@ -656,7 +671,7 @@ export const assetsSlice = createSlice({
   },
 });
 
-// export const {increment, decrement, incrementByAmount} = counterSlice.actions; //export actions defined in 'reducers' for usage in app
+export const {popMessage} = assetsSlice.actions; //export actions defined in 'reducers' for usage in app
 
 export {syncItems, syncItem, updateAssetsEntry, deleteAssetsEntry, createAssetsEntry}; //export thunks for usage in app
 
