@@ -19,9 +19,9 @@ function App() {
 
   // ***store***
   const store = useSelector(state => state.assets);
-  const status = useSelector(state => state.assets.status);
+  // const status = useSelector(state => state.assets.status);
 
-  console.log(status);
+  // console.log(status);
 
   // ***states***
   const [blocks, setBlocks] = useState({

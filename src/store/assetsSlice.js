@@ -240,8 +240,7 @@ export const assetsSlice = createSlice({
   initialState,
   reducers: {
     popMessage: (state) => {
-      console.log('popping');
-      console.log(state.messages.shift());
+      state.messages.shift();
     },
 
     calcResources: (state, action) => {

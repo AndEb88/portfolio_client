@@ -234,14 +234,19 @@ a {
   opacity: 0.9;
 }
 
-#popover .fade-out {
-  animation: fadeOut 3s; 
+#popover .slide-in {
+  animation: slideIn 0.5s ease-in-out; 
 }
 
-@keyframes fadeOut {
-  0% { opacity: 1; }
-  33.33% { opacity: 1; } 
-  100% { opacity: 0; } 
+@keyframes slideIn {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 

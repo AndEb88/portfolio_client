@@ -1,5 +1,5 @@
 import {useParams, useOutletContext, useNavigate} from 'react-router-dom';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
 import content from '../utils/content';
@@ -10,15 +10,12 @@ import {syncAssets, selectItemTitles, selectAssetsItem, updateAssetsEntry, popMe
 
 
 function Popover() { 
-    // make createPopoverCOmponent a separate component and move timer useEffect inside -> each message has its own timer
-    // but after pop message, message will cahnge and trigger timer again(?) -> not with empty dependency array for timer!
-    
+   
     // ***hooks***    
     const dispatch = useDispatch(); // for popping first message after timeout
     
     // ***store***
     const messages = useSelector(state => state.assets.messages);
-    console.log(messages);
     
     // ***variables***
 
@@ -27,34 +24,37 @@ function Popover() {
     // ***components***
 
     // ***lifecycle***
-    useEffect(() => {
-        const timer = setTimeout(() => {
-          dispatch(popMessage()); 
-        }, 3000); 
-    
-        return () => clearTimeout(timer);
-      }, [timer]);
 
     // ***handlers***
 
     // ***functions*** 
-    function createPopoverComponent (message){
+    function PopoverComponent ({message}){
 
-        // const timer = setTimeout(() => {
-        //     dispatch(popMessage(message.id)); // Assuming the message has an id
-        //   }, 3000);
+        const [isVisible, setIsVisible] = useState(true);
+        let animation = 'slide-in';
+
+        const timer = setTimeout(() => {
+            setIsVisible(false);
+            if (messages.length > 0) {
+                dispatch(popMessage());
+              } 
+        }, 3000);
       
-        //   // Clear the timer when the component is unmounted or the message is removed
-        //   useEffect(() => {
-        //     return () => clearTimeout(timer);
-        //   }, [timer]);
+        useEffect(() => {
+            animation = '';
+            return () => clearTimeout(timer);
+        }, []);
 
         return (
-            <div className='row d-flex justify-content-center'>
-                <div className='field col-auto d-flex align-items-center justify-content-center'>
-                    <p>{message}</p>
-                </div>
-            </div>
+            <>
+                {isVisible && 
+                    <div className={`row d-flex justify-content-center ${animation}`}>
+                        <div className='field col-auto d-flex align-items-center justify-content-center'>
+                            <p>{message}</p>
+                        </div>
+                    </div>
+                }
+            </>
         );
     } 
     
@@ -62,10 +62,11 @@ function Popover() {
     return(         
         <div className='container-fluid justify-content-center' id='popover'>
             {messages.map(currentMessage => (
-                createPopoverComponent(currentMessage)
+                <PopoverComponent message={currentMessage}/>
             ))}          
         </div> 
     );
 }
 
 export default Popover;
+

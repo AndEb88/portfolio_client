@@ -122,7 +122,7 @@ function Create() {
                                         onChange={handleTextChange}>
                                         <option 
                                             disabled 
-                                            selected 
+                                            defaultValue  
                                             value=''>
                                             Select...
                                         </option>                                      
@@ -140,7 +140,7 @@ function Create() {
                                         onChange={handleTextChange}>
                                         <option 
                                             disabled 
-                                            selected 
+                                            defaultValue  
                                             value=''>
                                             Select...
                                         </option>
