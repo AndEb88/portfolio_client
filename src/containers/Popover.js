@@ -23,30 +23,32 @@ function Popover() {
     const [messageQueue, setMessageQueue] = useState([]);
 
     // ***components***
+    const popoverComponent = messageQueue.map((currentMessage, index) => 
+        createPopoverComponent(currentMessage, index)
+    );  
 
     // ***lifecycle***
     useEffect(() => {
-        if (messages.length > 0) { // else clear message que
+        let timeout;
+        if (messages.length > 0) { 
             const newMessage = messages[0];
-            setMessageQueue(prevMessageQueue => [...prevMessageQueue, newMessage]); //add display bool prop
+            setMessageQueue(prevMessageQueue => [...prevMessageQueue, newMessage]); 
             dispatch(popMessage());
-        }        
+            
+            timeout = setTimeout(() => { // need to maintain array of timeouts for all messages
+                console.log('timeout'); 
+                setMessageQueue(prevMessageQueue => prevMessageQueue.slice(1)); // this will change the key and trigger slide-in again
+            }, 3000);
+        } 
+        return () => clearTimeout(timeout);         
       }, [messages]);
 
     // ***handlers***
 
     // ***functions*** 
-    function PopoverComponent ({message}){
-
-        useEffect(() => {                
-            const timeout = setTimeout(() => { 
-                setMessageQueue(prevMessageQueue => prevMessageQueue.slice(1)); // set display false
-            }, 3000);
-            return () => clearTimeout(timeout);            
-          }, []);
-
+    function createPopoverComponent (message, key){ 
         return (
-            <div className='row d-flex justify-content-center slide-in'>
+            <div key={key} className='row d-flex justify-content-center slide-in'>
                 <div className='field col-auto d-flex align-items-center justify-content-center'>
                     <p>{message}</p>
                 </div>
@@ -57,9 +59,7 @@ function Popover() {
     // ***render***
     return(         
         <div className='container-fluid justify-content-center' id='popover'>
-            {messageQueue.map((currentMessage, index) => (
-                <PopoverComponent key={index} message={currentMessage}/> // consider display prop
-            ))}        
+            {popoverComponent}        
         </div> 
     );
 }
