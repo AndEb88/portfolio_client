@@ -20,7 +20,9 @@ const syncItems = createAsyncThunk(
   async (_, thunkAPI) => {
 
     const response = await fetchAssets();
-    const items = response.data.assets; 
+    thunkAPI.dispatch(assetsSlice.actions.pushMessage(response.data));
+
+    const items = response.data.assets;
     //const json = await response.json(); returns response.data directly
     //required for JSON responses from database (?!?)
     thunkAPI.dispatch(assetsSlice.actions.calcTransfers(items.transfers));
@@ -37,7 +39,10 @@ const syncItem = createAsyncThunk(
   async ({item}, thunkAPI) => {
     
     const response = await fetchItem(item);
+    thunkAPI.dispatch(assetsSlice.actions.pushMessage(response.data));
+
     const entries = response.data.entries;
+    const message = response.data.message;  
 
     switch (item){
       case 'resources':
@@ -90,6 +95,7 @@ const createAssetsEntry = createAsyncThunk(
     }
 
     let response = await createEntries(item, newEntries);
+    thunkAPI.dispatch(assetsSlice.actions.pushMessage(response.data));
 
     await thunkAPI.dispatch(syncItem({item}));   
     if (item === 'transfers') {
@@ -105,18 +111,22 @@ const updateAssetsEntry = createAsyncThunk(
     const state = thunkAPI.getState().assets;    
     const prevEntry = state[item][entry.block].entries.find(currentEntry => currentEntry.id === entry.id);
 
-    const responseEntry = await updateEntry(item, entry);
     let responseNaming = {};
     let responseTransfersNaming = {};
+    const responseEntry = await updateEntry(item, entry);
+    thunkAPI.dispatch(assetsSlice.actions.pushMessage(responseEntry.data));
 
     if (prevEntry.group !== entry.group || prevEntry.title !== entry.title){
       if (item !== 'investments'){
-        responseNaming = await updateNaming(item, entry, prevEntry);       
+        responseNaming = await updateNaming(item, entry, prevEntry);
+        thunkAPI.dispatch(assetsSlice.actions.pushMessage(responseNaming.data));       
       } else { 
         [responseNaming, responseTransfersNaming] = await Promise.all([
           updateNaming(item, entry, prevEntry),
           updateNaming('transfers', entry, prevEntry)
-        ]);       
+        ]);
+        thunkAPI.dispatch(assetsSlice.actions.pushMessage(responseNaming.data));
+        thunkAPI.dispatch(assetsSlice.actions.pushMessage(responseTransfersNaming.data));
         await thunkAPI.dispatch(syncItem({item: 'transfers'}));  
       }
     }
@@ -137,11 +147,14 @@ const deleteAssetsEntry = createAsyncThunk(
 
     if (item !== 'investments'){
       responseEntries = await deleteEntries(item, entry);
+      thunkAPI.dispatch(assetsSlice.actions.pushMessage(responseEntries.data));
     } else {
       [responseEntries, responseTransfersEntries] = await Promise.all([
         deleteEntries(item, entry),
         deleteEntries('transfers', entry, true)
       ]);
+      thunkAPI.dispatch(assetsSlice.actions.pushMessage(responseEntries.data));
+      thunkAPI.dispatch(assetsSlice.actions.pushMessage(responseTransfersEntries.data));
       await thunkAPI.dispatch(syncItem({item: 'transfers'}));
     }  
     await thunkAPI.dispatch(syncItem({item}));
@@ -239,6 +252,11 @@ export const assetsSlice = createSlice({
   name: 'assets',
   initialState,
   reducers: {
+    pushMessage: (state, action) => {
+      const message = action.payload.message;
+      state.messages.push(message);
+    },
+
     popMessage: (state) => {
       state.messages.shift();
     },
@@ -591,8 +609,6 @@ export const assetsSlice = createSlice({
       })
       .addCase(syncItems.fulfilled, (state, action) => {
         state.status = 'idle';
-        const message = action.payload.message;
-        state.messages.push(message);
       })
       .addCase(syncItems.rejected, (state, action) => {
         state.status = 'error';
@@ -618,13 +634,7 @@ export const assetsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(createAssetsEntry.fulfilled, (state, action) => {
-        state.status = 'idle';
-        action.payload.forEach(currentPayload => {
-          if(currentPayload){
-            const message = currentPayload.message;
-            state.messages.push(message);
-          }
-        });        
+        state.status = 'idle';        
       })
       .addCase(createAssetsEntry.rejected, (state) => {
         state.status = 'error';
@@ -636,13 +646,7 @@ export const assetsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(updateAssetsEntry.fulfilled, (state, action) => {
-        state.status = 'idle';
-        action.payload.forEach(currentPayload => {
-          if(currentPayload){
-            const message = currentPayload.message;
-            state.messages.push(message);
-          }
-        });        
+        state.status = 'idle';       
       })
       .addCase(updateAssetsEntry.rejected, (state) => {
         state.status = 'error';
@@ -654,13 +658,7 @@ export const assetsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(deleteAssetsEntry.fulfilled, (state, action) => {
-        state.status = 'idle';
-        action.payload.forEach(currentPayload => {
-          if(currentPayload){
-            const message = currentPayload.message;
-            state.messages.push(message);
-          }
-        });        
+        state.status = 'idle';        
       })
       .addCase(deleteAssetsEntry.rejected, (state) => {
         state.status = 'error';

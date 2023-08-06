@@ -20,50 +20,46 @@ function Popover() {
     // ***variables***
 
     // ***states***
+    const [messageQueue, setMessageQueue] = useState([]);
 
     // ***components***
 
     // ***lifecycle***
+    useEffect(() => {
+        if (messages.length > 0) { // else clear message que
+            const newMessage = messages[0];
+            setMessageQueue(prevMessageQueue => [...prevMessageQueue, newMessage]); //add display bool prop
+            dispatch(popMessage());
+        }        
+      }, [messages]);
 
     // ***handlers***
 
     // ***functions*** 
     function PopoverComponent ({message}){
 
-        const [isVisible, setIsVisible] = useState(true);
-        let animation = 'slide-in';
-
-        const timer = setTimeout(() => {
-            setIsVisible(false);
-            if (messages.length > 0) {
-                dispatch(popMessage());
-              } 
-        }, 3000);
-      
-        useEffect(() => {
-            animation = '';
-            return () => clearTimeout(timer);
-        }, []);
+        useEffect(() => {                
+            const timeout = setTimeout(() => { 
+                setMessageQueue(prevMessageQueue => prevMessageQueue.slice(1)); // set display false
+            }, 3000);
+            return () => clearTimeout(timeout);            
+          }, []);
 
         return (
-            <>
-                {isVisible && 
-                    <div className={`row d-flex justify-content-center ${animation}`}>
-                        <div className='field col-auto d-flex align-items-center justify-content-center'>
-                            <p>{message}</p>
-                        </div>
-                    </div>
-                }
-            </>
+            <div className='row d-flex justify-content-center slide-in'>
+                <div className='field col-auto d-flex align-items-center justify-content-center'>
+                    <p>{message}</p>
+                </div>
+            </div>
         );
     } 
     
     // ***render***
     return(         
         <div className='container-fluid justify-content-center' id='popover'>
-            {messages.map(currentMessage => (
-                <PopoverComponent message={currentMessage}/>
-            ))}          
+            {messageQueue.map((currentMessage, index) => (
+                <PopoverComponent key={index} message={currentMessage}/> // consider display prop
+            ))}        
         </div> 
     );
 }
