@@ -622,7 +622,6 @@ export const assetsSlice = createSlice({
       .addCase(syncItem.fulfilled, (state, action) => {
         // state.status = 'idle';
         const message = action.payload.message;
-        state.messages.push(message);
       })
       .addCase(syncItem.rejected, (state, action) => {
         // state.status = 'error';

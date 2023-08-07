@@ -21,6 +21,8 @@ function Popover() {
 
     // ***states***
     const [messageQueue, setMessageQueue] = useState([]);
+    const [timeoutQueue, setTimeoutQueue] = useState([]);
+
 
     // ***components***
     const popoverComponent = messageQueue.map((currentMessage, index) => 
@@ -35,20 +37,21 @@ function Popover() {
             setMessageQueue(prevMessageQueue => [...prevMessageQueue, newMessage]); 
             dispatch(popMessage());
             
-            timeout = setTimeout(() => { // need to maintain array of timeouts for all messages
-                console.log('timeout'); 
-                setMessageQueue(prevMessageQueue => prevMessageQueue.slice(1)); // this will change the key and trigger slide-in again
+            const newTimeout = setTimeout(() => { 
+                setMessageQueue(prevMessageQueue => prevMessageQueue.slice(1)); 
             }, 3000);
+            setTimeoutQueue(prevTimeoutQueue => [...prevTimeoutQueue, newTimeout]); 
+            
         } 
-        return () => clearTimeout(timeout);         
+        // return () => clearTimeout(timeout);  // must clear timeouts and messageQueue       
       }, [messages]);
 
     // ***handlers***
 
     // ***functions*** 
-    function createPopoverComponent (message, key){ 
+    function createPopoverComponent (message, index){ 
         return (
-            <div key={key} className='row d-flex justify-content-center slide-in'>
+            <div key={index} className='row d-flex justify-content-center slide-in'>
                 <div className='field col-auto d-flex align-items-center justify-content-center'>
                     <p>{message}</p>
                 </div>
