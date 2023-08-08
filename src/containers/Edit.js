@@ -6,7 +6,7 @@ import content from '../utils/content';
 import mockStore from '../utils/mockStore';
 import {toAmountString, toPercentString, toNumber, setColorClass, toDate} from '../utils/assetsFunctions';
 import Loading from '../components/Loading';
-import {syncAssets, selectItemTitles, selectAssetsItem, updateAssetsEntry} from '../store/assetsSlice';
+import {syncAssets, selectAssetsItem, updateAssetsEntry, selectAccounts} from '../store/assetsSlice';
 
 
 function Edit() {
@@ -19,7 +19,7 @@ function Edit() {
     
     // ***store***
     const itemStore = useSelector(state => selectAssetsItem(state, item));
-    const titles = useSelector(state => selectItemTitles(state, item, block));
+    const accounts = useSelector(state => selectAccounts(state));
     const status = useSelector(state => state.assets.status);
     
     // ***variables***
@@ -118,7 +118,7 @@ function Edit() {
                     <div key={`entry-${formEntryIndex}-${formEntry.name}`} className={`row form-row ${formEntry.colored && setColorClass(formData[formEntry.name])} ${formEntry.margin && 'big-margin'} ${formEntry.bold && 'big-font'}`}>
                         <div className='col-5'>
                             <p>{formEntry.title}</p>
-                            {formEntry.type === 'displayDate' && formData.block !== 'overall' &&            
+                            {formEntry.type === 'displayDate' &&            
                                 <div className='form-check form-switch d-flex align-items-center form-row-bold'>
                                     <label className='form-check-label' htmlFor='freeze-switch'>Last Update</label>
                                 </div>
@@ -208,7 +208,7 @@ function Edit() {
                                     name={formEntry.name}
                                     value={formData[formEntry.name]}
                                     onChange={handleTextChange}>
-                                    {titles.map((currentAccount, currentAccountIndex) => 
+                                    {accounts.map((currentAccount, currentAccountIndex) => 
                                         <option
                                             key={currentAccountIndex}
                                             value={currentAccount}>

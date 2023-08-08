@@ -673,15 +673,7 @@ export {syncItems, syncItem, updateAssetsEntry, deleteAssetsEntry, createAssetsE
 
 export const selectAssetsItem = (state, item) => state.assets[item];
 
-export const selectItemTitles = (state, item, block) => {
-  let titlesItem = item;
-  if (item === 'transfers'){
-    titlesItem = 'investments';
-  }
-  const titles = [...state.assets[titlesItem][block].titles];
-  titles.sort();
-  return titles;
-}
+export const selectAccounts = (state) => state.assets.accounts;
 
 export default assetsSlice.reducer; //export slice for setting up store
 

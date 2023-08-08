@@ -239,17 +239,15 @@ a {
 }
 
 #popover .fade-out {
-  animation: fadeOut 2s ease; 
+  animation: fadeOut 0.5s ease; 
 }
 
 @keyframes slideIn {
   0% {
     transform: translateY(100%);
-    opacity: 1;
   }
   100% {
     transform: translateY(0);
-    opacity: 1;
   }
 }
 

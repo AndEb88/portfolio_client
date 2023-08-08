@@ -81,7 +81,7 @@ function Delete() {
                     <h4 className='text-center'>Are you sure you want to delete</h4>                
                 </div>
                 <div className={'row form-row'}>
-                    <h3 className='highlight-color text-center'>{formData.title} {item === 'transfers' && formData.date ? toShortDate(formData.date) : ''}</h3>                
+                    <h3 className='text-center'>{formData.title} {item === 'transfers' && formData.date ? toShortDate(formData.date) : ''}</h3>                
                 </div>  
                 <div className={'row form-row'}>
                     <h4 className='text-center'>from {formData.group} {content[mainIndex].items[itemIndex].title}?</h4>                

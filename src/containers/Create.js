@@ -5,7 +5,7 @@ import {useSelector, useDispatch} from 'react-redux';
 
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
-import {selectAssetsItem, selectItemTitles, createAssetsEntry} from '../store/assetsSlice';
+import {selectAssetsItem, selectAccounts, createAssetsEntry} from '../store/assetsSlice';
 
 
 
@@ -18,7 +18,7 @@ function Create() {
     
     // ***store***
     const itemStore = useSelector(state => selectAssetsItem(state, item));
-    const titles = useSelector(state => selectItemTitles(state, item, block));
+    const accounts = useSelector(state => selectAccounts(state));
     const status = useSelector(state => state.assets.status);
 
     // ***variables***
@@ -144,7 +144,7 @@ function Create() {
                                             value=''>
                                             Select...
                                         </option>
-                                        {titles.map((currentAccount, currentAccountIndex) => (
+                                        {accounts.map((currentAccount, currentAccountIndex) => (
                                         <option 
                                             key={currentAccountIndex} 
                                             value={currentAccount}>
