@@ -20,7 +20,7 @@ let mockAssets = {
         {block: '2020', id: 5, group: 'Liabilities', title: 'Mariana', date: '2020-12-31', closingBalance: 0, frozen: true},
         {block: '2021', id: 5, group: 'Liabilities', title: 'Mariana', date: '2021-12-31', closingBalance: -4000, frozen: true},
         {block: '2022', id: 5, group: 'Liabilities', title: 'Mariana', date: '2022-12-31', closingBalance: -9000, frozen: true},
-        {block: '2023', id: 5, group: 'Liabilities', title: 'Mariana', date: '2023-07-09', closingBalance: -9000, frozen: false},
+        {block: '2023', id: 5, group: 'Liabilities', title: 'Mariana', date: '2023-08-16', closingBalance: -11000, frozen: false},
         {block: '2020', id: 6, group: 'Liabilities', title: 'Family', date: '2020-12-31', closingBalance: 0, frozen: true},
         {block: '2021', id: 6, group: 'Liabilities', title: 'Family', date: '2021-12-31', closingBalance: -50000, frozen: true},
         {block: '2022', id: 6, group: 'Liabilities', title: 'Family', date: '2022-12-31', closingBalance: -50000, frozen: true},
@@ -225,6 +225,7 @@ let mockAssets = {
         {block: '2023', id: 112, group: 'P2P', title: 'Bondster', amount: -800, date: '2023-07-25'},
         {block: '2023', id: 113, group: 'P2P', title: 'Debitum Network', amount: 2000, date: '2023-07-08'},
         {block: '2023', id: 114, group: 'P2P', title: 'Peerberry', amount: -500, date: '2023-07-28'},
+        {block: '2023', id: 115, group: 'P2P', title: 'Lendermarket', amount: 2000, date: '2023-08-07'},
     ],
 
     expanses: [
