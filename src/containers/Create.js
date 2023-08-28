@@ -5,7 +5,7 @@ import {useSelector, useDispatch} from 'react-redux';
 
 import content from '../utils/content';
 import mockStore from '../utils/mockStore';
-import {selectAssetsItem, selectAccounts, createAssetsEntry} from '../store/assetsSlice';
+import {selectAssetsItem, selectAccounts, createAssetsEntry, pushMessage} from '../store/assetsSlice';
 
 
 
@@ -24,6 +24,7 @@ function Create() {
     // ***variables***
     const rawDate = new Date();
     const currentDate = rawDate.toISOString().split('T')[0];
+    const defaultSelect = 'Select...';
 
     // ***states***
     const [formData, setFormData] = useState({
@@ -49,15 +50,30 @@ function Create() {
             ...prevFormData,
             [name]: value,
         }));
-        //set flag for change
       };
 
       const handleNumberChange = (event) => {
         const {name, value, type} = event.target;
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: parseFloat(value),
-        }));
+        if(item == 'expanses'){
+            let amountMonthly = parseFloat(value);
+            let amountYearly = amountMonthly;
+            if(name === 'amountMonthly'){
+                amountYearly = amountMonthly / 12;
+            }
+            if(name === 'amountYearly'){
+                amountMonthly = amountYearly * 12;
+            }
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                amountMonthly: amountMonthly.toFixed(2),
+                amountYearly: amountYearly.toFixed(2),
+            }));
+        } else {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                [name]: parseFloat(value),
+            }));
+        }
       };
 
     const handleDateChange = (event) => {
@@ -73,9 +89,26 @@ function Create() {
         event.preventDefault();  
         console.log(`creating:`);
         console.log(formData);
-        // check if new title already exisitng in title array!
-        dispatch(createAssetsEntry({item, entry: formData}));
-        navigate('/assets/' + item);      
+        let abort = false;
+        content[mainIndex].items[itemIndex].createForm.map(formEntry => {
+           if (!formData[formEntry.name]){
+            const message = `${formEntry.title} may not be empty!`
+            dispatch(pushMessage({message}));
+            abort = true;
+           } 
+           if(formEntry.name === 'title' && item !== 'transfers'){
+            if(accounts.includes(formData[formEntry.name])){
+                const message = `Title ${formData[formEntry.name]} already exists!`
+                dispatch(pushMessage({message}));
+                abort = true;
+            }
+           }
+        })
+        if(!abort){
+            dispatch(pushMessage({message: 'Creating...'}))
+            dispatch(createAssetsEntry({item, entry: formData}));
+            navigate('/assets/' + item);  
+        }    
     };
 
     // ***render*** generate in function (SOC)?
@@ -118,13 +151,13 @@ function Create() {
                                 {formEntry.type === 'group' && (
                                     <select 
                                         name={formEntry.name} 
-                                        value={formData[formEntry.name]} 
+                                        value={formData[formEntry.name] || ''} 
                                         onChange={handleTextChange}>
                                         <option 
                                             disabled 
                                             defaultValue  
                                             value=''>
-                                            Select...
+                                            {defaultSelect}
                                         </option>                                      
                                         {content[mainIndex].items[itemIndex].groups.map(group => (
                                             <option key={group} value={group}>
@@ -136,13 +169,13 @@ function Create() {
                                 {formEntry.type === 'account' && (
                                     <select 
                                         name={formEntry.name} 
-                                        value={formData[formEntry.name]} 
+                                        value={formData[formEntry.name] ||''} 
                                         onChange={handleTextChange}>
                                         <option 
                                             disabled 
                                             defaultValue  
                                             value=''>
-                                            Select...
+                                            {defaultSelect}
                                         </option>
                                         {accounts.map((currentAccount, currentAccountIndex) => (
                                         <option 

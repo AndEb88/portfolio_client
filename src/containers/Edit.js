@@ -6,7 +6,7 @@ import content from '../utils/content';
 import mockStore from '../utils/mockStore';
 import {toAmountString, toPercentString, toNumber, setColorClass, toDate} from '../utils/assetsFunctions';
 import Loading from '../components/Loading';
-import {syncAssets, selectAssetsItem, updateAssetsEntry, selectAccounts} from '../store/assetsSlice';
+import {syncAssets, selectAssetsItem, updateAssetsEntry, selectAccounts, pushMessage} from '../store/assetsSlice';
 
 
 function Edit() {
@@ -62,7 +62,6 @@ function Edit() {
             ...prevFormData,
             [name]: value,
         }));
-        // set flag for change
       };
 
       const handleNumberChange = (event) => {
@@ -93,7 +92,9 @@ function Edit() {
         event.preventDefault();
         console.log(`submitting:`);
         console.log(formData);
-        // check if new title already exisitng in title array!
+        // validate form (as in create)
+        // and check if new title already exisitng in title array!
+        dispatch(pushMessage({message: 'Updating...'}))
         dispatch(updateAssetsEntry({item, entry: formData}));
         navigate('/assets/' + item);
       };

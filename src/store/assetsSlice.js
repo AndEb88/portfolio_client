@@ -667,7 +667,7 @@ export const assetsSlice = createSlice({
   },
 });
 
-export const {popMessage} = assetsSlice.actions; //export actions defined in 'reducers' for usage in app
+export const {popMessage, pushMessage} = assetsSlice.actions; //export actions defined in 'reducers' for usage in app
 
 export {syncItems, syncItem, updateAssetsEntry, deleteAssetsEntry, createAssetsEntry}; //export thunks for usage in app
 
