@@ -39,8 +39,6 @@ function Create() {
         const {name, value, type} = event.target;
         setFormData((prevFormData) => ({
             ...prevFormData,
-            // date: currentDate,
-            // block,
         }));
     }; 
 
@@ -55,18 +53,20 @@ function Create() {
       const handleNumberChange = (event) => {
         const {name, value, type} = event.target;
         if(item == 'expanses'){
-            let amountMonthly = parseFloat(value);
-            let amountYearly = amountMonthly;
+            let amountMonthly = value;
+            let amountYearly = value;
             if(name === 'amountMonthly'){
                 amountYearly = amountMonthly / 12;
+                amountYearly = amountYearly.toFixed(2);
             }
             if(name === 'amountYearly'){
                 amountMonthly = amountYearly * 12;
+                amountMonthly = amountMonthly.toFixed(2);
             }
             setFormData((prevFormData) => ({
                 ...prevFormData,
-                amountMonthly: amountMonthly.toFixed(2),
-                amountYearly: amountYearly.toFixed(2),
+                amountMonthly: parseFloat(amountMonthly),
+                amountYearly: parseFloat(amountYearly),
             }));
         } else {
             setFormData((prevFormData) => ({

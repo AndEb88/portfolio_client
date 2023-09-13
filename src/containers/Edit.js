@@ -66,17 +66,36 @@ function Edit() {
 
       const handleNumberChange = (event) => {
         const {name, value, type} = event.target;
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: parseFloat(value),
-        }));
+        if(item == 'expanses'){
+            let amountMonthly = value;
+            let amountYearly = value;
+            if(name === 'amountMonthly'){
+                amountYearly = amountMonthly / 12;
+                amountYearly = amountYearly.toFixed(2);
+            }
+            if(name === 'amountYearly'){
+                amountMonthly = amountYearly * 12;
+                amountMonthly = amountMonthly.toFixed(2);
+            }
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                amountMonthly: parseFloat(amountMonthly),
+                amountYearly: parseFloat(amountYearly),
+            }));
+        } else {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                [name]: parseFloat(value),
+            }));
+        }
       };
 
-    const handleDateChange = (event) => {
+      const handleDateChange = (event) => {
         const {name, value, type} = event.target;
         setFormData((prevFormData) => ({
             ...prevFormData,
             date: value,
+            block: value.slice(0, 4),
         }));    
       };
 
@@ -92,11 +111,19 @@ function Edit() {
         event.preventDefault();
         console.log(`submitting:`);
         console.log(formData);
-        // validate form (as in create)
-        // and check if new title already exisitng in title array!
-        dispatch(pushMessage({message: 'Updating...'}))
-        dispatch(updateAssetsEntry({item, entry: formData}));
-        navigate('/assets/' + item);
+         let abort = false;
+        content[mainIndex].items[itemIndex].editForm.map(formEntry => {
+           if (!formData[formEntry.name] && !(formEntry.type.includes('umber'))){
+            const message = `${formEntry.title} may not be empty!`
+            dispatch(pushMessage({message}));
+            abort = true;
+           } 
+        })
+        if(!abort){
+            dispatch(pushMessage({message: 'Updating...'}))
+            dispatch(updateAssetsEntry({item, entry: formData}));
+            navigate('/assets/' + item);
+        }
       };
 
     // ***components***
