@@ -236,6 +236,13 @@ let mockAssets = {
         {block: '2023', id: 123, group: 'P2P', title: 'Heavy Finance', amount: -250, date: '2023-09-08'},
         {block: '2023', id: 124, group: 'P2P', title: 'Peerberry', amount: -2500, date: '2023-09-08'},
         {block: '2023', id: 125, group: 'Other', title: 'Bausparer', amount: -36428.17, date: '2023-10-02'},
+        {block: '2023', id: 126, group: 'P2P', title: 'Afranga', amount: -1100, date: '2023-10-26'},
+        {block: '2023', id: 127, group: 'P2P', title: 'Bondster', amount: -200, date: '2023-10-26'},
+        {block: '2023', id: 128, group: 'P2P', title: 'EstateGuru', amount: -150, date: '2023-10-26'},
+        {block: '2023', id: 129, group: 'P2P', title: 'Peerberry', amount: -1200, date: '2023-10-26'},
+        {block: '2023', id: 130, group: 'P2P', title: 'Robocash', amount: -550, date: '2023-10-26'},
+        {block: '2023', id: 131, group: 'P2P', title: 'Heavy Finance', amount: -300, date: '2023-10-26'},
+        {block: '2023', id: 132, group: 'P2P', title: 'Mintos', amount: 3500, date: '2023-10-26'},
     ],
 
     expanses: [
