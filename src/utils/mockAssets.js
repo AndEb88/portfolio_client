@@ -250,7 +250,7 @@ let mockAssets = {
         {block: '2023', id: 137, group: 'P2P', title: 'Esketit', amount: -2500, date: '2023-11-27'},
         {block: '2023', id: 138, group: 'P2P', title: 'InRento', amount: -100, date: '2023-11-27'},
         {block: '2023', id: 139, group: 'P2P', title: 'Peerberry', amount: -800, date: '2023-11-27'},
-        {block: '2023', id: 140, group: 'P2P', title: 'Robocash', amount: -2200, date: '2023-11-27'},
+        {block: '2023', id: 140, group: 'P2P', title: 'RoboCash', amount: -2200, date: '2023-11-27'},
     ],
 
     expanses: [
