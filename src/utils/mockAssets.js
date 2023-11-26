@@ -98,7 +98,7 @@ let mockAssets = {
         {block: '2023', id: 8, group: 'P2P', title: 'ViaInvest', date: '2023-11-27', closingBalance: 10420, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2023', id: 9, group: 'P2P', title: 'Peerberry', date: '2023-11-27', closingBalance: 5929, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2023', id: 10, group: 'P2P', title: 'Swaper', date: '2023-11-27', closingBalance: 9600, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 11, group: 'P2P', title: 'Afranga', date: '2023-11-27', closingBalance: 8456, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 11, group: 'P2P', title: 'Afranga', date: '2023-11-27', closingBalance: 6256, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2023', id: 12, group: 'P2P', title: 'EstateGuru', date: '2023-11-27', closingBalance: 5887, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2023', id: 13, group: 'P2P', title: 'Debitum Network', date: '2023-11-27', closingBalance: 9746, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2023', id: 14, group: 'P2P', title: 'Reinvest24', date: '2023-11-27', closingBalance: 2537.11, withheldTaxes: 0, bonus: 0, frozen: false},
