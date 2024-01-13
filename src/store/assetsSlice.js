@@ -21,7 +21,7 @@ const syncItems = createAsyncThunk(
 
     const response = await fetchAssets();
     thunkAPI.dispatch(assetsSlice.actions.pushMessage(response.data));
-
+    
     const items = response.data.assets;
     //const json = await response.json(); returns response.data directly
     //required for JSON responses from database (?!?)
@@ -37,7 +37,6 @@ const syncItems = createAsyncThunk(
 const syncItem = createAsyncThunk(
   'assets/syncItem',
   async ({item}, thunkAPI) => {
-    
     const response = await fetchItem(item);
     thunkAPI.dispatch(assetsSlice.actions.pushMessage(response.data));
 
@@ -46,6 +45,7 @@ const syncItem = createAsyncThunk(
 
     switch (item){
       case 'resources':
+        
         thunkAPI.dispatch(assetsSlice.actions.calcResources(entries));
         break;
       case 'investments':
@@ -365,15 +365,17 @@ export const assetsSlice = createSlice({
           if (entryDaysPassed > 365){
             entryDaysPassed = 365;
           }
-        }        
-        const transfersEntries = state.transfers[block].entries.filter(currentTransfer => currentTransfer.title === currentEntry.title);
-        transfersEntries.forEach(currentTransfer => {
-          const transferDaysPassed = getDaysPassed(currentTransfer.date, block);
-          if(entryDaysPassed >= transferDaysPassed){
-            transfers += currentTransfer.amount;
-            weightedTransfers += currentTransfer.amount * (entryDaysPassed - transferDaysPassed) / 365;
-          }
-        });
+        }
+        if (state.transfers[block]){    
+          const transfersEntries = state.transfers[block].entries.filter(currentTransfer => currentTransfer.title === currentEntry.title);
+          transfersEntries.forEach(currentTransfer => {
+            const transferDaysPassed = getDaysPassed(currentTransfer.date, block);
+            if(entryDaysPassed >= transferDaysPassed){
+              transfers += currentTransfer.amount;
+              weightedTransfers += currentTransfer.amount * (entryDaysPassed - transferDaysPassed) / 365;
+            }
+          });
+        }
         const openingBalance = closingBalances[currentEntry.id] ?? 0;
         weightedTransfers += openingBalance * entryDaysPassed / 365;
         closingBalances[currentEntry.id] = closingBalance;
@@ -444,7 +446,7 @@ export const assetsSlice = createSlice({
           }
         }
       });
-
+      
       itemState.overall = overallBlock;
       itemState.overall.closingBalance = itemState[lastBlock].closingBalance;
 
