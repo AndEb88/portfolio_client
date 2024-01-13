@@ -40,10 +40,10 @@ const content = [
         route: 'assets', 
         title: 'Assets',
         firstYear: 2018,
-        taxRates: {
-            '2022': 0.26380,
-            '2018': 0.27820,
-        },
+        taxRates: [
+            {year: 2022, rate: 0.26380},
+            {year: 2018, rate: 0.27820},
+        ],
         description: 'Investments description...',      
         items: [
             {
