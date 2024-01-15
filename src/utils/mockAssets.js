@@ -29,8 +29,8 @@ let mockAssets = {
         {block: '2020', id: 6, group: 'Liabilities', title: 'Family', date: '2020-12-31', closingBalance: 0, frozen: true},
         {block: '2021', id: 6, group: 'Liabilities', title: 'Family', date: '2021-12-31', closingBalance: -50000, frozen: true},
         {block: '2022', id: 6, group: 'Liabilities', title: 'Family', date: '2022-12-31', closingBalance: -50000, frozen: true},
-        {block: '2023', id: 6, group: 'Liabilities', title: 'Family', date: '2023-12-31', closingBalance: -250000, frozen: true},
-        {block: '2024', id: 6, group: 'Liabilities', title: 'Family', date: '2024-01-01', closingBalance: -250000, frozen: false},    
+        {block: '2023', id: 6, group: 'Liabilities', title: 'Family', date: '2023-12-31', closingBalance: -300000, frozen: true},
+        {block: '2024', id: 6, group: 'Liabilities', title: 'Family', date: '2024-01-01', closingBalance: -300000, frozen: false},    
     ],
 
     investments: [
@@ -99,7 +99,7 @@ let mockAssets = {
         {block: '2023', id: 3, group: 'Other', title: 'Riester II', date: '2023-07-09', closingBalance: 2818.68, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2023', id: 4, group: 'Other', title: 'Bausparer', date: '2023-10-02', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2023', id: 5, group: 'Stock Market', title: 'Scalable Capital', date: '2023-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2023', id: 6, group: 'P2P', title: 'Mintos', date: '2023-11-27', closingBalance: 9327, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2023', id: 6, group: 'P2P', title: 'Mintos', date: '2023-12-31', closingBalance: 9382.37, withheldTaxes: 13.43, bonus: 0, frozen: false},
         {block: '2023', id: 7, group: 'P2P', title: 'RoboCash', date: '2023-12-31', closingBalance: 25688.61, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2023', id: 8, group: 'P2P', title: 'ViaInvest', date: '2023-12-31', closingBalance: 10577.93, withheldTaxes: 47.99, bonus: 0, frozen: false},
         {block: '2023', id: 9, group: 'P2P', title: 'Peerberry', date: '2023-12-31', closingBalance: 5494.94, withheldTaxes: 0, bonus: 0, frozen: true},
