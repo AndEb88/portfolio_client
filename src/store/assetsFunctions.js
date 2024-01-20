@@ -16,11 +16,8 @@ export function getAvailableId(item, block, state) {
   }
   
    export function getTaxRate(year) {
-    console.log('enter');
-    console.log(year);
     for (let taxSet of content[2].taxRates) {
       if (year >= taxSet.year) {
-        console.log(taxSet.rate);
         return taxSet.rate;
       }
     }
