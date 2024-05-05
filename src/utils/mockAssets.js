@@ -328,6 +328,7 @@ let mockAssets = {
         {block: '2024', id: 189, group: 'P2P', title: 'Peerberry', amount: -500, date: '2024-04-25'},
         {block: '2024', id: 190, group: 'P2P', title: 'RoboCash', amount: -100, date: '2024-04-25'},
         {block: '2024', id: 181, group: 'P2P', title: 'Crowdestor', amount: -2000, date: '2024-04-25'},
+        {block: '2024', id: 182, group: 'P2P', title: 'Debitum Network', amount: 3100, date: '2024-05-03'},
 
     ],
 
