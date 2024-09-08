@@ -54,6 +54,7 @@ let mockAssets = {
         {block: '2020', id: 18, group: 'P2P', title: 'Heavy Finance', date: '2020-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2020', id: 19, group: 'P2P', title: 'Lendermarket', date: '2020-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2020', id: 20, group: 'P2P', title: 'Crowdestor', date: '2020-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
+        {block: '2020', id: 21, group: 'P2P', title: 'Ventus Energy', date: '2020-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2021', id: 1, group: 'Other', title: 'Allianz', date: '2021-12-31', closingBalance: 14015.47, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2021', id: 2, group: 'Other', title: 'Riester I', date: '2021-12-31', closingBalance: 9021, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2021', id: 3, group: 'Other', title: 'Riester II', date: '2021-12-31', closingBalance: 1326, withheldTaxes: 0, bonus: 0, frozen: true},
@@ -74,6 +75,7 @@ let mockAssets = {
         {block: '2021', id: 18, group: 'P2P', title: 'Heavy Finance', date: '2021-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2021', id: 19, group: 'P2P', title: 'Lendermarket', date: '2021-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2021', id: 20, group: 'P2P', title: 'Crowdestor', date: '2021-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
+        {block: '2021', id: 21, group: 'P2P', title: 'Ventus Energy', date: '2021-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2022', id: 1, group: 'Other', title: 'Allianz', date: '2022-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2022', id: 2, group: 'Other', title: 'Riester I', date: '2022-12-31', closingBalance: 9188, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2022', id: 3, group: 'Other', title: 'Riester II', date: '2022-12-31', closingBalance: 2018.68, withheldTaxes: 0, bonus: 0, frozen: true},
@@ -94,6 +96,7 @@ let mockAssets = {
         {block: '2022', id: 18, group: 'P2P', title: 'Heavy Finance', date: '2022-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2022', id: 19, group: 'P2P', title: 'Lendermarket', date: '2022-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2022', id: 20, group: 'P2P', title: 'Crowdestor', date: '2022-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
+        {block: '2022', id: 21, group: 'P2P', title: 'Ventus Energy', date: '2022-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2023', id: 1, group: 'Other', title: 'Allianz', date: '2023-07-09', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2023', id: 2, group: 'Other', title: 'Riester I', date: '2023-12-31', closingBalance: 9824.38, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2023', id: 3, group: 'Other', title: 'Riester II', date: '2023-07-09', closingBalance: 3000.10, withheldTaxes: 0, bonus: 0, frozen: true},
@@ -113,7 +116,8 @@ let mockAssets = {
         {block: '2023', id: 17, group: 'P2P', title: 'InRento', date: '2023-12-31', closingBalance: 5049.99, withheldTaxes: 39.81, bonus: 23.57, frozen: true},
         {block: '2023', id: 18, group: 'P2P', title: 'Heavy Finance', date: '2023-12-31', closingBalance: 9737.60, withheldTaxes: 0, bonus: 250, frozen: true},
         {block: '2023', id: 19, group: 'P2P', title: 'Lendermarket', date: '2023-12-31', closingBalance: 10846.65, withheldTaxes: 0, bonus: 75, frozen: true},
-        {block: '2023', id: 20, group: 'P2P', title: 'Crowdestor', date: '2023-12-31', closingBalance: 100497.65, withheldTaxes: 0, bonus: 0, frozen: true},        
+        {block: '2023', id: 20, group: 'P2P', title: 'Crowdestor', date: '2023-12-31', closingBalance: 100497.65, withheldTaxes: 0, bonus: 0, frozen: true},
+        {block: '2023', id: 21, group: 'P2P', title: 'Ventus Energy', date: '2023-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},        
         {block: '2024', id: 1, group: 'Other', title: 'Allianz', date: '2024-01-01', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2024', id: 2, group: 'Other', title: 'Riester I', date: '2024-01-01', closingBalance: 10559, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2024', id: 3, group: 'Other', title: 'Riester II', date: '2024-01-01', closingBalance: 3250, withheldTaxes: 0, bonus: 0, frozen: false},
@@ -134,6 +138,7 @@ let mockAssets = {
         {block: '2024', id: 18, group: 'P2P', title: 'Heavy Finance', date: '2024-08-24', closingBalance: 9122, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2024', id: 19, group: 'P2P', title: 'Lendermarket', date: '2024-08-24', closingBalance: 18741, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2024', id: 20, group: 'P2P', title: 'Crowdestor', date: '2024-08-24', closingBalance: 100198, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2024', id: 21, group: 'P2P', title: 'Ventus Energy', date: '2024-09-08', closingBalance: 1, withheldTaxes: 0, bonus: 0, frozen: false},
     ],
 
     transfers: [
@@ -362,7 +367,8 @@ let mockAssets = {
         {block: '2024', id: 223, group: 'P2P', title: 'Debitum Network', amount: -100, date: '2024-08-23'},  
         {block: '2024', id: 224, group: 'P2P', title: 'InRento', amount: -100, date: '2024-08-23'},  
         {block: '2024', id: 225, group: 'P2P', title: 'HeavyFinance', amount: -300, date: '2024-08-23'},   
-        {block: '2024', id: 226, group: 'P2P', title: 'Lendermarket', amount: 1000, date: '2024-08-23'},   
+        {block: '2024', id: 226, group: 'P2P', title: 'Lendermarket', amount: 1000, date: '2024-08-23'},
+        {block: '2024', id: 227, group: 'P2P', title: 'Ventus Energy', amount: 1, date: '2024-09-07'},   
 
     ],
 

@@ -28,6 +28,7 @@ import heavyIcon from './accounts/heavy.png';
 import viainvestIcon from './accounts/viainvest.png';
 import esketitIcon from './accounts/esketit.png';
 import inrentoIcon from './accounts/inrento.png';
+import ventusenergyIcon from './accounts/ventusenergy.png';
 
 
 // PNG 120x120 or convert to SVG
@@ -71,6 +72,7 @@ const accountIcons = [
     {title: 'Swaper', source: swaperIcon},
     {title: 'InRento', source: inrentoIcon},
     {title: 'Esketit', source: esketitIcon},
+    {title: 'Ventus Energy', source: ventusenergyIcon},
 ]
 
 export default accountIcons;
