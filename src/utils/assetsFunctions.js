@@ -1,24 +1,24 @@
 export function toAmountElement (number){
-    const integer = Math.floor(number).toLocaleString();
+    const integer = Math.trunc(number).toLocaleString();
     const decimals = number.toFixed(2).slice(-2);
     return (<>{integer}<span className='decimals'> {decimals}</span></>)
 }
 
 export function toPercentElement (number){
-    const integer = Math.floor(number).toLocaleString();
-    const decimals = (number % 1).toFixed(2).slice(2);
+    const integer = Math.trunc(number).toLocaleString();
+    const decimals = Math.abs(number % 1).toFixed(2).slice(2);
     return (<>{integer}<span className='decimals'> {decimals}</span></>)
 }
 
 export function toAmountString (number){
-    const integer = Math.floor(number).toLocaleString();
-    const decimals = (number % 1).toFixed(2).slice(2);
+    const integer = Math.trunc(number).toLocaleString();
+    const decimals = Math.abs(number % 1).toFixed(2).slice(2);
     return integer + ',' + decimals;
 }
 
 export function toPercentString (number){
-    const integer = Math.floor(number).toLocaleString();
-    const decimals = (number % 1).toFixed(2).slice(2);
+    const integer = Math.trunc(number).toLocaleString();
+    const decimals = Math.abs(number % 1).toFixed(2).slice(2);
     return integer + ',' + decimals;
 }
 
