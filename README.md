@@ -67,7 +67,7 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 - Investments/ Stock Market: balance is equal gross investment amount, which also includes due taxes from previous years (due taxes are deduced from profit within calculated year, so next year only new profits will be considered); when realizing profits, the entire amount of withheld taxes is added to profit and only current year's due taxes are deduced
 - Investments/ P2P: extract profit from tax statement and derive closing balance accordingly
 - Investments/ Other / Allianz: closing balance = 'garantierte einmalige Kapitalzahlung bei Kündigung zum 01.09. des Folgejahres' (Services/ Kündigung) or (Postfach/ Bestätigung) in November of the following year
-- Investments/ Other/ Riester I: closing balance = 'Gesamtleistung bei Tod' (Services/ Tod) or 'Altersvorsorgevermögen Stand am 31.12.' (Postfach/ Auskunft) in January (I) or June (II) of the following year
+- Investments/ Other/ Riester: closing balance = 'Gesamtleistung bei Tod' (Services/ Tod) or 'Altersvorsorgevermögen Stand am 31.12.' (Postfach/ Auskunft) in January (I) or June (II) of the following year
 
 ## Pension
 - Pension/ Statutory: amount = 'bei 1% Anpassungssatz'
