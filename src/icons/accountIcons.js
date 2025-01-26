@@ -47,6 +47,7 @@ const accountIcons = [
     {title: 'Employer', source: pensionIcon},
     {title: 'Peerberry', source: peerberryIcon},
     {title: 'Scalable Capital', source: scalableCapitalIcon},
+    {title: 'Scalable Savings', source: scalableCapitalIcon},
     {title: 'Lendermarket', source: lendermarketIcon},
     {title: 'Family', source: familyIcon},
     {title: 'Mariana', source: marianaIcon},
