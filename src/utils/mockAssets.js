@@ -554,7 +554,7 @@ let mockAssets = {
         {block: '2024', id: 3, group: 'Private', title: 'Riester I', date: '2024-12-31', amount: 132.29, expected: null, ROI: 3.3, frozen: true},
         {block: '2024', id: 4, group: 'Private', title: 'Riester II', date: '2024-12-31', amount: 94.04, expected: null, ROI: 3.3, frozen: true},
         {block: '2024', id: 5, group: 'Employer', title: 'Conti+', date: '2024-12-31', amount: null, expected: 859.22, ROI: 5, frozen: true},
-        {block: '2025', id: 1, group: 'Public', title: 'Statutory', date: '2025-12-31', amount: 3950, expected: null, ROI: 2.5, frozen: false},
+        {block: '2025', id: 1, group: 'Public', title: 'Statutory', date: '2025-12-31', amount: 4060, expected: null, ROI: 2.5, frozen: true},
         {block: '2025', id: 3, group: 'Private', title: 'Riester I', date: '2025-12-01', amount: 132.29, expected: null, ROI: 3.3, frozen: false},
         {block: '2025', id: 4, group: 'Private', title: 'Riester II', date: '2025-12-01', amount: 93.71, expected: null, ROI: 3.3, frozen: false},
         {block: '2025', id: 5, group: 'Employer', title: 'Conti+', date: '2025-01-01', amount: null, expected: null, ROI: 5, frozen: false},
