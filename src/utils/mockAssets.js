@@ -201,8 +201,8 @@ let mockAssets = {
         {block: '2026', id: 17, group: 'P2P', title: 'InRento', date: '2026-02-14', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2026', id: 18, group: 'P2P', title: 'Heavy Finance', date: '2026-02-14', closingBalance: 8282, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2026', id: 19, group: 'P2P', title: 'Lendermarket', date: '2026-02-14', closingBalance: 20395, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2026', id: 20, group: 'P2P', title: 'Crowdestor', date: '2026-02-14', closingBalance: 90000, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2026', id: 21, group: 'P2P', title: 'Ventus Energy', date: '2026-02-14', closingBalance: 110000, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2026', id: 20, group: 'P2P', title: 'Crowdestor', date: '2026-03-11', closingBalance: 82.19, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2026', id: 21, group: 'P2P', title: 'Ventus Energy', date: '2026-03-11', closingBalance: 31200, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2026', id: 22, group: 'Stock Market', title: 'Nu Bonds', date: '2026-02-14', closingBalance: 8578, withheldTaxes: 0, bonus: 0, frozen: false},
     ],
 
@@ -621,6 +621,11 @@ let mockAssets = {
         {block: '2026', id: 412, group: 'P2P', title: 'Ventus Energy', amount: -2400, date: '2026-02-13'},
         {block: '2026', id: 413, group: 'P2P', title: 'Bondster', amount: -100, date: '2026-02-13'},
         {block: '2026', id: 414, group: 'P2P', title: 'Lendermarket', amount: -500, date: '2026-02-13'},
+        {block: '2026', id: 415, group: 'P2P', title: 'Crowdestor', amount: -90000, date: '2026-02-15'},
+        {block: '2026', id: 416, group: 'Stock Market', title: 'Scalable Capital', amount: 1600, date: '2026-03-01'},
+        {block: '2026', id: 417, group: 'Stock Market', title: 'Nu Bonds', amount: 1000, date: '2026-03-01'},
+        {block: '2026', id: 418, group: 'P2P', title: 'Ventus Energy', amount: -51500, date: '2026-03-05'},
+        {block: '2026', id: 419, group: 'P2P', title: 'Ventus Energy', amount: -28500, date: '2026-03-10'},
 
     ],
 
