@@ -30,6 +30,7 @@ import esketitIcon from './accounts/esketit.png';
 import inrentoIcon from './accounts/inrento.png';
 import ventusenergyIcon from './accounts/ventusenergy.png';
 import nuIcon from './accounts/nu.png';
+import nectaroIcon from './accounts/nectaro.png';
 
 
 // PNG 120x120 or convert to SVG
@@ -76,6 +77,7 @@ const accountIcons = [
     {title: 'Esketit', source: esketitIcon},
     {title: 'Ventus Energy', source: ventusenergyIcon},
     {title: 'Nu Bonds', source: nuIcon},
+    {title: 'Nectaro', source: nectaroIcon},
 ]
 
 export default accountIcons;
