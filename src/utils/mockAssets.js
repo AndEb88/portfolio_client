@@ -648,6 +648,8 @@ let mockAssets = {
         {block: '2026', id: 438, group: 'P2P', title: 'ViaInvest', amount: -300, date: '2026-04-25'},
         {block: '2026', id: 439, group: 'P2P', title: 'Afranga', amount: -200, date: '2026-04-26'},
         {block: '2026', id: 414, group: 'P2P', title: 'Lendermarket', amount: -700, date: '2026-03-20'},
+        {block: '2026', id: 415, group: 'P2P', title: 'Lendermarket', amount: 5000, date: '2026-04-27'},
+        {block: '2026', id: 416, group: 'P2P', title: 'EstateGuru', amount: -4, date: '2026-04-30'},
 
     ],
 
