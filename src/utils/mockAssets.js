@@ -191,7 +191,7 @@ let mockAssets = {
         {block: '2026', id: 7, group: 'P2P', title: 'RoboCash', date: '2026-05-29', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2026', id: 8, group: 'P2P', title: 'ViaInvest', date: '2026-05-29', closingBalance: 20000, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2026', id: 9, group: 'P2P', title: 'Peerberry', date: '2026-05-29', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
-        {block: '2026', id: 10, group: 'P2P', title: 'Swaper', date: '2026-05-29', closingBalance: 25000, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2026', id: 10, group: 'P2P', title: 'Swaper', date: '2026-05-29', closingBalance: 30000, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2026', id: 11, group: 'P2P', title: 'Afranga', date: '2026-05-29', closingBalance: 20000, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2026', id: 12, group: 'P2P', title: 'EstateGuru', date: '2026-05-29', closingBalance: 4686, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2026', id: 13, group: 'P2P', title: 'Debitum Network', date: '2026-05-29', closingBalance: 16900, withheldTaxes: 0, bonus: 0, frozen: false},
@@ -200,10 +200,10 @@ let mockAssets = {
         {block: '2026', id: 16, group: 'P2P', title: 'Esketit', date: '2026-05-29', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2026', id: 17, group: 'P2P', title: 'InRento', date: '2026-05-29', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2026', id: 18, group: 'P2P', title: 'Heavy Finance', date: '2026-05-29', closingBalance: 8230, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2026', id: 19, group: 'P2P', title: 'Lendermarket', date: '2026-05-29', closingBalance: 25500, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2026', id: 19, group: 'P2P', title: 'Lendermarket', date: '2026-05-29', closingBalance: 30700, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2026', id: 20, group: 'P2P', title: 'Crowdestor', date: '2026-05-29', closingBalance: 82.19, withheldTaxes: 0, bonus: 0, frozen: false},
         {block: '2026', id: 21, group: 'P2P', title: 'Ventus Energy', date: '2026-05-29', closingBalance: 10000, withheldTaxes: 0, bonus: 0, frozen: false},
-        {block: '2026', id: 22, group: 'Stock Market', title: 'Nu Bonds', date: '2026-05-29', closingBalance: 9850, withheldTaxes: 0, bonus: 0, frozen: false},
+        {block: '2026', id: 22, group: 'Stock Market', title: 'Nu Bonds', date: '2026-12-31', closingBalance: 0, withheldTaxes: 0, bonus: 0, frozen: true},
         {block: '2026', id: 23, group: 'P2P', title: 'Nectaro', date: '2026-05-29', closingBalance: 20000, withheldTaxes: 0, bonus: 0, frozen: false},
     ],
 
@@ -659,6 +659,10 @@ let mockAssets = {
         {block: '2026', id: 449, group: 'P2P', title: 'Afranga', amount: -300, date: '2026-05-23'},
         {block: '2026', id: 450, group: 'P2P', title: 'Heavy Finance', amount: -700, date: '2026-05-23'},
         {block: '2026', id: 451, group: 'P2P', title: 'Bondster', amount: -100, date: '2026-05-23'},
+        {block: '2026', id: 452, group: 'P2P', title: 'EstateGuru', amount: -3.06, date: '2026-06-08'},
+        {block: '2026', id: 453, group: 'Stock Market', title: 'Nu Bonds', amount: -9850, date: '2026-06-08'},
+        {block: '2026', id: 454, group: 'P2P', title: 'Lendermarket', amount: 5000, date: '2026-06-08'},
+        {block: '2026', id: 455, group: 'P2P', title: 'Swaper', amount: 5000, date: '2026-06-13'},
 
 
     ],
@@ -738,7 +742,7 @@ let mockAssets = {
         {block: '2025', id: 4, group: 'Private', title: 'Riester II', date: '2025-12-01', amount: 93.71, expected: null, ROI: 3.3, frozen: false},
         {block: '2025', id: 5, group: 'Employer', title: 'Conti+', date: '2025-12-31', amount: null, expected: 712.06, ROI: 5, frozen: true},
 
-        {block: '2026', id: 1, group: 'Public', title: 'Statutory', date: '2026-01-01', amount: 4060, expected: null, ROI: 2.5, frozen: true},
+        {block: '2026', id: 1, group: 'Public', title: 'Statutory', date: '2026-12-31', amount: 3980, expected: null, ROI: 2.5, frozen: true},
         {block: '2026', id: 3, group: 'Private', title: 'Riester I', date: '2026-01-01', amount: 132.29, expected: null, ROI: 3.3, frozen: false},
         {block: '2026', id: 4, group: 'Private', title: 'Riester II', date: '2026-01-01', amount: 93.71, expected: null, ROI: 3.3, frozen: false},
         {block: '2026', id: 5, group: 'Employer', title: 'Conti+', date: '2026-01-01', amount: null, expected: null, ROI: 5, frozen: false},
